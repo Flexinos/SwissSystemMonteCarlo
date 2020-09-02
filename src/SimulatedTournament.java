@@ -16,20 +16,25 @@ public class SimulatedTournament {
     }
 
     private void getNextRound() {
-        System.out.println("Ranking after round: " + roundsFinished);
+        roundArrayList.add(new Round(rankingByScoreThenEloArrayList.get(roundsFinished++)));
         rankingByScoreThenEloArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByELO));
+        System.out.println("\n\nRanking after round: " + roundsFinished);
         for (SimulatedPlayer player : rankingByScoreThenEloArrayList.get(rankingByScoreThenEloArrayList.size() - 1).getRanking()) {
             System.out.println(player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tElo: " + player.getParticipant().getElo());
         }
-        roundArrayList.add(new Round(rankingByScoreThenEloArrayList.get(roundsFinished++)));
-        System.out.print("\n\n");
     }
 
     public void simulateTournament() {
+        rankingByScoreThenEloArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByELO));
+        System.out.println("Starting rank: ");
+        for (SimulatedPlayer player : rankingByScoreThenEloArrayList.get(rankingByScoreThenEloArrayList.size() - 1).getRanking()) {
+            System.out.println(player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tElo: " + player.getParticipant().getElo());
+        }
+        System.out.print("\n\n");
         while (roundsFinished < tournament.getTotalRounds()) {
             getNextRound();
         }
-        for (SimulatedPlayer player : rankingByScoreThenEloArrayList.get(tournament.getTotalRounds() - 1).getRanking()) {
+        for (SimulatedPlayer player : rankingByScoreThenEloArrayList.get(roundsFinished - 1).getRanking()) {
             System.out.println(player.getParticipant().getName() + " " + player.getScore());
         }
     }
