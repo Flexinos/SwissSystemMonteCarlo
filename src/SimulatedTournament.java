@@ -2,11 +2,11 @@ import java.util.ArrayList;
 
 public class SimulatedTournament {
     private final Tournament tournament;
-    private ArrayList<SimulatedPlayer> simulatedPlayerArrayList = new ArrayList<>();
+    private final ArrayList<SimulatedPlayer> simulatedPlayerArrayList = new ArrayList<>();
     private int roundsFinished = 0;
-    private ArrayList<Round> roundArrayList = new ArrayList<>();
-    private ArrayList<Ranking> rankingByScoreThenEloArrayList = new ArrayList<>();
-    private ArrayList<Ranking> rankingByScoreThenTieBreakArrayList = new ArrayList<>();
+    private final ArrayList<Round> roundArrayList = new ArrayList<>();
+    private final ArrayList<Ranking> rankingByScoreThenEloArrayList = new ArrayList<>();
+    private final ArrayList<Ranking> rankingByScoreThenTieBreakArrayList = new ArrayList<>();
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;

@@ -1,8 +1,8 @@
 import java.util.ArrayList;
 
 public class PairingValidpairingPair {
-    private ArrayList<Pairing> pairings;
-    private boolean isValid;
+    private final ArrayList<Pairing> pairings;
+    private final boolean isValid;
 
     public PairingValidpairingPair(ArrayList<Pairing> pairings, boolean isValid) {
         this.pairings = pairings;

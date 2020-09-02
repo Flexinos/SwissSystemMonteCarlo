@@ -6,15 +6,11 @@ import java.util.stream.Collectors;
 
 public class Round {
     private final Ranking rankingByEloBeforeRound;
-    private HashSet<Pairing> pairings = new HashSet<>();
+    private final HashSet<Pairing> pairings = new HashSet<>();
 
     public Round(Ranking rankingByEloBeforeRound) {
         this.rankingByEloBeforeRound = rankingByEloBeforeRound;
         createPairings();
-    }
-
-    public HashSet<Pairing> getPairings() {
-        return pairings;
     }
 
     private PairingValidpairingPair tryPairBracket(int board, List<SimulatedPlayer> playersInBracket) {

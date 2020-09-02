@@ -4,7 +4,7 @@ public class SimulatedPlayer {
     private final Participant participant;
     private double score;
     private double buchholz;
-    private ArrayList<SimulatedPlayer> pastOpponents = new ArrayList<>();
+    private final ArrayList<SimulatedPlayer> pastOpponents = new ArrayList<>();
 
     public SimulatedPlayer(Participant participant) {
         this.participant = participant;
@@ -33,16 +33,19 @@ public class SimulatedPlayer {
         return buchholz;
     }
 
-    public void setBuchholz(double buchholz) {
-        this.buchholz = buchholz;
-    }
-
     public ArrayList<SimulatedPlayer> getPastOpponents() {
         return pastOpponents;
     }
 
     public Participant getParticipant() {
         return participant;
+    }
+
+    public void updateBuchholz() {
+        buchholz = 0;
+        for (SimulatedPlayer opponent : pastOpponents) {
+            buchholz += opponent.getScore();
+        }
     }
 
     public static int compareToByTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
@@ -52,13 +55,6 @@ public class SimulatedPlayer {
             return -1;
         } else {
             return Double.compare(p2.getBuchholz(), p1.getBuchholz());
-        }
-    }
-
-    public void updateBuchholz() {
-        buchholz = 0;
-        for (SimulatedPlayer opponent : pastOpponents) {
-            buchholz += opponent.getScore();
         }
     }
 }

@@ -13,21 +13,11 @@ public class Pairing {
 
     public static boolean pairingAllowed(SimulatedPlayer player1, SimulatedPlayer player2) {
         if (player1.equals(player2)) {
-            /*
-            System.out.println();
-            System.out.println(player1.getParticipant().getName());
-            System.out.println(player2.getParticipant().getName());
-            System.out.println();
-            System.out.println("fail bruno");
-             */
             System.out.println("playing against oneself");
             return false;
         } else {
-            if (player1.getPastOpponents().contains(player2)) {
-                //System.out.println(player1.getParticipant().getName() + " playing against past opponent: " + player2.getParticipant().getName());
-                return false;
-            }
-            return true;
+            System.out.println(player1.getParticipant().getName() + " playing against past opponent: " + player2.getParticipant().getName());
+            return !player1.getPastOpponents().contains(player2);
         }
     }
 
