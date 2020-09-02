@@ -53,7 +53,7 @@ public class Round {
         } else {
             System.out.println("\nNo downfloaters");
         }
-        System.out.println("Players in bracket for score " + String.valueOf(playersInBracket.get(0).getScore()) + ": " + playersInBracket.size());
+        System.out.println("Players in bracket for score " + playersInBracket.get(0).getScore() + ": " + playersInBracket.size());
         for (SimulatedPlayer player : playersInBracket) {
             System.out.print(player.getParticipant().getName() + ", ");
         }
@@ -92,7 +92,6 @@ public class Round {
                         tmpList.add(downfloatersToNextBracket.remove(0));
                     }
                     Collections.swap(tmpList, i, j);
-                    System.out.println("swapping list");
                     if (tmpList.size() % 2 == 1) {
                         downfloatersToNextBracket.add(tmpList.remove(tmpList.size() - 1));
                     }
@@ -113,7 +112,7 @@ public class Round {
             }
         }
         downfloatersToNextBracket.addAll(tmpList);
-        return new PairingDownfloaterPair(new ArrayList<Pairing>(), downfloatersToNextBracket);
+        return new PairingDownfloaterPair(new ArrayList<>(), downfloatersToNextBracket);
         //todo baaadd
         //throw new RuntimeException("Pairings kinda not possible (won't fix)");
     }
@@ -125,8 +124,7 @@ public class Round {
         while (unpairedPlayers.size() > 0) {
             double highestScore = unpairedPlayers.get(0).getScore();
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream()
-                    .filter(p -> p.getScore() == highestScore).collect(Collectors.toList());
-            nextBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
+                    .filter(p -> p.getScore() == highestScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
             PairingDownfloaterPair proposedPairings = pairBracket(board, nextBracket, downfloaters);
             downfloaters.clear();
             pairings.addAll(proposedPairings.getPairings());

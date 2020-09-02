@@ -2,9 +2,9 @@ import java.security.SecureRandom;
 
 public class GameResult {
     private static final SecureRandom random = new SecureRandom();
-    //static Map<Integer, ResultOfGame> indexToResult = Map.of(0, ResultOfGame.WHITE_WIN, 1, ResultOfGame.DRAW, 2, ResultOfGame.BLACK_WIN);
 
     public static ResultOfGame randomResult(SimulatedPlayer p1, SimulatedPlayer p2) {
+        //todo give white small advantage
         double eloDiff = p1.getParticipant().getElo() - p2.getParticipant().getElo();
         double p1Score = 1 / (1 + Math.pow(10, -eloDiff / 400));
         double underdogScore;

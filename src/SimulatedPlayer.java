@@ -19,6 +19,16 @@ public class SimulatedPlayer {
         score += result;
     }
 
+    public static int compareToByScoreThenElo(SimulatedPlayer p1, SimulatedPlayer p2) {
+        if (p1.getScore() > p2.getScore()) {
+            return -1;
+        } else if (p1.getScore() < p2.getScore()) {
+            return 1;
+        }
+        return Double.compare(p2.getParticipant().getElo(), p1.getParticipant().getElo());
+
+    }
+
     public double getBuchholz() {
         return buchholz;
     }
@@ -35,26 +45,20 @@ public class SimulatedPlayer {
         return participant;
     }
 
-    public int compareToByScoreThenElo(SimulatedPlayer p2) {
-        return -1 * Double.compare(this.getScore(), p2.getScore());
-        /*else {
-            if (this.participant.getElo() > p2.participant.getElo()) {
-                return 1;
-            } else {
-                return -1;
-            }
+    public static int compareToByTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
+        if (p1.getScore() < p2.getScore()) {
+            return 1;
+        } else if (p1.getScore() > p2.getScore()) {
+            return -1;
+        } else {
+            return Double.compare(p2.getBuchholz(), p1.getBuchholz());
         }
-        */
     }
 
-    public int compareToByTieBreak(SimulatedPlayer p2) {
-        /*
-        if (this.getBuchholz() > p2.getBuchholz()) {
-            return 1;
-        } else {
-            return -1;
+    public void updateBuchholz() {
+        buchholz = 0;
+        for (SimulatedPlayer opponent : pastOpponents) {
+            buchholz += opponent.getScore();
         }
-        */
-        return Double.compare(this.getScore(), p2.getScore());
     }
 }

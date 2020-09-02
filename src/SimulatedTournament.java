@@ -18,9 +18,13 @@ public class SimulatedTournament {
     private void getNextRound() {
         roundArrayList.add(new Round(rankingByScoreThenEloArrayList.get(roundsFinished++)));
         rankingByScoreThenEloArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByELO));
+        for (SimulatedPlayer player : simulatedPlayerArrayList) {
+            player.updateBuchholz();
+        }
+        rankingByScoreThenTieBreakArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByBUCHHOLZ));
         System.out.println("\n\nRanking after round: " + roundsFinished);
-        for (SimulatedPlayer player : rankingByScoreThenEloArrayList.get(rankingByScoreThenEloArrayList.size() - 1).getRanking()) {
-            System.out.println(player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tElo: " + player.getParticipant().getElo());
+        for (SimulatedPlayer player : rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking()) {
+            System.out.println(player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBucholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo());
         }
     }
 
