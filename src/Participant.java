@@ -18,4 +18,8 @@ public class Participant {
     public void setElo(int elo) {
         this.elo = elo;
     }
+
+    public int compareToByElo(Participant p2) {
+        return -1 * (Double.compare(this.getElo(), p2.getElo()));
+    }
 }
