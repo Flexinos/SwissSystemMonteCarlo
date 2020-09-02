@@ -80,7 +80,6 @@ public class Round {
             if (tmpList.size() % 2 == 1) {
                 downfloatersToNextBracket.add(tmpList.remove(tmpList.size() - 1));
             }
-            System.out.println("Downfloaters to next bracket: ");
             for (SimulatedPlayer player : downfloatersToNextBracket) {
                 System.out.println(player.getParticipant().getName());
             }
