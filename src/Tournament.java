@@ -4,7 +4,6 @@ public class Tournament {
     private final String name;
     private final int totalRounds;
     private List<Participant> participantArrayList;
-    private List<SimulatedTournament> simulatedTournamentArrayList;
 
     public Tournament(String name, int totalRounds) {
         this.name = name;

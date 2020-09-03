@@ -1,16 +1,18 @@
 import java.security.SecureRandom;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Main {
+    public static final int numberOfParticipants = 151;
+    public static final int numberOfRounds = 11;
+
     public static void main(String[] args) {
         final SecureRandom random = new SecureRandom();
-        Tournament myTournament = new Tournament("myTournament", 11);
+        Tournament myTournament = new Tournament("myTournament", numberOfRounds);
 
-        List<Participant> participants = new ArrayList<>();
-        for (int i = 0; i < 151; i++) {
-            participants.add(new Participant(myTournament, "player " + i, 1000 + random.nextInt(1600)));
-        }
+        List<Participant> participants = IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant(myTournament, "player " + i, 1000 + random.nextInt(1600))).collect(Collectors.toList());
+        myTournament.addParticipants(participants);
 
         SimulatedTournament mySimulatedTournament = new SimulatedTournament(myTournament);
 

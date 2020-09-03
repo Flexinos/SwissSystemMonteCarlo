@@ -9,7 +9,7 @@ public class SimulatedPlayer {
 
     public SimulatedPlayer(Participant participant) {
         this.participant = participant;
-        this.pastOpponents = new ArrayList<>(participant.getTournament().getTotalRounds());
+        this.pastOpponents = new ArrayList<>(Main.numberOfRounds);
     }
 
     public double getScore() {
