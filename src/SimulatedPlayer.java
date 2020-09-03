@@ -6,6 +6,7 @@ public class SimulatedPlayer {
     private double score;
     private double buchholz;
     private final List<SimulatedPlayer> pastOpponents;
+    private boolean receivedBye = false;
 
     public SimulatedPlayer(Participant participant) {
         this.participant = participant;
@@ -41,6 +42,14 @@ public class SimulatedPlayer {
 
     public Participant getParticipant() {
         return participant;
+    }
+
+    public boolean receivedBye() {
+        return receivedBye;
+    }
+
+    public void setReceivedBye(boolean receivedBye) {
+        this.receivedBye = receivedBye;
     }
 
     public void updateBuchholz() {

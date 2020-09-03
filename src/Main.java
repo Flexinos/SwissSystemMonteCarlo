@@ -11,7 +11,7 @@ public class Main {
         final SecureRandom random = new SecureRandom();
         Tournament myTournament = new Tournament(numberOfRounds);
 
-        List<Participant> participants = IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant(myTournament, "player " + i, 1000 + random.nextInt(1600))).collect(Collectors.toList());
+        List<Participant> participants = IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, 1000 + random.nextInt(1600))).collect(Collectors.toList());
         myTournament.addParticipants(participants);
 
         SimulatedTournament mySimulatedTournament = new SimulatedTournament(myTournament);

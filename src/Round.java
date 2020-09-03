@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Round {
+
+    private final Ranking rankingByScoreThenEloBeforeRound;
+    private final HashSet<Pairing> pairings;
+
     private PairingDownfloaterPair pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
         boolean downfloatersPresent = !downfloatersFromUpperBracket.isEmpty();
         List<SimulatedPlayer> unpairedPlayersInBracket = new ArrayList<>(nonDownfloaters);
@@ -54,11 +58,9 @@ public class Round {
         return new PairingDownfloaterPair(new ArrayList<>(), downfloatersToNextBracket);
     }
 
-    private final Ranking rankingByEloBeforeRound;
-    private final HashSet<Pairing> pairings = new HashSet<>();
-
-    public Round(Ranking rankingByEloBeforeRound) {
-        this.rankingByEloBeforeRound = rankingByEloBeforeRound;
+    public Round(Ranking rankingByScoreThenEloBeforeRound) {
+        this.rankingByScoreThenEloBeforeRound = rankingByScoreThenEloBeforeRound;
+        this.pairings = new HashSet<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
         createPairings();
     }
 
@@ -110,8 +112,16 @@ public class Round {
     private void createPairings() {
         //todo give lowest player bye
         int board = 1;
-        List<SimulatedPlayer> unpairedPlayers = rankingByEloBeforeRound.getRanking();
+        List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
         List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();
+        if (unpairedPlayers.size() % 2 == 1) {
+            int lastBoard = unpairedPlayers.size() / 2 + 1;
+            for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
+                if (!unpairedPlayers.get(i).receivedBye()) {
+                    pairings.add(new Pairing(new PossiblePairing(lastBoard, unpairedPlayers.get(i), Tournament.BYE)));
+                }
+            }
+        }
         while (unpairedPlayers.size() > 0) {
             double highestUnpairedScore = unpairedPlayers.get(0).getScore();
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());

@@ -11,13 +11,14 @@ public class SimulatedTournament {
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;
-
         this.roundArrayList = new ArrayList<>(tournament.getTotalRounds());
         this.rankingByScoreThenEloArrayList = new ArrayList<>(tournament.getTotalRounds());
         this.rankingByScoreThenTieBreakArrayList = new ArrayList<>(tournament.getTotalRounds());
         this.simulatedPlayerArrayList = new ArrayList<>(tournament.getPlayerArrayList().size());
-
         tournament.getPlayerArrayList().stream().map(SimulatedPlayer::new).forEachOrdered(simulatedPlayerArrayList::add);
+        if (simulatedPlayerArrayList.size() % 2 == 1) {
+            simulatedPlayerArrayList.add(this.tournament.getBYE());
+        }
     }
 
     private void getNextRound() {

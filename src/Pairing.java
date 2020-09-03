@@ -37,8 +37,10 @@ public class Pairing {
         System.out.print("Board " + getBoard() + ": ");
         if (player1.getParticipant().getName().equals("BYE")) {
             result = GameResult.ResultOfGame.BLACK_WIN;
+            player2.setReceivedBye(true);
         } else if (player2.getParticipant().getName().equals("BYE")) {
             result = GameResult.ResultOfGame.WHITE_WIN;
+            player1.setReceivedBye(true);
         } else {
             result = GameResult.randomResult(player1, player2);
             if (result.equals(GameResult.ResultOfGame.WHITE_WIN)) {

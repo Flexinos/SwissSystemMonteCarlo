@@ -7,7 +7,7 @@ public class GameResult {
         double eloDiff = WhitePlayer.getParticipant().getElo() - BlackPlayer.getParticipant().getElo();
         double WhiteScore = 1 / (1 + Math.pow(10, -eloDiff / 400));
         double underdogScore;
-        //give white small edge. completely arbitrary
+        // give white small edge. completely arbitrary
         if (WhiteScore > 0.5) {
             underdogScore = (1 - WhiteScore) * 0.9;
         } else {

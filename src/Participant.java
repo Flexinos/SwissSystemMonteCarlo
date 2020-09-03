@@ -1,10 +1,8 @@
 public class Participant {
     private final String name;
     private final int elo;
-    private final Tournament tournament;
 
-    public Participant(Tournament tournament, String name, int elo) {
-        this.tournament = tournament;
+    public Participant(String name, int elo) {
         this.name = name;
         this.elo = elo;
     }
