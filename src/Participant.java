@@ -1,8 +1,10 @@
 public class Participant {
     private final String name;
-    private int elo;
+    private final int elo;
+    private final Tournament tournament;
 
-    public Participant(String name, int elo) {
+    public Participant(Tournament tournament, String name, int elo) {
+        this.tournament = tournament;
         this.name = name;
         this.elo = elo;
     }
@@ -15,8 +17,8 @@ public class Participant {
         return elo;
     }
 
-    public void setElo(int elo) {
-        this.elo = elo;
+    public Tournament getTournament() {
+        return tournament;
     }
 
     public int compareToByElo(Participant p2) {

@@ -1,18 +1,23 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class SimulatedTournament {
     private final Tournament tournament;
-    private final ArrayList<SimulatedPlayer> simulatedPlayerArrayList = new ArrayList<>();
+    private final List<SimulatedPlayer> simulatedPlayerArrayList;
     private int roundsFinished = 0;
-    private final ArrayList<Round> roundArrayList = new ArrayList<>();
-    private final ArrayList<Ranking> rankingByScoreThenEloArrayList = new ArrayList<>();
-    private final ArrayList<Ranking> rankingByScoreThenTieBreakArrayList = new ArrayList<>();
+    private final List<Round> roundArrayList;
+    private final List<Ranking> rankingByScoreThenEloArrayList;
+    private final List<Ranking> rankingByScoreThenTieBreakArrayList;
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;
-        for (Participant participant : tournament.getPlayerArrayList()) {
-            simulatedPlayerArrayList.add(new SimulatedPlayer(participant));
-        }
+
+        this.roundArrayList = new ArrayList<>(tournament.getTotalRounds());
+        this.rankingByScoreThenEloArrayList = new ArrayList<>(tournament.getTotalRounds());
+        this.rankingByScoreThenTieBreakArrayList = new ArrayList<>(tournament.getTotalRounds());
+        this.simulatedPlayerArrayList = new ArrayList<>(tournament.getPlayerArrayList().size());
+
+        tournament.getPlayerArrayList().stream().map(SimulatedPlayer::new).forEachOrdered(simulatedPlayerArrayList::add);
     }
 
     private void getNextRound() {

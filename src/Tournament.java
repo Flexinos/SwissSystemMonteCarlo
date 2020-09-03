@@ -1,18 +1,21 @@
-import java.util.ArrayList;
+import java.util.List;
 
 public class Tournament {
     private final String name;
     private final int totalRounds;
-    private final ArrayList<Participant> participantArrayList;
-    private ArrayList<SimulatedTournament> simulatedTournamentArrayList;
+    private List<Participant> participantArrayList;
+    private List<SimulatedTournament> simulatedTournamentArrayList;
 
-    public Tournament(String name, int totalRounds, ArrayList<Participant> participantArrayList) {
+    public Tournament(String name, int totalRounds) {
         this.name = name;
         this.totalRounds = totalRounds;
-        participantArrayList.sort(Participant::compareToByElo);
-        this.participantArrayList = participantArrayList;
+    }
+
+    public void addParticipants(List<Participant> participants) {
+        participants.sort(Participant::compareToByElo);
+        this.participantArrayList = participants;
         if (participantArrayList.size() % 2 == 1) {
-            participantArrayList.add(new Participant("BYE", 0));
+            participantArrayList.add(new Participant(this, "BYE", 0));
         }
     }
 
@@ -24,7 +27,7 @@ public class Tournament {
         return totalRounds;
     }
 
-    public ArrayList<Participant> getPlayerArrayList() {
+    public List<Participant> getPlayerArrayList() {
         return participantArrayList;
     }
 }

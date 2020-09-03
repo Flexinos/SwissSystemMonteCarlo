@@ -34,7 +34,6 @@ public class Pairing {
     }
 
     private void simulateResult() {
-        //todo fix Byes
         System.out.print("Board " + getBoard() + ": ");
         if (player1.getParticipant().getName().equals("BYE")) {
             result = GameResult.ResultOfGame.BLACK_WIN;

@@ -1,13 +1,15 @@
 import java.util.ArrayList;
+import java.util.List;
 
 public class SimulatedPlayer {
     private final Participant participant;
     private double score;
     private double buchholz;
-    private final ArrayList<SimulatedPlayer> pastOpponents = new ArrayList<>();
+    private final List<SimulatedPlayer> pastOpponents;
 
     public SimulatedPlayer(Participant participant) {
         this.participant = participant;
+        this.pastOpponents = new ArrayList<>(participant.getTournament().getTotalRounds());
     }
 
     public double getScore() {
@@ -33,7 +35,7 @@ public class SimulatedPlayer {
         return buchholz;
     }
 
-    public ArrayList<SimulatedPlayer> getPastOpponents() {
+    public List<SimulatedPlayer> getPastOpponents() {
         return pastOpponents;
     }
 

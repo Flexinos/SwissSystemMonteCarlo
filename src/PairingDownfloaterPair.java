@@ -1,19 +1,19 @@
-import java.util.ArrayList;
+import java.util.List;
 
 public class PairingDownfloaterPair {
-    private final ArrayList<Pairing> pairings;
-    private final ArrayList<SimulatedPlayer> downfloater;
+    private final List<Pairing> pairings;
+    private final List<SimulatedPlayer> downfloater;
 
-    public PairingDownfloaterPair(ArrayList<Pairing> pairings, ArrayList<SimulatedPlayer> downfloater) {
+    public PairingDownfloaterPair(List<Pairing> pairings, List<SimulatedPlayer> downfloater) {
         this.pairings = pairings;
         this.downfloater = downfloater;
     }
 
-    public ArrayList<Pairing> getPairings() {
+    public List<Pairing> getPairings() {
         return pairings;
     }
 
-    public ArrayList<SimulatedPlayer> getDownfloater() {
+    public List<SimulatedPlayer> getDownfloater() {
         return downfloater;
     }
 }
