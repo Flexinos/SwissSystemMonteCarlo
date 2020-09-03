@@ -108,6 +108,7 @@ public class Round {
     }
 
     private void createPairings() {
+        //todo give lowest player bye
         int board = 1;
         List<SimulatedPlayer> unpairedPlayers = rankingByEloBeforeRound.getRanking();
         List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();
