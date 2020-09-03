@@ -3,23 +3,24 @@ import java.security.SecureRandom;
 public class GameResult {
     private static final SecureRandom random = new SecureRandom();
 
-    public static ResultOfGame randomResult(SimulatedPlayer p1, SimulatedPlayer p2) {
-        //todo give white small advantage
-        double eloDiff = p1.getParticipant().getElo() - p2.getParticipant().getElo();
-        double p1Score = 1 / (1 + Math.pow(10, -eloDiff / 400));
+    public static ResultOfGame randomResult(SimulatedPlayer WhitePlayer, SimulatedPlayer BlackPlayer) {
+        double eloDiff = WhitePlayer.getParticipant().getElo() - BlackPlayer.getParticipant().getElo();
+        double WhiteScore = 1 / (1 + Math.pow(10, -eloDiff / 400));
         double underdogScore;
-        if (p1Score > 0.5) {
-            underdogScore = 1 - p1Score;
+        //give white small edge. completely arbitrary
+        if (WhiteScore > 0.5) {
+            underdogScore = (1 - WhiteScore) * 0.9;
         } else {
-            underdogScore = p1Score;
+            underdogScore = WhiteScore * 1.1;
         }
+
         double drawChance = underdogScore;
-        double p1WinChance = p1Score - drawChance * 0.5;
-        //double p2WinChance = 1 - p1Score - drawChance * 0.5;
+        double WhiteWinChance = WhiteScore - drawChance * 0.5;
+
         double randomValue = random.nextDouble();
-        if (randomValue < p1WinChance) {
+        if (randomValue < WhiteWinChance) {
             return ResultOfGame.WHITE_WIN;
-        } else if (randomValue < p1WinChance + drawChance) {
+        } else if (randomValue < WhiteWinChance + drawChance) {
             return ResultOfGame.DRAW;
         } else {
             return ResultOfGame.BLACK_WIN;
