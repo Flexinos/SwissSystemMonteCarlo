@@ -9,6 +9,12 @@ public class Round {
     private final Ranking rankingByScoreThenEloBeforeRound;
     private final HashSet<Pairing> pairings;
 
+    public Round(Ranking rankingByScoreThenEloBeforeRound) {
+        this.rankingByScoreThenEloBeforeRound = rankingByScoreThenEloBeforeRound;
+        this.pairings = new HashSet<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
+        createPairings();
+    }
+
     private PairingDownfloaterPair pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
         boolean downfloatersPresent = !downfloatersFromUpperBracket.isEmpty();
         List<SimulatedPlayer> unpairedPlayersInBracket = new ArrayList<>(nonDownfloaters);
@@ -56,12 +62,6 @@ public class Round {
         }
         downfloatersToNextBracket.addAll(unpairedPlayersInBracket);
         return new PairingDownfloaterPair(new ArrayList<>(), downfloatersToNextBracket);
-    }
-
-    public Round(Ranking rankingByScoreThenEloBeforeRound) {
-        this.rankingByScoreThenEloBeforeRound = rankingByScoreThenEloBeforeRound;
-        this.pairings = new HashSet<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
-        createPairings();
     }
 
     private PairingIsValidTuple tryPairBracket(int board, List<SimulatedPlayer> playersInBracket) {

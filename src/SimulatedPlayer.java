@@ -7,6 +7,7 @@ public class SimulatedPlayer {
     private double buchholz;
     private final List<SimulatedPlayer> pastOpponents;
     private boolean receivedBye = false;
+    private int colorDifference = 0;
 
     public SimulatedPlayer(Participant participant) {
         this.participant = participant;
@@ -17,9 +18,14 @@ public class SimulatedPlayer {
         return score;
     }
 
-    public void addGame(SimulatedPlayer opponent, double result) {
+    public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
         pastOpponents.add(opponent);
         score += result;
+        if (isWhite) {
+            colorDifference++;
+        } else {
+            colorDifference--;
+        }
     }
 
     public static int compareToByScoreThenElo(SimulatedPlayer p1, SimulatedPlayer p2) {
@@ -50,6 +56,10 @@ public class SimulatedPlayer {
 
     public void setReceivedBye(boolean receivedBye) {
         this.receivedBye = receivedBye;
+    }
+
+    public int getColorDifference() {
+        return colorDifference;
     }
 
     public void updateBuchholz() {
