@@ -1,12 +1,10 @@
 import java.util.List;
 
 public class Tournament {
-    private final String name;
     private final int totalRounds;
     private List<Participant> participantArrayList;
 
-    public Tournament(String name, int totalRounds) {
-        this.name = name;
+    public Tournament(int totalRounds) {
         this.totalRounds = totalRounds;
     }
 
@@ -16,10 +14,6 @@ public class Tournament {
         if (participantArrayList.size() % 2 == 1) {
             participantArrayList.add(new Participant(this, "BYE", 0));
         }
-    }
-
-    public String getName() {
-        return name;
     }
 
     public int getTotalRounds() {

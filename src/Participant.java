@@ -17,10 +17,6 @@ public class Participant {
         return elo;
     }
 
-    public Tournament getTournament() {
-        return tournament;
-    }
-
     public int compareToByElo(Participant p2) {
         return -1 * (Double.compare(this.getElo(), p2.getElo()));
     }
