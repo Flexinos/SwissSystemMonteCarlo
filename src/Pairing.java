@@ -16,10 +16,11 @@ public class Pairing {
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");
             return false;
-        } else {
+        } else if (player1.getPastOpponents().contains(player2)) {
             System.out.println(player1.getParticipant().getName() + " playing against past opponent: " + player2.getParticipant().getName());
-            return !player1.getPastOpponents().contains(player2);
+            return false;
         }
+        return true;
     }
 
     public int getBoard() {
