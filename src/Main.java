@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Main {
-    public static final int numberOfParticipants = 200;
+    public static final int numberOfParticipants = 2000;
     public static final int numberOfRounds = 9;
 
     public static void main(String[] args) {
