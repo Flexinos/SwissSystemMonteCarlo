@@ -14,10 +14,10 @@ public class Round {
         createPairings();
     }
 
-    private void pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
-        boolean downfloatersPresent = !downfloatersFromUpperBracket.isEmpty();
+    private void pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
+        boolean downfloatersPresent = !downfloatersFromPreviousBracket.isEmpty();
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
-        printPlayersInBracketWithPossibleDownfloaters(nonDownfloaters, downfloatersFromUpperBracket, downfloatersPresent, unpairedPlayersInThisBracket);
+        printAndUpdateBracket(nonDownfloaters, downfloatersFromPreviousBracket, downfloatersPresent, unpairedPlayersInThisBracket);
 
         List<Pairing> proposedPairings = new ArrayList<>();
         //todo check if this makes sense
@@ -47,7 +47,7 @@ public class Round {
             unpairedPlayersInThisBracket.remove(pairing.getPlayer1());
             unpairedPlayersInThisBracket.remove(pairing.getPlayer2());
         }
-        //only works if one player left. not sure if only possible case when coding according to fide specs
+        //only adds one player. not sure if scenario with multiple downfloaters can exist (probably can)
         if (!unpairedPlayersInThisBracket.isEmpty()) {
             downfloatersToNextBracket.add(unpairedPlayersInThisBracket.remove(unpairedPlayersInThisBracket.size() - 1));
         }
@@ -55,7 +55,6 @@ public class Round {
 
     private boolean tryPairBracket(List<Pairing> proposedPairings, int board, List<SimulatedPlayer> playersInBracket) {
         List<PossiblePairing> provisionalPairings = new ArrayList<>();
-        proposedPairings.clear();
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
                 //todo add considerations to color
@@ -65,13 +64,15 @@ public class Round {
             }
         }
         System.out.println("\nGames:");
+        proposedPairings.clear();
         for (PossiblePairing possiblePairing : provisionalPairings) {
             proposedPairings.add(new Pairing(possiblePairing));
         }
         return true;
     }
 
-    private void printPlayersInBracketWithPossibleDownfloaters(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket, boolean downfloatersPresent, List<SimulatedPlayer> unpairedPlayersInBracket) {
+    private void printAndUpdateBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket, boolean downfloatersPresent, List<SimulatedPlayer> unpairedPlayersInBracket) {
+        //todo remove side effects! method should only print
         if (downfloatersPresent) {
             printPlayersInBracket(typeOfBracket.DOWNFLOATERS, downfloatersFromUpperBracket);
             printPlayersInBracket(typeOfBracket.NONDOWNFLOATERS, nonDownfloaters);
@@ -99,10 +100,30 @@ public class Round {
     }
 
     private void createPairings() {
-        //todo give lowest player bye
-        int board = 1;
         List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
+        giveByeIfNecessary(unpairedPlayers);
         List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();
+        List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
+        while (unpairedPlayers.size() > 0) {
+            double highestUnpairedScore = unpairedPlayers.get(0).getScore();
+            int board = unorderedPairings.size() + 1;
+            List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
+            downfloatersToNextBracket.clear();
+            pairBracket(board, nextBracket, downfloatersFromPreviousBracket, downfloatersToNextBracket);
+            downfloatersFromPreviousBracket.clear();
+            downfloatersFromPreviousBracket.addAll(downfloatersToNextBracket);
+            for (Pairing pairing : unorderedPairings) {
+                unpairedPlayers.remove(pairing.getPlayer1());
+                unpairedPlayers.remove(pairing.getPlayer2());
+            }
+            for (SimulatedPlayer player : downfloatersToNextBracket) {
+                unpairedPlayers.remove(player);
+            }
+            unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
+        }
+    }
+
+    private void giveByeIfNecessary(List<SimulatedPlayer> unpairedPlayers) {
         if (unpairedPlayers.size() % 2 == 1) {
             int lastBoard = unpairedPlayers.size() / 2 + 1;
             for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
@@ -110,23 +131,6 @@ public class Round {
                     unorderedPairings.add(new Pairing(new PossiblePairing(lastBoard, unpairedPlayers.get(i), Tournament.BYE)));
                 }
             }
-        }
-        while (unpairedPlayers.size() > 0) {
-            double highestUnpairedScore = unpairedPlayers.get(0).getScore();
-            List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
-            List<SimulatedPlayer> downfloaters = new ArrayList<>();
-            pairBracket(board, nextBracket, downfloatersFromPreviousBracket, downfloaters);
-            downfloatersFromPreviousBracket.clear();
-            board = unorderedPairings.size();
-            downfloatersFromPreviousBracket.addAll(downfloaters);
-            for (Pairing pairing : unorderedPairings) {
-                unpairedPlayers.remove(pairing.getPlayer1());
-                unpairedPlayers.remove(pairing.getPlayer2());
-            }
-            for (SimulatedPlayer player : downfloaters) {
-                unpairedPlayers.remove(player);
-            }
-            unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         }
     }
 
