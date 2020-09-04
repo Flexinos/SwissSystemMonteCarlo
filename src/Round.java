@@ -14,16 +14,17 @@ public class Round {
         createPairings();
     }
 
-    private PairingDownfloaterPair pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
+    private List<SimulatedPlayer> pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
         boolean downfloatersPresent = !downfloatersFromUpperBracket.isEmpty();
         List<SimulatedPlayer> unpairedPlayersInBracket = new ArrayList<>(nonDownfloaters);
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         printPlayersInBracketWithPossibleDownfloaters(nonDownfloaters, downfloatersFromUpperBracket, downfloatersPresent, unpairedPlayersInBracket);
 
-        PairingIsValidTuple proposedPairing = tryPairBracket(board, unpairedPlayersInBracket);
+        List<Pairing> proposedPairings = new ArrayList<>();
+        boolean proposedPairingIsValid = tryPairBracket(proposedPairings, board, unpairedPlayersInBracket);
 
-        if (proposedPairing.getIsValid()) {
-            for (Pairing pairing : proposedPairing.getPairings()) {
+        if (proposedPairingIsValid) {
+            for (Pairing pairing : proposedPairings) {
                 unpairedPlayersInBracket.remove(pairing.getPlayer1());
                 unpairedPlayersInBracket.remove(pairing.getPlayer2());
             }
@@ -31,7 +32,8 @@ public class Round {
             if (unpairedPlayersInBracket.size() % 2 == 1) {
                 downfloatersToNextBracket.add(unpairedPlayersInBracket.remove(unpairedPlayersInBracket.size() - 1));
             }
-            return new PairingDownfloaterPair(proposedPairing.getPairings(), downfloatersToNextBracket);
+            unorderedPairings.addAll(proposedPairings);
+            return downfloatersToNextBracket;
         } else {
             for (int i = unpairedPlayersInBracket.size() - 1; i >= 0; i--) {
                 for (int j = unpairedPlayersInBracket.size() - 1; j >= 0; j--) {
@@ -42,14 +44,15 @@ public class Round {
                     if (unpairedPlayersInBracket.size() % 2 == 1) {
                         downfloatersToNextBracket.add(unpairedPlayersInBracket.remove(unpairedPlayersInBracket.size() - 1));
                     }
-                    proposedPairing = tryPairBracket(board, unpairedPlayersInBracket);
-                    if (proposedPairing.getIsValid()) {
-                        for (Pairing pairing : proposedPairing.getPairings()) {
+                    proposedPairingIsValid = tryPairBracket(proposedPairings, board, unpairedPlayersInBracket);
+                    if (proposedPairingIsValid) {
+                        for (Pairing pairing : proposedPairings) {
                             unpairedPlayersInBracket.remove(pairing.getPlayer1());
                             unpairedPlayersInBracket.remove(pairing.getPlayer2());
                         }
                         downfloatersToNextBracket.addAll(unpairedPlayersInBracket);
-                        return new PairingDownfloaterPair(proposedPairing.getPairings(), downfloatersToNextBracket);
+                        unorderedPairings.addAll(proposedPairings);
+                        return downfloatersToNextBracket;
                     }
                     if (!downfloatersToNextBracket.isEmpty()) {
                         unpairedPlayersInBracket.add(downfloatersToNextBracket.remove(0));
@@ -60,25 +63,25 @@ public class Round {
             }
         }
         downfloatersToNextBracket.addAll(unpairedPlayersInBracket);
-        return new PairingDownfloaterPair(new ArrayList<>(), downfloatersToNextBracket);
+        return downfloatersToNextBracket;
     }
 
-    private PairingIsValidTuple tryPairBracket(int board, List<SimulatedPlayer> playersInBracket) {
+    private boolean tryPairBracket(List<Pairing> proposedPairings, int board, List<SimulatedPlayer> playersInBracket) {
         List<PossiblePairing> provisionalPairings = new ArrayList<>();
-        List<Pairing> returnedPairings = new ArrayList<>();
+        proposedPairings.clear();
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
                 //todo add considerations to color
                 provisionalPairings.add(new PossiblePairing(board++, playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
             } else {
-                return new PairingIsValidTuple(returnedPairings, false);
+                return false;
             }
         }
         System.out.println("\nGames:");
         for (PossiblePairing possiblePairing : provisionalPairings) {
-            returnedPairings.add(new Pairing(possiblePairing));
+            proposedPairings.add(new Pairing(possiblePairing));
         }
-        return new PairingIsValidTuple(returnedPairings, true);
+        return true;
     }
 
     private void printPlayersInBracketWithPossibleDownfloaters(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket, boolean downfloatersPresent, List<SimulatedPlayer> unpairedPlayersInBracket) {
@@ -124,16 +127,16 @@ public class Round {
         while (unpairedPlayers.size() > 0) {
             double highestUnpairedScore = unpairedPlayers.get(0).getScore();
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
-            PairingDownfloaterPair proposedPairings = pairBracket(board, nextBracket, downfloatersFromPreviousBracket);
+
+            List<SimulatedPlayer> downfloaters = pairBracket(board, nextBracket, downfloatersFromPreviousBracket);
             downfloatersFromPreviousBracket.clear();
-            unorderedPairings.addAll(proposedPairings.getPairings());
-            board += proposedPairings.getPairings().size();
-            downfloatersFromPreviousBracket.addAll(proposedPairings.getDownfloater());
-            for (Pairing pairing : proposedPairings.getPairings()) {
+            board = unorderedPairings.size();
+            downfloatersFromPreviousBracket.addAll(downfloaters);
+            for (Pairing pairing : unorderedPairings) {
                 unpairedPlayers.remove(pairing.getPlayer1());
                 unpairedPlayers.remove(pairing.getPlayer2());
             }
-            for (SimulatedPlayer player : proposedPairings.getDownfloater()) {
+            for (SimulatedPlayer player : downfloaters) {
                 unpairedPlayers.remove(player);
             }
             unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
