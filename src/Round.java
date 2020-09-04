@@ -16,54 +16,45 @@ public class Round {
 
     private List<SimulatedPlayer> pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
         boolean downfloatersPresent = !downfloatersFromUpperBracket.isEmpty();
-        List<SimulatedPlayer> unpairedPlayersInBracket = new ArrayList<>(nonDownfloaters);
+        List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
-        printPlayersInBracketWithPossibleDownfloaters(nonDownfloaters, downfloatersFromUpperBracket, downfloatersPresent, unpairedPlayersInBracket);
+        printPlayersInBracketWithPossibleDownfloaters(nonDownfloaters, downfloatersFromUpperBracket, downfloatersPresent, unpairedPlayersInThisBracket);
 
         List<Pairing> proposedPairings = new ArrayList<>();
-        boolean proposedPairingIsValid = tryPairBracket(proposedPairings, board, unpairedPlayersInBracket);
+        //todo check if this makes sense
 
-        if (proposedPairingIsValid) {
-            for (Pairing pairing : proposedPairings) {
-                unpairedPlayersInBracket.remove(pairing.getPlayer1());
-                unpairedPlayersInBracket.remove(pairing.getPlayer2());
-            }
-            //todo check if this is only scenario with downfloaters
-            if (unpairedPlayersInBracket.size() % 2 == 1) {
-                downfloatersToNextBracket.add(unpairedPlayersInBracket.remove(unpairedPlayersInBracket.size() - 1));
-            }
-            unorderedPairings.addAll(proposedPairings);
-            return downfloatersToNextBracket;
-        } else {
-            for (int i = unpairedPlayersInBracket.size() - 1; i >= 0; i--) {
-                for (int j = unpairedPlayersInBracket.size() - 1; j >= 0; j--) {
-                    if (!downfloatersToNextBracket.isEmpty()) {
-                        unpairedPlayersInBracket.add(downfloatersToNextBracket.remove(0));
-                    }
-                    Collections.swap(unpairedPlayersInBracket, i, j);
-                    if (unpairedPlayersInBracket.size() % 2 == 1) {
-                        downfloatersToNextBracket.add(unpairedPlayersInBracket.remove(unpairedPlayersInBracket.size() - 1));
-                    }
-                    proposedPairingIsValid = tryPairBracket(proposedPairings, board, unpairedPlayersInBracket);
-                    if (proposedPairingIsValid) {
-                        for (Pairing pairing : proposedPairings) {
-                            unpairedPlayersInBracket.remove(pairing.getPlayer1());
-                            unpairedPlayersInBracket.remove(pairing.getPlayer2());
-                        }
-                        downfloatersToNextBracket.addAll(unpairedPlayersInBracket);
-                        unorderedPairings.addAll(proposedPairings);
-                        return downfloatersToNextBracket;
-                    }
-                    if (!downfloatersToNextBracket.isEmpty()) {
-                        unpairedPlayersInBracket.add(downfloatersToNextBracket.remove(0));
-                        unpairedPlayersInBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
-                    }
-                    //Collections.swap(unpairedPlayersInBracket, i, j); slows down simulation, but may be closer to fide regulations
+        for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
+            for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
+                boolean proposedPairingIsValid = tryPairBracket(proposedPairings, board, unpairedPlayersInThisBracket);
+                if (proposedPairingIsValid) {
+                    getDownfloater(unpairedPlayersInThisBracket, downfloatersToNextBracket, proposedPairings);
+                    unorderedPairings.addAll(proposedPairings);
+                    return downfloatersToNextBracket;
                 }
+                if (!downfloatersToNextBracket.isEmpty()) {
+                    unpairedPlayersInThisBracket.add(downfloatersToNextBracket.remove(0));
+                }
+                Collections.swap(unpairedPlayersInThisBracket, i, j);
+                if (unpairedPlayersInThisBracket.size() % 2 == 1) {
+                    downfloatersToNextBracket.add(unpairedPlayersInThisBracket.remove(unpairedPlayersInThisBracket.size() - 1));
+                }
+                //Collections.swap(unpairedPlayersInThisBracket, i, j); slows down simulation, but may be closer to fide regulations
             }
         }
-        downfloatersToNextBracket.addAll(unpairedPlayersInBracket);
+
+        downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
         return downfloatersToNextBracket;
+    }
+
+    private void getDownfloater(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> downfloatersToNextBracket, List<Pairing> proposedPairings) {
+        for (Pairing pairing : proposedPairings) {
+            unpairedPlayersInThisBracket.remove(pairing.getPlayer1());
+            unpairedPlayersInThisBracket.remove(pairing.getPlayer2());
+        }
+        //only works if one player left. not sure if only possible case when coding according to fide specs
+        if (!unpairedPlayersInThisBracket.isEmpty()) {
+            downfloatersToNextBracket.add(unpairedPlayersInThisBracket.remove(unpairedPlayersInThisBracket.size() - 1));
+        }
     }
 
     private boolean tryPairBracket(List<Pairing> proposedPairings, int board, List<SimulatedPlayer> playersInBracket) {
