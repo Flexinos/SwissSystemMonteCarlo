@@ -1,17 +1,16 @@
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Round {
 
     private final Ranking rankingByScoreThenEloBeforeRound;
-    private final HashSet<Pairing> pairings;
+    private final List<Pairing> unorderedPairings;
 
     public Round(Ranking rankingByScoreThenEloBeforeRound) {
         this.rankingByScoreThenEloBeforeRound = rankingByScoreThenEloBeforeRound;
-        this.pairings = new HashSet<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
+        this.unorderedPairings = new ArrayList<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
         createPairings();
     }
 
@@ -118,7 +117,7 @@ public class Round {
             int lastBoard = unpairedPlayers.size() / 2 + 1;
             for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
                 if (!unpairedPlayers.get(i).receivedBye()) {
-                    pairings.add(new Pairing(new PossiblePairing(lastBoard, unpairedPlayers.get(i), Tournament.BYE)));
+                    unorderedPairings.add(new Pairing(new PossiblePairing(lastBoard, unpairedPlayers.get(i), Tournament.BYE)));
                 }
             }
         }
@@ -127,7 +126,7 @@ public class Round {
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
             PairingDownfloaterPair proposedPairings = pairBracket(board, nextBracket, downfloatersFromPreviousBracket);
             downfloatersFromPreviousBracket.clear();
-            pairings.addAll(proposedPairings.getPairings());
+            unorderedPairings.addAll(proposedPairings.getPairings());
             board += proposedPairings.getPairings().size();
             downfloatersFromPreviousBracket.addAll(proposedPairings.getDownfloater());
             for (Pairing pairing : proposedPairings.getPairings()) {
