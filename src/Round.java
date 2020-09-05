@@ -14,13 +14,36 @@ public class Round {
         createPairings();
     }
 
+    private void createPairings() {
+        List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
+        giveByeIfNecessary(unpairedPlayers);
+        List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();
+        List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
+        while (unpairedPlayers.size() > 0) {
+            double highestUnpairedScore = unpairedPlayers.get(0).getScore();
+            int board = unorderedPairings.size() + 1;
+            List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
+            downfloatersToNextBracket.clear();
+            pairBracket(board, nextBracket, downfloatersFromPreviousBracket, downfloatersToNextBracket);
+            downfloatersFromPreviousBracket.clear();
+            downfloatersFromPreviousBracket.addAll(downfloatersToNextBracket);
+            for (Pairing pairing : unorderedPairings) {
+                unpairedPlayers.remove(pairing.getPlayer1());
+                unpairedPlayers.remove(pairing.getPlayer2());
+            }
+            for (SimulatedPlayer player : downfloatersToNextBracket) {
+                unpairedPlayers.remove(player);
+            }
+            unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
+        }
+    }
+
     private void pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
-        printAndUpdateBracket(nonDownfloaters, downfloatersFromPreviousBracket, !downfloatersFromPreviousBracket.isEmpty(), unpairedPlayersInThisBracket);
+        printAndUpdateBracket(unpairedPlayersInThisBracket, nonDownfloaters, downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
         List<Pairing> proposedPairings = new ArrayList<>();
-        //todo: check if this makes sense
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
                 boolean proposedPairingIsValid = tryPairBracket(proposedPairings, board, unpairedPlayersInThisBracket);
@@ -70,8 +93,8 @@ public class Round {
         return true;
     }
 
-    private void printAndUpdateBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket, boolean downfloatersPresent, List<SimulatedPlayer> unpairedPlayersInBracket) {
-        if (downfloatersPresent) {
+    private void printAndUpdateBracket(List<SimulatedPlayer> unpairedPlayersInBracket, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
+        if (!downfloatersFromUpperBracket.isEmpty()) {
             printPlayersInBracket(typeOfBracket.DOWNFLOATERS, downfloatersFromUpperBracket);
             printPlayersInBracket(typeOfBracket.NONDOWNFLOATERS, nonDownfloaters);
             printPlayersInBracket(typeOfBracket.TOTAL, unpairedPlayersInBracket);
@@ -92,30 +115,6 @@ public class Round {
         }
         for (SimulatedPlayer player : playersInBracket) {
             System.out.print(player.getParticipant().getName() + ", ");
-        }
-    }
-
-    private void createPairings() {
-        List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
-        giveByeIfNecessary(unpairedPlayers);
-        List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();
-        List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
-        while (unpairedPlayers.size() > 0) {
-            double highestUnpairedScore = unpairedPlayers.get(0).getScore();
-            int board = unorderedPairings.size() + 1;
-            List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
-            downfloatersToNextBracket.clear();
-            pairBracket(board, nextBracket, downfloatersFromPreviousBracket, downfloatersToNextBracket);
-            downfloatersFromPreviousBracket.clear();
-            downfloatersFromPreviousBracket.addAll(downfloatersToNextBracket);
-            for (Pairing pairing : unorderedPairings) {
-                unpairedPlayers.remove(pairing.getPlayer1());
-                unpairedPlayers.remove(pairing.getPlayer2());
-            }
-            for (SimulatedPlayer player : downfloatersToNextBracket) {
-                unpairedPlayers.remove(player);
-            }
-            unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         }
     }
 
