@@ -7,5 +7,6 @@ Programm to simulate Swiss System tournaments. Each simulation is a random walk,
 Since this programm is intended to simulate chess tournaments, it uses a so called dutch system for creating the pairings. https://en.wikipedia.org/wiki/Swiss-system_tournament#Dutch_system
 
 # FIDE Guidelines
-https://handbook.fide.com/chapter/C0403 \n
+https://handbook.fide.com/chapter/C0403
+
 http://pairings.fide.com/images/stories/downloads/appendix_p_approved.pdf
