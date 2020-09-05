@@ -17,6 +17,8 @@ public class Round {
     private void pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
         printAndUpdateBracket(nonDownfloaters, downfloatersFromPreviousBracket, !downfloatersFromPreviousBracket.isEmpty(), unpairedPlayersInThisBracket);
+        unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
+        unpairedPlayersInThisBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
         List<Pairing> proposedPairings = new ArrayList<>();
         //todo: check if this makes sense
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
@@ -44,9 +46,9 @@ public class Round {
             unpairedPlayersInThisBracket.remove(pairing.getPlayer1());
             unpairedPlayersInThisBracket.remove(pairing.getPlayer2());
         }
-        //only adds one player. not sure if scenario with multiple downfloaters can exist (probably can)
         if (!unpairedPlayersInThisBracket.isEmpty()) {
-            downfloatersToNextBracket.add(unpairedPlayersInThisBracket.remove(unpairedPlayersInThisBracket.size() - 1));
+            downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
+            unpairedPlayersInThisBracket.clear();
         }
     }
 
@@ -69,12 +71,9 @@ public class Round {
     }
 
     private void printAndUpdateBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket, boolean downfloatersPresent, List<SimulatedPlayer> unpairedPlayersInBracket) {
-        //todo: remove side effects! method should only print
         if (downfloatersPresent) {
             printPlayersInBracket(typeOfBracket.DOWNFLOATERS, downfloatersFromUpperBracket);
             printPlayersInBracket(typeOfBracket.NONDOWNFLOATERS, nonDownfloaters);
-            unpairedPlayersInBracket.addAll(downfloatersFromUpperBracket);
-            unpairedPlayersInBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
             printPlayersInBracket(typeOfBracket.TOTAL, unpairedPlayersInBracket);
         } else {
             System.out.println("\nNo downfloaters");
