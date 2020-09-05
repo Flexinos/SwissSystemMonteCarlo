@@ -1,7 +1,7 @@
-import java.security.SecureRandom;
+import java.util.Random;
 
 public class GameResult {
-    private static final SecureRandom random = new SecureRandom();
+    private static final Random random = new Random();
 
     public static ResultOfGame randomResult(SimulatedPlayer WhitePlayer, SimulatedPlayer BlackPlayer) {
         double eloDiff = WhitePlayer.getParticipant().getElo() - BlackPlayer.getParticipant().getElo();

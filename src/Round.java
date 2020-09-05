@@ -15,13 +15,10 @@ public class Round {
     }
 
     private void pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
-        boolean downfloatersPresent = !downfloatersFromPreviousBracket.isEmpty();
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
-        printAndUpdateBracket(nonDownfloaters, downfloatersFromPreviousBracket, downfloatersPresent, unpairedPlayersInThisBracket);
-
+        printAndUpdateBracket(nonDownfloaters, downfloatersFromPreviousBracket, !downfloatersFromPreviousBracket.isEmpty(), unpairedPlayersInThisBracket);
         List<Pairing> proposedPairings = new ArrayList<>();
-        //todo check if this makes sense
-
+        //todo: check if this makes sense
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
                 boolean proposedPairingIsValid = tryPairBracket(proposedPairings, board, unpairedPlayersInThisBracket);
@@ -72,7 +69,7 @@ public class Round {
     }
 
     private void printAndUpdateBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket, boolean downfloatersPresent, List<SimulatedPlayer> unpairedPlayersInBracket) {
-        //todo remove side effects! method should only print
+        //todo: remove side effects! method should only print
         if (downfloatersPresent) {
             printPlayersInBracket(typeOfBracket.DOWNFLOATERS, downfloatersFromUpperBracket);
             printPlayersInBracket(typeOfBracket.NONDOWNFLOATERS, nonDownfloaters);

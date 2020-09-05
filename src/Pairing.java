@@ -13,14 +13,11 @@ public class Pairing {
     }
 
     public static boolean pairingAllowed(SimulatedPlayer player1, SimulatedPlayer player2) {
+        //System.out.println(player1.getParticipant().getName() + " playing against past opponent: " + player2.getParticipant().getName());
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");
             return false;
-        } else if (player1.getPastOpponents().contains(player2)) {
-            System.out.println(player1.getParticipant().getName() + " playing against past opponent: " + player2.getParticipant().getName());
-            return false;
-        }
-        return true;
+        } else return !player1.getPastOpponents().contains(player2);
     }
 
     public int getBoard() {
@@ -36,7 +33,7 @@ public class Pairing {
     }
 
     private void simulateResult() {
-        System.out.print("Board " + getBoard() + ": ");
+        //System.out.print("Board " + getBoard() + ": ");
         if (player1.getParticipant().getName().equals("BYE")) {
             result = GameResult.ResultOfGame.BLACK_WIN;
             player2.setReceivedBye(true);
@@ -48,15 +45,15 @@ public class Pairing {
             if (result.equals(GameResult.ResultOfGame.WHITE_WIN)) {
                 player1.addGame(player2, 1, true);
                 player2.addGame(player1, 0, false);
-                System.out.println(player1.getParticipant().getName() + " won against " + player2.getParticipant().getName());
+                //System.out.println(player1.getParticipant().getName() + " won against " + player2.getParticipant().getName());
             } else if (result.equals(GameResult.ResultOfGame.BLACK_WIN)) {
                 player1.addGame(player2, 0, true);
                 player2.addGame(player1, 1, false);
-                System.out.println(player1.getParticipant().getName() + " lost against " + player2.getParticipant().getName());
+                //System.out.println(player1.getParticipant().getName() + " lost against " + player2.getParticipant().getName());
             } else {
                 player1.addGame(player2, 0.5, true);
                 player2.addGame(player1, 0.5, false);
-                System.out.println(player1.getParticipant().getName() + " drew against " + player2.getParticipant().getName());
+                //System.out.println(player1.getParticipant().getName() + " drew against " + player2.getParticipant().getName());
             }
         }
     }
