@@ -26,17 +26,17 @@ public class SimulatedTournament {
         simulatedPlayerArrayList.forEach(SimulatedPlayer::updateBuchholz);
         rankingByScoreThenEloArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByELO));
         rankingByScoreThenTieBreakArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByBUCHHOLZ));
-        System.out.println("\n\nRanking after round: " + roundsFinished);
-        rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBucholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
+        //System.out.println("\n\nRanking after round: " + roundsFinished);
+        //rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBucholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
     }
 
     public void simulateTournament() {
         rankingByScoreThenEloArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByELO));
-        System.out.println("Starting rank: ");
-        rankingByScoreThenEloArrayList.get(rankingByScoreThenEloArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
+        //System.out.println("Starting rank: ");
+        //rankingByScoreThenEloArrayList.get(rankingByScoreThenEloArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
         while (roundsFinished < tournament.getTotalRounds()) {
             getNextRound();
         }
-        rankingByScoreThenEloArrayList.get(roundsFinished - 1).getRanking().stream().map(player -> player.getParticipant().getName() + " " + player.getScore()).forEach(System.out::println);
+        rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBuchholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
     }
 }

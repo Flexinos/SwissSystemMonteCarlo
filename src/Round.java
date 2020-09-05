@@ -16,7 +16,7 @@ public class Round {
 
     private void pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
-        printAndUpdateBracket(nonDownfloaters, downfloatersFromPreviousBracket, !downfloatersFromPreviousBracket.isEmpty(), unpairedPlayersInThisBracket);
+        //printAndUpdateBracket(nonDownfloaters, downfloatersFromPreviousBracket, !downfloatersFromPreviousBracket.isEmpty(), unpairedPlayersInThisBracket);
         List<Pairing> proposedPairings = new ArrayList<>();
         //todo: check if this makes sense
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
@@ -60,7 +60,7 @@ public class Round {
                 return false;
             }
         }
-        System.out.println("\nGames:");
+        //System.out.println("\nGames:");
         proposedPairings.clear();
         for (PossiblePairing possiblePairing : provisionalPairings) {
             proposedPairings.add(new Pairing(possiblePairing));

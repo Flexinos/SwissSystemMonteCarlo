@@ -4,8 +4,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Main {
-    public static final int numberOfParticipants = 1000;
-    public static final int numberOfRounds = 11;
+    public static final int numberOfParticipants = 200;
+    public static final int numberOfRounds = 9;
 
     public static void main(String[] args) {
         final SecureRandom random = new SecureRandom();
