@@ -43,7 +43,7 @@ public class Round {
         //printAndUpdateBracket(unpairedPlayersInThisBracket, nonDownfloaters, downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
-        List<Pairing> proposedPairings = new ArrayList<>();
+        List<Pairing> proposedPairings = new ArrayList<>(unpairedPlayersInThisBracket.size() / 2);
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
                 boolean proposedPairingIsValid = tryPairBracket(proposedPairings, board, unpairedPlayersInThisBracket);
@@ -65,7 +65,7 @@ public class Round {
     }
 
     private boolean tryPairBracket(List<Pairing> proposedPairings, int board, List<SimulatedPlayer> playersInBracket) {
-        List<PossiblePairing> provisionalPairings = new ArrayList<>();
+        List<PossiblePairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
                 //todo add considerations to color
@@ -83,10 +83,12 @@ public class Round {
     }
 
     private void getDownfloater(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> downfloatersToNextBracket, List<Pairing> proposedPairings) {
+        List<SimulatedPlayer> tmpList = new ArrayList<>(unpairedPlayersInThisBracket.size());
         for (Pairing pairing : proposedPairings) {
-            unpairedPlayersInThisBracket.remove(pairing.getPlayer1());
-            unpairedPlayersInThisBracket.remove(pairing.getPlayer2());
+            tmpList.add(pairing.getPlayer1());
+            tmpList.add(pairing.getPlayer2());
         }
+        unpairedPlayersInThisBracket.removeAll(tmpList);
         if (!unpairedPlayersInThisBracket.isEmpty()) {
             downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
             unpairedPlayersInThisBracket.clear();
