@@ -6,6 +6,7 @@ public class SimulatedPlayer {
     private double score;
     private double buchholz;
     private final List<SimulatedPlayer> pastOpponents;
+    //more testing to compare against hashset or global lookup matrix in simulated tournament
     private boolean receivedBye = false;
     private int colorDifference = 0;
 

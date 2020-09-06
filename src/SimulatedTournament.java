@@ -23,11 +23,15 @@ public class SimulatedTournament {
 
     private void getNextRound() {
         roundArrayList.add(new Round(rankingByScoreThenEloArrayList.get(roundsFinished++)));
-        simulatedPlayerArrayList.forEach(SimulatedPlayer::updateBuchholz);
         rankingByScoreThenEloArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByELO));
-        rankingByScoreThenTieBreakArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByBUCHHOLZ));
+        //createRankingByScoreThenTieBreak();
         //System.out.println("\n\nRanking after round: " + roundsFinished);
         //rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBucholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
+    }
+
+    private void createRankingByScoreThenTieBreak() {
+        simulatedPlayerArrayList.forEach(SimulatedPlayer::updateBuchholz);
+        rankingByScoreThenTieBreakArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByBUCHHOLZ));
     }
 
     public void simulateTournament() {
@@ -37,6 +41,7 @@ public class SimulatedTournament {
         while (roundsFinished < tournament.getTotalRounds()) {
             getNextRound();
         }
-        rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBuchholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
+        createRankingByScoreThenTieBreak();
+        //rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBuchholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
     }
 }
