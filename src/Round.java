@@ -40,7 +40,7 @@ public class Round {
 
     private void pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
-        //printAndUpdateBracket(unpairedPlayersInThisBracket, nonDownfloaters, downfloatersFromPreviousBracket);
+        //printPlayersInBracket(unpairedPlayersInThisBracket, nonDownfloaters, downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
         List<Pairing> proposedPairings = new ArrayList<>(unpairedPlayersInThisBracket.size() / 2);
@@ -95,7 +95,7 @@ public class Round {
         }
     }
 
-    private void printAndUpdateBracket(List<SimulatedPlayer> unpairedPlayersInBracket, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
+    private void printPlayersInBracket(List<SimulatedPlayer> unpairedPlayersInBracket, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
         if (!downfloatersFromUpperBracket.isEmpty()) {
             printPlayersInBracket(typeOfBracket.DOWNFLOATERS, downfloatersFromUpperBracket);
             printPlayersInBracket(typeOfBracket.NONDOWNFLOATERS, nonDownfloaters);
