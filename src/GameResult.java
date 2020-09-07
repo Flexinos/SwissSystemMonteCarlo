@@ -3,24 +3,24 @@ import java.util.Random;
 public class GameResult {
     private static final Random random = new Random();
 
-    public static ResultOfGame randomResult(SimulatedPlayer WhitePlayer, SimulatedPlayer BlackPlayer) {
-        double eloDiff = WhitePlayer.getParticipant().getElo() - BlackPlayer.getParticipant().getElo();
-        double WhiteScore = 1 / (1 + Math.pow(10, -eloDiff / 400));
+    public static ResultOfGame randomResult(SimulatedPlayer whitePlayer, SimulatedPlayer blackPlayer) {
+        double eloDiff = whitePlayer.getParticipant().getElo() - blackPlayer.getParticipant().getElo();
+        double whiteScore = 1 / (1 + Math.pow(10, -eloDiff / 400));
         double underdogScore;
         // give white small edge. completely arbitrary
-        if (WhiteScore > 0.5) {
-            underdogScore = (1 - WhiteScore) * 0.9;
+        if (whiteScore > 0.5) {
+            underdogScore = (1 - whiteScore) * 0.9;
         } else {
-            underdogScore = WhiteScore * 1.1;
+            underdogScore = whiteScore * 1.1;
         }
 
         double drawChance = underdogScore;
-        double WhiteWinChance = WhiteScore - drawChance * 0.5;
+        double whiteWinChance = whiteScore - drawChance * 0.5;
 
         double randomValue = random.nextDouble();
-        if (randomValue < WhiteWinChance) {
+        if (randomValue < whiteWinChance) {
             return ResultOfGame.WHITE_WIN;
-        } else if (randomValue < WhiteWinChance + drawChance) {
+        } else if (randomValue < whiteWinChance + drawChance) {
             return ResultOfGame.DRAW;
         } else {
             return ResultOfGame.BLACK_WIN;
