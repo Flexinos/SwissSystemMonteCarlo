@@ -16,7 +16,7 @@ public class Round {
 
     private void createPairings() {
         List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
-        giveByeIfNecessary(unpairedPlayers);
+        giveByeIfNecessary(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
         List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         while (unpairedPlayers.size() > 0) {
