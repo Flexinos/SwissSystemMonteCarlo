@@ -4,8 +4,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Main {
-    public static final int numberOfParticipants = 300;
-    public static final int numberOfRounds = 11;
+    public static final int numberOfParticipants = 20;
+    public static final int numberOfRounds = 1;
 
     public static void main(String[] args) {
         long startTime = System.nanoTime();

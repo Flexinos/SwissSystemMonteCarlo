@@ -1,11 +1,11 @@
 public class Pairing {
-    private final int board;
+    //private final int board;
     private final SimulatedPlayer player1;
     private final SimulatedPlayer player2;
     private GameResult.ResultOfGame result;
 
     public Pairing(PossiblePairing pairing) {
-        this.board = pairing.getBoard();
+        //this.board = pairing.getBoard();
         this.player1 = pairing.getPlayer1();
         this.player2 = pairing.getPlayer2();
         simulateResult();
@@ -20,10 +20,6 @@ public class Pairing {
         } else return !player1.getPastOpponents().contains(player2);
     }
 
-    public int getBoard() {
-        return board;
-    }
-
     public SimulatedPlayer getPlayer1() {
         return player1;
     }
@@ -34,6 +30,8 @@ public class Pairing {
 
     private void simulateResult() {
         //System.out.print("Board " + getBoard() + ": ");
+        // todo: improve this check. string comparison very slow.
+        // possible solution: give each participant a isBye flag, give each pairing same flag. also possibly tournament wide flag
         if (player1.getParticipant().getName().equals("BYE")) {
             result = GameResult.ResultOfGame.BLACK_WIN;
             player2.setReceivedBye(true);
