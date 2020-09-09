@@ -7,13 +7,13 @@ public class SimulatedTournament {
     private int roundsFinished = 0;
     private final List<Round> roundArrayList;
     private final List<Ranking> rankingByScoreThenEloArrayList;
-    private final List<Ranking> rankingByScoreThenTieBreakArrayList;
+    private final List<Ranking> rankingByScoreThenTieBreakList;
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;
         this.roundArrayList = new ArrayList<>(tournament.getTotalRounds());
         this.rankingByScoreThenEloArrayList = new ArrayList<>(tournament.getTotalRounds());
-        this.rankingByScoreThenTieBreakArrayList = new ArrayList<>(tournament.getTotalRounds());
+        this.rankingByScoreThenTieBreakList = new ArrayList<>(tournament.getTotalRounds());
         this.simulatedPlayerArrayList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(SimulatedPlayer::new).forEachOrdered(simulatedPlayerArrayList::add);
         if (simulatedPlayerArrayList.size() % 2 == 1) {
@@ -31,7 +31,7 @@ public class SimulatedTournament {
 
     private void createRankingByScoreThenTieBreak() {
         simulatedPlayerArrayList.forEach(SimulatedPlayer::updateBuchholz);
-        rankingByScoreThenTieBreakArrayList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByBUCHHOLZ));
+        rankingByScoreThenTieBreakList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByBUCHHOLZ));
     }
 
     public void simulateTournament() {
