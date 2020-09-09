@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.LongAdder;
 
 public class SimulatedTournament {
     private final Tournament tournament;
@@ -42,6 +43,9 @@ public class SimulatedTournament {
             getNextRound();
         }
         createRankingByScoreThenTieBreak();
+        for (int i = 0; i < 3; i++) {
+            tournament.topThreeCounter.computeIfAbsent(rankingByScoreThenTieBreakList.get(rankingByScoreThenTieBreakList.size() - 1).getRanking().get(i).getParticipant(), k -> new LongAdder()).increment();
+        }
         //rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBuchholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
     }
 }
