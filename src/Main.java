@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Main {
-    public static final int numberOfParticipants = 200;
+    public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 9;
     public static final int numberOfSimulations = 10000;
     public static final int numberOfConcurrentThreads = 4;
@@ -33,11 +33,11 @@ public class Main {
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
         System.out.println("\n\nNumber of top three finishes:\n");
         for (Participant participant : participantsWithTopThreeRanking) {
-            System.out.println(participant.getName() + "\t" + "Elo: " + participant.getElo() + "\t" + participant.getNumberOfTopThreeFinishes());
+            System.out.println(participant.getName() + "\t" + "starting rank: " + participant.getStartingRank() + "\t" + "Elo: " + participant.getElo() + "\t" + participant.getNumberOfTopThreeFinishes());
         }
 
         long endTime = System.nanoTime();
         long duration = (endTime - startTime) / 1000000;
-        System.out.println("\nTotal runtime: " + duration + "ms");
+        System.out.println("\nTotal runtime: " + duration / 1000 + "." + duration % 1000 + "s");
     }
 }

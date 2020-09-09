@@ -16,7 +16,10 @@ public class Tournament {
 
     public void addParticipants(List<Participant> participants) {
         participantArrayList.addAll(participants);
-        participants.sort(Participant::compareToByElo);
+        participantArrayList.sort(Participant::compareToByElo);
+        for (int i = 0; i < participantArrayList.size(); i++) {
+            participantArrayList.get(i).setStartingRank(i + 1);
+        }
         this.topThreeCounter = new ConcurrentHashMap<>((int) (participantArrayList.size() / 0.75), (float) 0.75, Main.numberOfConcurrentThreads);
     }
 

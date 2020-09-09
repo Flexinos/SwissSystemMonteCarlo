@@ -1,6 +1,7 @@
 public class Participant {
     private final String name;
     private final int elo;
+    private int startingRank;
     private int numberOfTopThreeFinishes;
 
     public Participant(String name, int elo) {
@@ -22,6 +23,14 @@ public class Participant {
 
     public void setNumberOfTopThreeFinishes(int numberOfTopThreeFinishes) {
         this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
+    }
+
+    public int getStartingRank() {
+        return startingRank;
+    }
+
+    public void setStartingRank(int startingRank) {
+        this.startingRank = startingRank;
     }
 
     public int compareToByElo(Participant p2) {
