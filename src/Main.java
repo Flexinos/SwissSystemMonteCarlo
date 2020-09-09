@@ -23,7 +23,7 @@ public class Main {
             SimulatedTournament mySimulatedTournament = new SimulatedTournament(myTournament);
             mySimulatedTournament.simulateTournament();
             if (i % 1000 == 0) {
-                System.out.println(i);
+                System.out.println("Finished simulations: " + i);
             }
         }
 
@@ -31,9 +31,9 @@ public class Main {
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounterKeySet);
         myTournament.topThreeCounter.forEach((participant, longAdder) -> participantsWithTopThreeRanking.get(participantsWithTopThreeRanking.indexOf(participant)).setNumberOfTopThreeFinishes(longAdder.intValue()));
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
-        System.out.println("\nNumber of top three finishes:\n");
+        System.out.println("\n\nNumber of top three finishes:\n");
         for (Participant participant : participantsWithTopThreeRanking) {
-            System.out.println(participant.getName() + "\t" + participant.getElo() + "\t" + participant.getNumberOfTopThreeFinishes());
+            System.out.println(participant.getName() + "\t" + "Elo: " + participant.getElo() + "\t" + participant.getNumberOfTopThreeFinishes());
         }
 
         long endTime = System.nanoTime();
