@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -14,10 +13,7 @@ public class Main {
     public static void main(String[] args) {
         long startTime = System.nanoTime();
         final Random random = new Random();
-        Tournament myTournament = new Tournament(numberOfRounds);
-
-        List<Participant> participants = IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, 1000 + random.nextInt(1600))).collect(Collectors.toList());
-        myTournament.addParticipants(participants);
+        Tournament myTournament = new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, 1000 + random.nextInt(1600))).collect(Collectors.toList()));
 
         for (int i = 0; i < numberOfSimulations; i++) {
             SimulatedTournament mySimulatedTournament = new SimulatedTournament(myTournament);
@@ -27,17 +23,13 @@ public class Main {
             }
         }
 
-        Set<Participant> topThreeCounterKeySet = myTournament.topThreeCounter.keySet();
-        List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounterKeySet);
-        myTournament.topThreeCounter.forEach((participant, longAdder) -> participantsWithTopThreeRanking.get(participantsWithTopThreeRanking.indexOf(participant)).setNumberOfTopThreeFinishes(longAdder.intValue()));
+        myTournament.topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
+        List<Participant> participantsWithTopThreeRanking = new ArrayList<>(myTournament.topThreeCounter.keySet());
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
         System.out.println("\n\nNumber of top three finishes:\n");
-        for (Participant participant : participantsWithTopThreeRanking) {
-            System.out.println(participant.getName() + "\t" + "starting rank: " + participant.getStartingRank() + "\t" + "Elo: " + participant.getElo() + "\t" + participant.getNumberOfTopThreeFinishes());
-        }
+        participantsWithTopThreeRanking.stream().map(participant -> participant.getName() + "\t" + "starting rank: " + participant.getStartingRank() + "\t" + "Elo: " + participant.getElo() + "\t" + participant.getNumberOfTopThreeFinishes()).forEach(System.out::println);
 
-        long endTime = System.nanoTime();
-        long duration = (endTime - startTime) / 1000000;
+        long duration = (System.nanoTime() - startTime) / 1000000;
         System.out.println("\nTotal runtime: " + duration / 1000 + "." + duration % 1000 + "s");
     }
 }
