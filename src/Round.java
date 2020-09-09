@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Round {
@@ -66,9 +67,12 @@ public class Round {
 
     private boolean tryPairBracket(List<Pairing> proposedPairings, int board, List<SimulatedPlayer> playersInBracket) {
         List<PossiblePairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
+        Random random = new Random();
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
-                //todo add considerations to color
+                if (random.nextBoolean()) {
+                    provisionalPairings.add(new PossiblePairing(board++, playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)));
+                }
                 provisionalPairings.add(new PossiblePairing(board++, playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
             } else {
                 return false;
