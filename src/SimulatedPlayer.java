@@ -6,7 +6,7 @@ public class SimulatedPlayer {
     private double score;
     private double buchholz;
     private final List<SimulatedPlayer> pastOpponents; //todo optimize
-    //private final boolean receivedBye = false;
+    private boolean receivedBye = false;
     private int colorDifference = 0;
 
     public SimulatedPlayer(Participant participant) {
@@ -54,6 +54,14 @@ public class SimulatedPlayer {
 
     public Participant getParticipant() {
         return participant;
+    }
+
+    public boolean hasReceivedBye() {
+        return receivedBye;
+    }
+
+    public void setReceivedBye(boolean receivedBye) {
+        this.receivedBye = receivedBye;
     }
 
     public void updateBuchholz() {
