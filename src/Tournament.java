@@ -8,6 +8,7 @@ public class Tournament {
     private final int totalRounds;
     private final List<Participant> participantArrayList = new ArrayList<>();
     public static final SimulatedPlayer BYE = new SimulatedPlayer(new Participant("BYE", 0));
+    private final LongAdder finishedSimulations = new LongAdder();
     public Map<Participant, LongAdder> topThreeCounter;
 
     public Tournament(int totalRounds, List<Participant> participants) {
@@ -30,5 +31,13 @@ public class Tournament {
 
     public List<Participant> getPlayerArrayList() {
         return participantArrayList;
+    }
+
+    public LongAdder getFinishedSimulations() {
+        return finishedSimulations;
+    }
+
+    public void addToLongAdder(int x) {
+        finishedSimulations.add(x);
     }
 }
