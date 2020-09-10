@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 
 public class Round {
 
+    private final Tournament tournament;
     private final Ranking rankingByScoreThenEloBeforeRound;
     private final List<Pairing> unorderedPairings;
 
-    public Round(Ranking rankingByScoreThenEloBeforeRound) {
+    public Round(Tournament tournament, Ranking rankingByScoreThenEloBeforeRound) {
+        this.tournament = tournament;
         this.rankingByScoreThenEloBeforeRound = rankingByScoreThenEloBeforeRound;
         this.unorderedPairings = new ArrayList<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
         createPairings();
@@ -125,11 +127,11 @@ public class Round {
     }
 
     private void giveByeIfNecessary(List<SimulatedPlayer> unpairedPlayers) {
-        if (unpairedPlayers.size() % 2 == 1) {
+        if (tournament.hasBye()) {
             int lastBoard = unpairedPlayers.size() / 2 + 1;
             for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
                 if (!unpairedPlayers.get(i).receivedBye()) {
-                    unorderedPairings.add(new Pairing(new PossiblePairing(lastBoard, unpairedPlayers.get(i), Tournament.BYE)));
+                    unorderedPairings.add(new Pairing(new PossiblePairing(lastBoard, unpairedPlayers.get(i), tournament.getBye()), true));
                 }
             }
         }

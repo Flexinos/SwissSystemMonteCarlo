@@ -6,8 +6,7 @@ public class SimulatedPlayer {
     private double score;
     private double buchholz;
     private final List<SimulatedPlayer> pastOpponents;
-    //more testing to compare against hashset or global lookup matrix in simulated tournament
-    private boolean receivedBye = false;
+    private final boolean receivedBye = false;
     private int colorDifference = 0;
 
     public SimulatedPlayer(Participant participant) {
@@ -17,6 +16,11 @@ public class SimulatedPlayer {
 
     public double getScore() {
         return score;
+    }
+
+    public void addGame(SimulatedPlayer opponent, double result) {
+        pastOpponents.add(opponent);
+        score += result;
     }
 
     public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
@@ -53,14 +57,6 @@ public class SimulatedPlayer {
 
     public boolean receivedBye() {
         return receivedBye;
-    }
-
-    public void setReceivedBye(boolean receivedBye) {
-        this.receivedBye = receivedBye;
-    }
-
-    public int getColorDifference() {
-        return colorDifference;
     }
 
     public void updateBuchholz() {

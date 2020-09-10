@@ -28,6 +28,6 @@ public class GameResult {
     }
 
     public enum ResultOfGame {
-        WHITE_WIN, DRAW, BLACK_WIN
+        WHITE_WIN, DRAW, BLACK_WIN, BYE
     }
 }

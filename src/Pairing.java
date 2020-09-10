@@ -1,15 +1,19 @@
 public class Pairing {
-    //private final int board;
     private final SimulatedPlayer player1;
     private final SimulatedPlayer player2;
     private GameResult.ResultOfGame result;
 
     public Pairing(PossiblePairing pairing) {
-        //this.board = pairing.getBoard();
         this.player1 = pairing.getPlayer1();
         this.player2 = pairing.getPlayer2();
         simulateResult();
-        //todo change so that results of games aren't side effects, but explicitly called
+    }
+
+    public Pairing(PossiblePairing pairing, boolean includesBye) {
+        this.player1 = pairing.getPlayer1();
+        this.player2 = pairing.getPlayer2();
+        result = GameResult.ResultOfGame.BYE;
+        player1.addGame(player2, 1);
     }
 
     public static boolean pairingAllowed(SimulatedPlayer player1, SimulatedPlayer player2) {
@@ -30,30 +34,19 @@ public class Pairing {
 
     private void simulateResult() {
         //System.out.print("Board " + getBoard() + ": ");
-        // todo: improve this check. string comparison very slow.
-        // possible solution: give each participant a isBye flag, give each pairing same flag. also possibly tournament wide flag
-        if (player1.getParticipant().getName().equals("BYE")) {
-            result = GameResult.ResultOfGame.BLACK_WIN;
-            player2.setReceivedBye(true);
-        } else if (player2.getParticipant().getName().equals("BYE")) {
-            result = GameResult.ResultOfGame.WHITE_WIN;
-            player1.setReceivedBye(true);
+        result = GameResult.randomResult(player1, player2);
+        if (result.equals(GameResult.ResultOfGame.WHITE_WIN)) {
+            player1.addGame(player2, 1, true);
+            player2.addGame(player1, 0, false);
+            //System.out.println(player1.getParticipant().getName() + " won against " + player2.getParticipant().getName());
+        } else if (result.equals(GameResult.ResultOfGame.BLACK_WIN)) {
+            player1.addGame(player2, 0, true);
+            player2.addGame(player1, 1, false);
+            //System.out.println(player1.getParticipant().getName() + " lost against " + player2.getParticipant().getName());
         } else {
-            result = GameResult.randomResult(player1, player2);
-            if (result.equals(GameResult.ResultOfGame.WHITE_WIN)) {
-                player1.addGame(player2, 1, true);
-                player2.addGame(player1, 0, false);
-                //System.out.println(player1.getParticipant().getName() + " won against " + player2.getParticipant().getName());
-            } else if (result.equals(GameResult.ResultOfGame.BLACK_WIN)) {
-                player1.addGame(player2, 0, true);
-                player2.addGame(player1, 1, false);
-                //System.out.println(player1.getParticipant().getName() + " lost against " + player2.getParticipant().getName());
-            } else {
-                player1.addGame(player2, 0.5, true);
-                player2.addGame(player1, 0.5, false);
-                //System.out.println(player1.getParticipant().getName() + " drew against " + player2.getParticipant().getName());
-            }
+            player1.addGame(player2, 0.5, true);
+            player2.addGame(player1, 0.5, false);
+            //System.out.println(player1.getParticipant().getName() + " drew against " + player2.getParticipant().getName());
         }
     }
-
 }
