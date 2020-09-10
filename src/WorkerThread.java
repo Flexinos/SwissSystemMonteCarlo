@@ -13,7 +13,7 @@ public class WorkerThread implements Runnable {
             SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
             simulatedTournament.simulateTournament();
             tournament.addToLongAdder(1);
-            if (tournament.getFinishedSimulations().intValue() % 1000 == 0) {
+            if (tournament.getFinishedSimulations().intValue() % 10000 == 0) {
                 System.out.println(tournament.getFinishedSimulations().intValue());
             }
         }
