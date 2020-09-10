@@ -17,7 +17,7 @@ public class GameResult {
         double drawChance = underdogScore;
         double whiteWinChance = whiteScore - drawChance * 0.5;
 
-        double randomValue = random.nextDouble();
+        double randomValue = random.nextFloat();
         if (randomValue < whiteWinChance) {
             return ResultOfGame.WHITE_WIN;
         } else if (randomValue < whiteWinChance + drawChance) {

@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 public class Main {
     public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 9;
-    public static final int numberOfSimulations = 100000;
+    public static final int numberOfSimulations = 1000000;
     public static final int numberOfConcurrentThreads = 6;
 
     public static void main(String[] args) throws InterruptedException {
@@ -30,6 +30,7 @@ public class Main {
         myTournament.topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(myTournament.topThreeCounter.keySet());
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
+
         System.out.println("\n\nNumber of top three finishes:\n");
         participantsWithTopThreeRanking.stream().map(participant -> participant.getName() + "\t" + "starting rank: " + participant.getStartingRank() + "\t" + "Elo: " + participant.getElo() + "\t" + participant.getNumberOfTopThreeFinishes()).forEach(System.out::println);
 

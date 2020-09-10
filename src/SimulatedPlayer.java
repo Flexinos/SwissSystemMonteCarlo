@@ -5,8 +5,8 @@ public class SimulatedPlayer {
     private final Participant participant;
     private double score;
     private double buchholz;
-    private final List<SimulatedPlayer> pastOpponents;
-    private final boolean receivedBye = false;
+    private final List<SimulatedPlayer> pastOpponents; //todo optimize
+    //private final boolean receivedBye = false;
     private int colorDifference = 0;
 
     public SimulatedPlayer(Participant participant) {
@@ -24,6 +24,7 @@ public class SimulatedPlayer {
     }
 
     public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
+        //todo optimize
         pastOpponents.add(opponent);
         score += result;
         if (isWhite) {
@@ -53,10 +54,6 @@ public class SimulatedPlayer {
 
     public Participant getParticipant() {
         return participant;
-    }
-
-    public boolean receivedBye() {
-        return receivedBye;
     }
 
     public void updateBuchholz() {
