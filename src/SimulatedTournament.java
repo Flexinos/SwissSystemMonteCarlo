@@ -20,9 +20,6 @@ public class SimulatedTournament {
         this.rankingByScoreThenTieBreakList = new ArrayList<>(tournament.getTotalRounds());
         this.simulatedPlayerArrayList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerArrayList::add);
-        if (simulatedPlayerArrayList.size() % 2 == 1) {
-            simulatedPlayerArrayList.add(this.tournament.getBye());
-        }
         gameMatrix = new BitSet(simulatedPlayerArrayList.size() ^ 2);
     }
 
@@ -36,6 +33,7 @@ public class SimulatedTournament {
 
     public void simulateTournament() {
         rankingByScoreThenEloList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByELO));
+        //rankingByScoreThenEloList.get(0).getRanking().stream().map(player -> player.getParticipant().getName() + "\t" + player.getParticipant().getElo()).forEach(System.out::println);
         while (roundsFinished < tournament.getTotalRounds()) {
             getNextRound();
         }

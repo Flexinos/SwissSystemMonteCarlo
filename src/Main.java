@@ -10,7 +10,7 @@ import java.util.stream.IntStream;
 public class Main {
     public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 9;
-    public static final int numberOfSimulations = 1000000;
+    public static final int numberOfSimulations = 100000;
     public static final int numberOfConcurrentThreads = 6;
 
     public static void main(String[] args) throws InterruptedException {

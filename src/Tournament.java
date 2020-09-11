@@ -46,7 +46,7 @@ public class Tournament {
         return hasBye;
     }
 
-    public void addToLongAdder(int x) {
+    public void addToFinishedSimulations(int x) {
         finishedSimulations.add(x);
     }
 }

@@ -52,5 +52,6 @@ public class Pairing {
                 player2.addGame(player1, 0.5, false);
             }
         }
+        //System.out.println(player1.getParticipant().getName() + "played against " + player2.getParticipant().getName());
     }
 }
