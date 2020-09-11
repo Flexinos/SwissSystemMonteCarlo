@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.IntStream;
@@ -10,6 +11,7 @@ public class SimulatedTournament {
     private final List<Round> roundArrayList;
     private final List<Ranking> rankingByScoreThenEloList;
     private final List<Ranking> rankingByScoreThenTieBreakList;
+    private final BitSet gameMatrix;
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;
@@ -17,10 +19,19 @@ public class SimulatedTournament {
         this.rankingByScoreThenEloList = new ArrayList<>(tournament.getTotalRounds());
         this.rankingByScoreThenTieBreakList = new ArrayList<>(tournament.getTotalRounds());
         this.simulatedPlayerArrayList = new ArrayList<>(tournament.getPlayerArrayList().size());
-        tournament.getPlayerArrayList().stream().map(SimulatedPlayer::new).forEachOrdered(simulatedPlayerArrayList::add);
+        tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerArrayList::add);
         if (simulatedPlayerArrayList.size() % 2 == 1) {
             simulatedPlayerArrayList.add(this.tournament.getBye());
         }
+        gameMatrix = new BitSet(simulatedPlayerArrayList.size() ^ 2);
+    }
+
+    public void addGame(SimulatedPlayer player1, SimulatedPlayer player2) {
+        gameMatrix.set((player1.getParticipant().getStartingRank() - 1) * simulatedPlayerArrayList.size() + player2.getParticipant().getStartingRank() - 1);
+    }
+
+    public boolean haveMet(SimulatedPlayer player1, SimulatedPlayer player2) {
+        return gameMatrix.get((player1.getParticipant().getStartingRank() - 1) * simulatedPlayerArrayList.size() + player2.getParticipant().getStartingRank() - 1);
     }
 
     public void simulateTournament() {

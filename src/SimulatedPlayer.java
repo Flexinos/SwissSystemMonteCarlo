@@ -3,6 +3,7 @@ import java.util.List;
 
 public class SimulatedPlayer {
     private final Participant participant;
+    private SimulatedTournament simulatedTournament = null;
     private double score;
     private double buchholz;
     private final List<SimulatedPlayer> pastOpponents; //todo optimize
@@ -14,18 +15,25 @@ public class SimulatedPlayer {
         this.pastOpponents = new ArrayList<>(Main.numberOfRounds);
     }
 
+    public SimulatedPlayer(Participant participant, SimulatedTournament simulatedTournament) {
+        this.participant = participant;
+        this.simulatedTournament = simulatedTournament;
+        this.pastOpponents = new ArrayList<>(Main.numberOfRounds);
+    }
+
     public double getScore() {
         return score;
     }
 
     public void addGame(SimulatedPlayer opponent, double result) {
         pastOpponents.add(opponent);
+        simulatedTournament.addGame(this, opponent);
         score += result;
     }
 
     public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
-        //todo optimize
         pastOpponents.add(opponent);
+        simulatedTournament.addGame(this, opponent);
         score += result;
         if (isWhite) {
             colorDifference++;
@@ -41,7 +49,10 @@ public class SimulatedPlayer {
             return 1;
         }
         return Double.compare(p2.getParticipant().getElo(), p1.getParticipant().getElo());
+    }
 
+    public SimulatedTournament getSimulatedTournament() {
+        return simulatedTournament;
     }
 
     public double getBuchholz() {

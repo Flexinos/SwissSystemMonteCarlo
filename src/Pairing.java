@@ -12,16 +12,20 @@ public class Pairing {
     public Pairing(PossiblePairing pairing, boolean includesBye) {
         this.player1 = pairing.getPlayer1();
         this.player2 = pairing.getPlayer2();
-        result = GameResult.ResultOfGame.BYE;
-        player1.addGame(player2, 1);
+        if (includesBye) {
+            result = GameResult.ResultOfGame.BYE;
+            player1.addGame(player2, 1);
+        } else {
+            simulateResult();
+        }
     }
 
     public static boolean pairingAllowed(SimulatedPlayer player1, SimulatedPlayer player2) {
-        //is optimizable
+        //todo check if this really works
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");
             return false;
-        } else return !player1.getPastOpponents().contains(player2);
+        } else return !player1.getSimulatedTournament().haveMet(player1, player2);
     }
 
     public SimulatedPlayer getPlayer1() {
