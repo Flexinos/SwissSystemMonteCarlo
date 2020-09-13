@@ -39,6 +39,6 @@ public class XLSXParser {
     }
 
     private static String improveLink(String link) {
-        return link.replace("flag=30", "flag=NO").replaceFirst("turdet=[^&]", "turdet=NO");
+        return link.replace("flag=30", "flag=NO").replaceFirst("turdet=[^&]*", "turdet=NO");
     }
 }
