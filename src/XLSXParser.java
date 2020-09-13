@@ -14,7 +14,7 @@ public class XLSXParser {
     }
 
     public static void getPairings(String link) throws IOException {
-        XSSFSheet worksheet = getWorksheet(removeFlags(link));
+        XSSFSheet worksheet = getWorksheet(improveLink(link));
         for (Iterator<Row> rowIterator = worksheet.rowIterator(); rowIterator.hasNext(); ) {
             Row row = rowIterator.next();
             for (Iterator<Cell> cellIterator = row.cellIterator(); cellIterator.hasNext(); ) {
@@ -35,7 +35,7 @@ public class XLSXParser {
         return new XSSFWorkbook(new URL(link).openStream()).getSheetAt(0);
     }
 
-    private static String removeFlags(String link) {
-        return link.replace("flag=30", "flag=NO");
+    private static String improveLink(String link) {
+        return link.replace("flag=30", "flag=NO").replaceFirst("turdet=[^&]", "turdet=NO");
     }
 }
