@@ -18,6 +18,7 @@ public class Round {
     }
 
     private void createPairings() {
+        //maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
         List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
         giveByeIfNecessary(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
         List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();

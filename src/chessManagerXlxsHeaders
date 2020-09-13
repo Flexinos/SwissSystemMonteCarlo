@@ -1,0 +1,20 @@
+rg.     snr     name    fideid  typ     land    elo     bdld    verein/ort  pkt         wtg1    wtg2    wtg3
+rg.     snr     [blank] name    fideid  land    elo     bdld    verein/ort  pkt         wtg1    wtg2    wtg3
+rg.     snr     [blank] name    typ     sex     land    eloi    elon        verein/ort  pkt     wtg1    wtg2    wtg3
+Rg.	    Snr     Name	Typ	    sex	    Gr	    Land	EloI    EloN	    Verein/Ort	Pkt. 	Wtg1	Wtg2	Wtg3
+rg.     snr     name    land    eloi    pkt     wtg1    wtg2    wtg3
+Rg.	    Snr		Name	Land	Elo	    Wtg1	Wtg2	Wtg3
+Nr.		Name	Ident	FideID	Land	EloI	EloN	sex	    Bdld	    Typ	        Gr	    Verein/Ort
+
+relevant fields:
+snr     name    [blank] land    elo     bdld     pkt     wtg1    wtg2    wtg3    typ     sex
+"snr" possibly "Snr" ::int
+"name" possibly "Name" ::String
+[blank] is "title" ::String
+"land" possibly "Land" ::String
+use "elo" or "Elo" if present, else use "EloI" or "eloi" ::int
+"bdld" possibly "Bdld"
+"pkt" possibly "Pkt." ::double
+"wtgx" possibly "Wtgx" ::double or ::int
+"typ" possibly "Typ" ::String
+"sex" possibly "Sex" ::String
