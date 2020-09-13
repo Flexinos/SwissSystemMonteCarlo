@@ -10,11 +10,11 @@ import java.util.Iterator;
 
 public class XLSXParser {
     public static void main(String[] args) throws IOException {
-        getPairings("https://chess-results.com/tnr534098.aspx?lan=0&zeilen=0&art=2&rd=7&turdet=YES%20&flag=NO&prt=4&excel=2010");
+        getPairings("https://chess-results.com/tnr507449.aspx?lan=0&zeilen=0&turdet=YES&flag=30&prt=4&excel=2010");
     }
 
     public static void getPairings(String link) throws IOException {
-        XSSFSheet worksheet = getWorksheet(link);
+        XSSFSheet worksheet = getWorksheet(removeFlags(link));
         for (Iterator<Row> rowIterator = worksheet.rowIterator(); rowIterator.hasNext(); ) {
             Row row = rowIterator.next();
             for (Iterator<Cell> cellIterator = row.cellIterator(); cellIterator.hasNext(); ) {
@@ -33,5 +33,9 @@ public class XLSXParser {
 
     private static XSSFSheet getWorksheet(String link) throws IOException {
         return new XSSFWorkbook(new URL(link).openStream()).getSheetAt(0);
+    }
+
+    private static String removeFlags(String link) {
+        return link.replace("flag=30", "flag=NO");
     }
 }
