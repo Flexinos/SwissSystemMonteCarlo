@@ -20,9 +20,12 @@ public class XLSXParser {
             for (Iterator<Cell> cellIterator = row.cellIterator(); cellIterator.hasNext(); ) {
                 Cell cell = cellIterator.next();
                 if (cell.getCellType().equals(CellType.STRING)) {
-                    System.out.print(cell.getStringCellValue() + ",");
+                    System.out.print(cell.getStringCellValue());
                 } else if (cell.getCellType().equals(CellType.NUMERIC)) {
-                    System.out.print(cell.getNumericCellValue() + ",");
+                    System.out.print(cell.getNumericCellValue());
+                }
+                if (cellIterator.hasNext()) {
+                    System.out.print(",");
                 }
             }
             System.out.println();
