@@ -23,9 +23,9 @@ public class SimulatedTournament {
         gameMatrix = new BitSet(simulatedPlayerArrayList.size() ^ 2);
     }
 
-    public SimulatedTournament(Tournament tournament, int roundsFinished) {
+    public SimulatedTournament(Tournament tournament, boolean isOngoing) {
         this.tournament = tournament;
-        this.roundsFinished = roundsFinished;
+        this.roundsFinished = tournament.getFinishedRounds();
         this.roundArrayList = new ArrayList<>(tournament.getTotalRounds());
         this.rankingByScoreThenEloList = new ArrayList<>(tournament.getTotalRounds());
         this.rankingByScoreThenTieBreakList = new ArrayList<>(tournament.getTotalRounds());

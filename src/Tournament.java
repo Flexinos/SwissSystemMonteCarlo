@@ -3,6 +3,7 @@ import java.util.List;
 
 public class Tournament {
     private final int totalRounds;
+    private int finishedRounds = 0;
     private final List<Participant> participantArrayList = new ArrayList<>();
     private boolean hasBye = false;
     private SimulatedPlayer bye;
@@ -20,8 +21,17 @@ public class Tournament {
         }
     }
 
+    public Tournament(int totalRounds, int finishedRounds) {
+        this.totalRounds = totalRounds;
+        this.finishedRounds = finishedRounds;
+    }
+
     public int getTotalRounds() {
         return totalRounds;
+    }
+
+    public int getFinishedRounds() {
+        return finishedRounds;
     }
 
     public SimulatedPlayer getBye() {

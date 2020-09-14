@@ -2,8 +2,8 @@ public class Participant {
     private final String title;
     private final String name;
     private final String country;
-    private final double score;
     private final int elo;
+    private final double score;
     private final double tieBreak1;
     private final double tieBreak2;
     private final double tieBreak3;
