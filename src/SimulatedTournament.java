@@ -6,12 +6,12 @@ import java.util.stream.IntStream;
 
 public class SimulatedTournament {
     private final Tournament tournament;
-    private final List<SimulatedPlayer> simulatedPlayerArrayList;
     private int roundsFinished = 0;
+    private final List<SimulatedPlayer> simulatedPlayerArrayList;
     private final List<Round> roundArrayList;
     private final List<Ranking> rankingByScoreThenEloList;
     private final List<Ranking> rankingByScoreThenTieBreakList;
-    private final BitSet gameMatrix;
+    private BitSet gameMatrix;
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;
@@ -21,6 +21,16 @@ public class SimulatedTournament {
         this.simulatedPlayerArrayList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerArrayList::add);
         gameMatrix = new BitSet(simulatedPlayerArrayList.size() ^ 2);
+    }
+
+    public SimulatedTournament(Tournament tournament, int roundsFinished) {
+        this.tournament = tournament;
+        this.roundsFinished = roundsFinished;
+        this.roundArrayList = new ArrayList<>(tournament.getTotalRounds());
+        this.rankingByScoreThenEloList = new ArrayList<>(tournament.getTotalRounds());
+        this.rankingByScoreThenTieBreakList = new ArrayList<>(tournament.getTotalRounds());
+        this.simulatedPlayerArrayList = new ArrayList<>(tournament.getPlayerArrayList().size());
+        tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerArrayList::add);
     }
 
     public void addGame(SimulatedPlayer player1, SimulatedPlayer player2) {
@@ -47,7 +57,7 @@ public class SimulatedTournament {
     }
 
     private void createRankingByScoreThenTieBreak() {
-        simulatedPlayerArrayList.forEach(SimulatedPlayer::updateBuchholz);
+        simulatedPlayerArrayList.forEach(SimulatedPlayer::updateTieBreaks);
         rankingByScoreThenTieBreakList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByBUCHHOLZ));
     }
 }
