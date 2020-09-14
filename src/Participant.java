@@ -2,7 +2,7 @@ public class Participant {
     private final String title;
     private final String name;
     private final String country;
-    private final double points;
+    private final double score;
     private final int elo;
     private final double tieBreak1;
     private final double tieBreak2;
@@ -16,13 +16,13 @@ public class Participant {
         this(0, "", name, "", elo, 0, 0, 0, 0, "", false);
     }
 
-    public Participant(int startingRank, String title, String name, String country, int elo, double points, double tieBreak1, double tieBreak2, double tieBreak3, String type, boolean isFemale) {
+    public Participant(int startingRank, String title, String name, String country, int elo, double score, double tieBreak1, double tieBreak2, double tieBreak3, String type, boolean isFemale) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
         this.country = country;
         this.elo = elo;
-        this.points = points;
+        this.score = score;
         this.tieBreak1 = tieBreak1;
         this.tieBreak2 = tieBreak2;
         this.tieBreak3 = tieBreak3;
@@ -54,8 +54,8 @@ public class Participant {
         return elo;
     }
 
-    public double getPoints() {
-        return points;
+    public double getScore() {
+        return score;
     }
 
     public double getTieBreak1() {
