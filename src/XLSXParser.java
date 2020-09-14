@@ -109,43 +109,19 @@ public class XLSXParser {
         Iterator<Cell> cellIterator = row.cellIterator();
         while (cellIterator.hasNext()) {
             Cell cell = cellIterator.next();
-            switch(columnTypeIterator.next()){
-                case STARTING_RANK:
-                    startingRank = (int)cell.getNumericCellValue();
-                    break;
-                case TITLE:
-                    title = cell.getStringCellValue();
-                    break;
-                case NAME:
-                    name = cell.getStringCellValue();
-                    break;
-                case COUNTRY:
-                    country = cell.getStringCellValue();
-                    break;
-                case BUNDESLAND:
-                    bundesland = cell.getStringCellValue();
-                    break;
-                case ELO:
-                    elo = (int)cell.getNumericCellValue();
-                    break;
-                case SCORE:
-                    score = cell.getNumericCellValue();
-                    break;
-                case TIE_BREAK_1:
-                    tieBreak1 = cell.getNumericCellValue();
-                    break;
-                case TIE_BREAK_2:
-                    tieBreak2 = cell.getNumericCellValue();
-                    break;
-                case TIE_BREAK_3:
-                    tieBreak3 = cell.getNumericCellValue();
-                    break;
-                case TYPE:
-                    type = cell.getStringCellValue();
-                    break;
-                case SEX:
-                    sex = cell.getStringCellValue();
-                    break;
+            switch (columnTypeIterator.next()) {
+                case STARTING_RANK -> startingRank = (int) cell.getNumericCellValue();
+                case TITLE -> title = cell.getStringCellValue();
+                case NAME -> name = cell.getStringCellValue();
+                case COUNTRY -> country = cell.getStringCellValue();
+                case BUNDESLAND -> bundesland = cell.getStringCellValue();
+                case ELO -> elo = (int) cell.getNumericCellValue();
+                case SCORE -> score = cell.getNumericCellValue();
+                case TIE_BREAK_1 -> tieBreak1 = cell.getNumericCellValue();
+                case TIE_BREAK_2 -> tieBreak2 = cell.getNumericCellValue();
+                case TIE_BREAK_3 -> tieBreak3 = cell.getNumericCellValue();
+                case TYPE -> type = cell.getStringCellValue();
+                case SEX -> sex = cell.getStringCellValue();
             }
         }
         boolean isFemale = sex.matches("w");
