@@ -36,7 +36,7 @@ public class XLSXParser {
         List<Participant> participants = new ArrayList<>();
         XSSFSheet worksheet = getWorksheet(improveLink(link));
         boolean tableStarted = false;
-        Map<Integer, String> relevantEntryIndices;
+        List<RankingColumnType> columnStructure = new ArrayList<>(); // The only purpose of the initialization is suppressing uninitialized warnings.
         for (Iterator<Row> rowIterator = worksheet.rowIterator(); rowIterator.hasNext(); ) {
             Row row = rowIterator.next();
             // Before the participant entries start check for the table header.
@@ -44,7 +44,7 @@ public class XLSXParser {
                 if (isTableHeader(row)) {
                     // Indicate that the relevant data has been reached.
                     tableStarted = true;
-                    relevantEntryIndices = getRelevantEntryIndices(row);
+                    columnStructure = getRankingColumnStructure(row);
                 }
                 continue;
             }
@@ -53,7 +53,7 @@ public class XLSXParser {
                 break;
             }
             // Runs for each row containing participant data.
-            participants.add(createParticipantFromRow(row, relevantEntryIndices));
+            participants.add(createParticipantFromRow(row, columnStructure));
         }
         return participants;
     }
@@ -81,27 +81,115 @@ public class XLSXParser {
         return cell.getCellType().equals(CellType.NUMERIC);
     }
 
-    private static Map<Integer, String> getRelevantEntryIndices(Row tableHeader) {
-        Map<Integer, String> relevantEntryIndices = new HashMap<>();
-        int currentColumn = 0;
+    private static List<RankingColumnType> getRankingColumnStructure(Row tableHeader) {
+        List<RankingColumnType> columnStructure = new ArrayList<>();
         for (Iterator<Cell> cellIterator = tableHeader.cellIterator(); cellIterator.hasNext(); ) {
             Cell cell = cellIterator.next();
             String cellContent = cell.getStringCellValue();
-            String columnType = getColumnType(cellContent);
-            if (!columnType.equals("")) {
-                relevantEntryIndices.put(currentColumn, columnType);
-            }
-            ++currentColumn;
+            RankingColumnType columnType = getColumnType(cellContent);
+            columnStructure.add(columnType);
         }
-        return relevantEntryIndices;
+        return columnStructure;
     }
 
-    private static Participant createParticipantFromRow(Row row, Map<Integer, String> relevantEntryIndices) {
-
+    private static Participant createParticipantFromRow(Row row, List<RankingColumnType> columnStructure) {
+        int startingRank = 0;
+        String title = "";
+        String name = "";
+        String country = "";
+        int elo = 0;
+        String bundesland = "";
+        double score = 0;
+        double tieBreak1 = 0;
+        double tieBreak2 = 0;
+        double tieBreak3 = 0;
+        String type = "";
+        String sex = "";
+        Iterator<RankingColumnType> columnTypeIterator = columnStructure.iterator();
+        Iterator<Cell> cellIterator = row.cellIterator();
+        while (cellIterator.hasNext()) {
+            Cell cell = cellIterator.next();
+            switch(columnTypeIterator.next()){
+                case STARTING_RANK:
+                    startingRank = (int)cell.getNumericCellValue();
+                    break;
+                case TITLE:
+                    title = cell.getStringCellValue();
+                    break;
+                case NAME:
+                    name = cell.getStringCellValue();
+                    break;
+                case COUNTRY:
+                    country = cell.getStringCellValue();
+                    break;
+                case BUNDESLAND:
+                    bundesland = cell.getStringCellValue();
+                    break;
+                case ELO:
+                    elo = (int)cell.getNumericCellValue();
+                    break;
+                case SCORE:
+                    score = cell.getNumericCellValue();
+                    break;
+                case TIE_BREAK_1:
+                    tieBreak1 = cell.getNumericCellValue();
+                    break;
+                case TIE_BREAK_2:
+                    tieBreak2 = cell.getNumericCellValue();
+                    break;
+                case TIE_BREAK_3:
+                    tieBreak3 = cell.getNumericCellValue();
+                    break;
+                case TYPE:
+                    type = cell.getStringCellValue();
+                    break;
+                case SEX:
+                    sex = cell.getStringCellValue();
+                    break;
+            }
+        }
+        boolean isFemale = sex.matches("w");
+        return new Participant(startingRank, title, name, country, bundesland, elo, score, tieBreak1, tieBreak2, tieBreak3, type, isFemale);
     }
 
-    private static String getColumnType(String columnName) {
-
+    private static RankingColumnType getColumnType(String columnName) {
+        if (isStartingRank(columnName)) {
+            return RankingColumnType.STARTING_RANK;
+        }
+        if (isTitle(columnName)) {
+            return RankingColumnType.TITLE;
+        }
+        if (isName(columnName)) {
+            return RankingColumnType.NAME;
+        }
+        if (isCountry(columnName)) {
+            return RankingColumnType.COUNTRY;
+        }
+        if (isBundesland(columnName)) {
+            return RankingColumnType.BUNDESLAND;
+        }
+        if (isElo(columnName)) {
+            return RankingColumnType.ELO;
+        }
+        if (isScore(columnName)) {
+            return RankingColumnType.SCORE;
+        }
+        if (isTieBreak1(columnName)) {
+            return RankingColumnType.TIE_BREAK_1;
+        }
+        if (isTieBreak2(columnName)) {
+            return RankingColumnType.TIE_BREAK_2;
+        }
+        if (isTieBreak3(columnName)) {
+            return RankingColumnType.TIE_BREAK_3;
+        }
+        if (isType(columnName)) {
+            return RankingColumnType.TYPE;
+        }
+        if (isSex(columnName)) {
+            return RankingColumnType.SEX;
+        }
+        return RankingColumnType.IGNORE;
     }
 
     private static boolean isStartingRank(String string) {
@@ -110,5 +198,45 @@ public class XLSXParser {
 
     private static boolean isTitle(String string) {
         return string.matches("");
+    }
+
+    private static boolean isName(String string) {
+        return string.matches("name|Name");
+    }
+
+    private static boolean isCountry(String string) {
+        return string.matches("land|Land");
+    }
+
+    private static boolean isBundesland(String string) {
+        return string.matches("bdld|Bdld");
+    }
+
+    private static boolean isElo(String string) {
+        return string.matches("Elo|elo|EloI|eloi");
+    }
+
+    private static boolean isScore(String string) {
+        return string.matches("pkt|Pkt\\.");
+    }
+
+    private static boolean isTieBreak1(String string) {
+        return string.matches("wtg1|Wtg1");
+    }
+
+    private static boolean isTieBreak2(String string) {
+        return string.matches("wtg2|Wtg2");
+    }
+
+    private static boolean isTieBreak3(String string) {
+        return string.matches("wtg3|Wtg3");
+    }
+
+    private static boolean isType(String string) {
+        return string.matches("typ|Typ");
+    }
+
+    private static boolean isSex(String string) {
+        return string.matches("sex|Sex");
     }
 }
