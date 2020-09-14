@@ -4,6 +4,7 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -12,6 +13,7 @@ public class Main {
     public static final int numberOfRounds = 9;
     public static final int numberOfSimulations = 100000;
     public static final int numberOfConcurrentThreads = 6;
+    public static final LongAdder finishedSimulations = new LongAdder();
 
     public static void main(String[] args) throws InterruptedException {
         long startTime = System.nanoTime();

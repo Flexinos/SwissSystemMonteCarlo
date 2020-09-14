@@ -12,9 +12,9 @@ public class WorkerThread implements Runnable {
         for (int j = 0; j < numberOfSimulations; j++) {
             SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
             simulatedTournament.simulateTournament();
-            tournament.addToFinishedSimulations(1);
-            if (tournament.getFinishedSimulations().intValue() % 10000 == 0) {
-                System.out.println(tournament.getFinishedSimulations().intValue());
+            Main.finishedSimulations.increment();
+            if (Main.finishedSimulations.intValue() % 10000 == 0) {
+                System.out.println(Main.finishedSimulations.intValue());
             }
         }
     }

@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.LongAdder;
 public class Tournament {
     private final int totalRounds;
     private final List<Participant> participantArrayList = new ArrayList<>();
-    private final LongAdder finishedSimulations = new LongAdder();
     public Map<Participant, LongAdder> topThreeCounter;
     private boolean hasBye = false;
     private SimulatedPlayer bye;
@@ -38,15 +37,7 @@ public class Tournament {
         return participantArrayList;
     }
 
-    public LongAdder getFinishedSimulations() {
-        return finishedSimulations;
-    }
-
     public boolean hasBye() {
         return hasBye;
-    }
-
-    public void addToFinishedSimulations(int x) {
-        finishedSimulations.add(x);
     }
 }
