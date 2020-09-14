@@ -6,7 +6,7 @@ import java.util.stream.IntStream;
 
 public class SimulatedTournament {
     private final Tournament tournament;
-    private int roundsFinished = 0;
+    private int roundsFinished;
     private final List<SimulatedPlayer> simulatedPlayerArrayList;
     private final List<Round> roundArrayList;
     private final List<Ranking> rankingByScoreThenEloList;
@@ -15,6 +15,7 @@ public class SimulatedTournament {
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;
+        this.roundsFinished = tournament.getFinishedRounds();
         this.roundArrayList = new ArrayList<>(tournament.getTotalRounds());
         this.rankingByScoreThenEloList = new ArrayList<>(tournament.getTotalRounds());
         this.rankingByScoreThenTieBreakList = new ArrayList<>(tournament.getTotalRounds());

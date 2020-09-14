@@ -52,4 +52,17 @@ public class Pairing {
         }
         //System.out.println(player1.getParticipant().getName() + "played against " + player2.getParticipant().getName());
     }
+
+    @Override
+    public String toString() {
+        if (result.equals(GameResult.ResultOfGame.WHITE_WIN)) {
+            return player1 + "1-0 " + player2;
+        } else if (result.equals(GameResult.ResultOfGame.DRAW)) {
+            return player1 + "0.5-0.5 " + player2;
+        } else if (result.equals(GameResult.ResultOfGame.BLACK_WIN)) {
+            return player1 + "0-1 " + player2;
+        } else {
+            return player1 + " 1 " + "spielfrei";
+        }
+    }
 }

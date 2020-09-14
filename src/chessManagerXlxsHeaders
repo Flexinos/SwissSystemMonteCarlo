@@ -7,10 +7,10 @@ Rg.	    Snr		Name	Land	Elo	    Wtg1	Wtg2	Wtg3
 Nr.		Name	Ident	FideID	Land	EloI	EloN	sex	    Bdld	    Typ	        Gr	    Verein/Ort
 
 relevant fields:
-snr     name    [blank] land    elo     bdld     pkt     wtg1    wtg2    wtg3    typ     sex
+snr     [blank] name    land    elo     bdld     pkt     wtg1    wtg2    wtg3    typ     sex
 "snr" possibly "Snr" ::int
-"name" possibly "Name" ::String
 [blank] is "title" ::String
+"name" possibly "Name" ::String
 "land" possibly "Land" ::String
 use "elo" or "Elo" if present, else use "EloI" or "eloi" ::int
 "bdld" possibly "Bdld"

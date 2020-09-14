@@ -105,4 +105,14 @@ public class SimulatedPlayer {
             tieBreak1 += opponent.getScore();
         }
     }
+
+    @Override
+    public String toString() {
+        return "Name: " + participant.getName() +
+                "\tElo: " + participant.getElo() +
+                "\tscore: " + score +
+                "\ttieBreak1: " + tieBreak1 +
+                "\ttieBreak2: " + tieBreak2 +
+                "\ttieBreak3: " + tieBreak3;
+    }
 }

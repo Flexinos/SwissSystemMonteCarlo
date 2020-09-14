@@ -3,6 +3,7 @@ public class Participant {
     private final String name;
     private final String country;
     private final int elo;
+    private final String bundesland;
     private final double score;
     private final double tieBreak1;
     private final double tieBreak2;
@@ -13,14 +14,15 @@ public class Participant {
     private int numberOfTopThreeFinishes;
 
     public Participant(String name, int elo) {
-        this(0, "", name, "", elo, 0, 0, 0, 0, "", false);
+        this(0, "", name, "", "", elo, 0, 0, 0, 0, "", false);
     }
 
-    public Participant(int startingRank, String title, String name, String country, int elo, double score, double tieBreak1, double tieBreak2, double tieBreak3, String type, boolean isFemale) {
+    public Participant(int startingRank, String title, String name, String country, String bundesland, int elo, double score, double tieBreak1, double tieBreak2, double tieBreak3, String type, boolean isFemale) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
         this.country = country;
+        this.bundesland = bundesland;
         this.elo = elo;
         this.score = score;
         this.tieBreak1 = tieBreak1;
@@ -92,5 +94,16 @@ public class Participant {
 
     public int compareToByTopThreeFinishes(Participant p2) {
         return -1 * (Integer.compare(this.getNumberOfTopThreeFinishes(), p2.getNumberOfTopThreeFinishes()));
+    }
+
+    @Override
+    public String toString() {
+        return "Starting rank: " + startingRank +
+                " Name: " + name +
+                " Elo: " + elo +
+                " score: " + score +
+                " tieBreak1: " + tieBreak1 +
+                " tieBreak2: " + tieBreak2 +
+                " tieBreak3: " + tieBreak3;
     }
 }

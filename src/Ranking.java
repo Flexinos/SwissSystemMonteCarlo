@@ -31,6 +31,14 @@ public class Ranking {
     public List<SimulatedPlayer> getRanking() {
         return ranking;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder tmp = new StringBuilder("Rang:\tName:\tElo:\tScore:\tTieBreak1:\tTieBreak2:\tTieBreak3:");
+        for (int i = 0, rankingSize = ranking.size(); i < rankingSize; i++) {
+            SimulatedPlayer player = ranking.get(i);
+            tmp.append(i).append(". ").append(player.toString());
+        }
+        return tmp.toString();
+    }
 }
-//write toString
-//rankingByScoreThenTieBreakArrayList.get(rankingByScoreThenTieBreakArrayList.size() - 1).getRanking().stream().map(player -> player.getParticipant().getName() + "\tScore: " + player.getScore() + "\tBuchholz: " + player.getBuchholz() + "\tElo: " + player.getParticipant().getElo()).forEach(System.out::println);
