@@ -86,6 +86,7 @@ public class Round {
         }
         proposedPairings.clear();
         provisionalPairings.stream().map(Pairing::new).forEach(proposedPairings::add);
+        proposedPairings.forEach(Pairing::simulateResult);
         return true;
     }
 

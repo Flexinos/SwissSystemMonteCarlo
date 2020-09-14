@@ -6,17 +6,15 @@ public class Pairing {
     public Pairing(PossiblePairing pairing) {
         this.player1 = pairing.getPlayer1();
         this.player2 = pairing.getPlayer2();
-        simulateResult();
     }
 
     public Pairing(PossiblePairing pairing, boolean includesBye) {
+        // only call if it includes bye
         this.player1 = pairing.getPlayer1();
         this.player2 = pairing.getPlayer2();
         if (includesBye) {
             result = GameResult.ResultOfGame.BYE;
             player1.addGame(player2, 1);
-        } else {
-            simulateResult();
         }
     }
 
@@ -36,7 +34,7 @@ public class Pairing {
         return player2;
     }
 
-    private void simulateResult() {
+    public void simulateResult() {
         result = GameResult.randomResult(player1, player2);
         switch (result) {
             case WHITE_WIN -> {
