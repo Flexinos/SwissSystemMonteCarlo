@@ -13,12 +13,13 @@ public class Participant {
     private int numberOfTopThreeFinishes;
 
     public Participant(String name, int elo) {
-        this(name, "", "", elo, 0, 0, 0, 0, "", false);
+        this(0, "", name, "", elo, 0, 0, 0, 0, "", false);
     }
 
-    public Participant(String name, String title, String country, int elo, double points, double tieBreak1, double tieBreak2, double tieBreak3, String type, boolean isFemale) {
-        this.name = name;
+    public Participant(int startingRank, String title, String name, String country, int elo, double points, double tieBreak1, double tieBreak2, double tieBreak3, String type, boolean isFemale) {
+        this.startingRank = startingRank;
         this.title = title;
+        this.name = name;
         this.country = country;
         this.elo = elo;
         this.points = points;
