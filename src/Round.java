@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 public class Round {
 
     private final Tournament tournament;
-    private final Ranking rankingByScoreThenEloBeforeRound;
+    private Ranking rankingByScoreThenEloBeforeRound;
     private final List<Pairing> unorderedPairings;
 
     public Round(Tournament tournament, Ranking rankingByScoreThenEloBeforeRound) {
@@ -16,7 +16,13 @@ public class Round {
         this.unorderedPairings = new ArrayList<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
     }
 
+    public Round(Tournament tournament, List<Pairing> unorderedPairings) {
+        this.tournament = tournament;
+        this.unorderedPairings = unorderedPairings;
+    }
+
     public void createPairings() {
+        //change to static method in future
         //maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
         List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
         giveByeIfNecessary(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
