@@ -38,7 +38,7 @@ public class SimulatedTournament {
             getNextRound();
         }
         createRankingByScoreThenTieBreak();
-        IntStream.range(0, 3).forEach(i -> tournament.topThreeCounter.computeIfAbsent(rankingByScoreThenTieBreakList.get(rankingByScoreThenTieBreakList.size() - 1).getRanking().get(i).getParticipant(), k -> new LongAdder()).increment());
+        IntStream.range(0, 3).forEach(i -> Main.topThreeCounter.computeIfAbsent(rankingByScoreThenTieBreakList.get(rankingByScoreThenTieBreakList.size() - 1).getRanking().get(i).getParticipant(), k -> new LongAdder()).increment());
     }
 
     private void getNextRound() {

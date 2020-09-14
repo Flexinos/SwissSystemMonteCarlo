@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +16,7 @@ public class Main {
     public static final int numberOfSimulations = 100000;
     public static final int numberOfConcurrentThreads = 6;
     public static final LongAdder finishedSimulations = new LongAdder();
+    public static final Map<Participant, LongAdder> topThreeCounter = new ConcurrentHashMap<>((int) (numberOfParticipants / 0.75), (float) 0.75, Main.numberOfConcurrentThreads);
 
     public static void main(String[] args) throws InterruptedException {
         long startTime = System.nanoTime();
@@ -29,8 +32,8 @@ public class Main {
         pool.shutdown();
         pool.awaitTermination(1, TimeUnit.DAYS);
 
-        myTournament.topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
-        List<Participant> participantsWithTopThreeRanking = new ArrayList<>(myTournament.topThreeCounter.keySet());
+        topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
+        List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
 
         System.out.println("\n\nNumber of top three finishes:\n");
