@@ -53,6 +53,7 @@ public class SimulatedTournament {
 
     private void getNextRound() {
         roundArrayList.add(new Round(tournament, rankingByScoreThenEloList.get(roundsFinished++)));
+        roundArrayList.get(roundArrayList.size() - 1).createPairings();
         rankingByScoreThenEloList.add(new Ranking(simulatedPlayerArrayList, Ranking.TypesOfRanking.ByELO));
     }
 

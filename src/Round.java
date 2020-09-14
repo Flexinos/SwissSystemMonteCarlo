@@ -14,10 +14,9 @@ public class Round {
         this.tournament = tournament;
         this.rankingByScoreThenEloBeforeRound = rankingByScoreThenEloBeforeRound;
         this.unorderedPairings = new ArrayList<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
-        createPairings();
     }
 
-    private void createPairings() {
+    public void createPairings() {
         //maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
         List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
         giveByeIfNecessary(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
