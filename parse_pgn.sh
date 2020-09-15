@@ -5,4 +5,4 @@ if [ $# -ne 1 ]; then
 	exit
 fi
 
-awk -f pgn_parser.awk $1 | sed 's/\"\|\]//g'
+sed 's/\r//g' $1 | awk -f pgn_parser.awk #| awk '/^[01](\.5)?,[0-9]{3,4},[0-9]{3,4}/ {print $0}'
