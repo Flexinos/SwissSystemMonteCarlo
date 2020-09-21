@@ -17,13 +17,13 @@ n
 # skip line if it contains the regex (might need improvement)
 /^\[ECO/ n
 # stop matching if next line is not WhiteElo
-/^\[WhiteE/ !d
+/^\[WhiteElo "\([89][0-9]\{2\}\|[12][0-9]\{3\}\)/ !d
 # append white elo line into hold buffer
 H
 # put next line into pattern space
 n
 # stop matching if it is not BlackElo
-/^\[BlackE/ !d
+/^\[BlackElo "\([89][0-9]\{2\}\|[12][0-9]\{3\}\)/ !d
 # append black elo line to hold buffer
 H
 # put hold buffer content into pattern space
