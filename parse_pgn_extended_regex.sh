@@ -27,7 +27,7 @@ H
 # put hold buffer content into pattern space
 g
 # extract relevant data
-s/^\[Result "(0|1|1\/2)\-(0|1|1\/2)"\]\r?\n\[WhiteElo "([0-9]{3,4})"\]\r?\n\[BlackElo "([0-9]{3,4})/\1,\3,\4/
+s/^\[Result "(0|1|1\/2)\-(0|1|1\/2)"\]\r?\n\[WhiteElo "([0-9]{3,4})"\]\r?\n\[BlackElo "([0-9]{3,4})"\]\r?$/\1,\3,\4/
 # convert result 1 to 2
 s/^1,/2,/
 # convert result 1/2 into 1
