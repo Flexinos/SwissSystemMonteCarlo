@@ -1,13 +1,37 @@
 #!/bin/sh
 
-# pgn file must be specified as the only argument
 if [ $# -ne 1 ]; then
-	echo "Please specify the pgn file"
+	echo 'Please give the pgn file as the only argument.'
 	exit
 fi
 
-# sed removes carriage returns (in case the file comes from Windows)
-# first awk script extracts result, white elo, black elo and puts them into csv format
-# second awk script removes lines which do not match the desired format specified in the regex:
-# result,white elo,black elo\n
-sed 's/\r//g' $1 | awk -f pgn_parser.awk | awk '/^[01](\.5)?,[0-9]{3,4},[0-9]{3,4}$/ {print $0}'
+sed -nE '
+# Quit if line does not contain valid result
+/^\[Result "[01]/ !d
+# put result line into hold buffer
+h
+# put next line into pattern space
+n
+# skip line if it contains the regex (might need improvement)
+/^\[ECO/ n
+# stop matching if next line is not WhiteElo
+/^\[WhiteElo "([89][0-9]{2}|[12][0-9]{3})/ !d
+# append white elo line into hold buffer
+H
+# put next line into pattern space
+n
+# stop matching if it is not BlackElo
+/^\[BlackElo "([89][0-9]{2}|[12][0-9]{3})/ !d
+# append black elo line to hold buffer
+H
+# put hold buffer content into pattern space
+g
+# extract relevant data
+s/^\[Result "(0|1|1\/2)\-(0|1|1\/2)"\]\r?\n\[WhiteElo "([0-9]{3,4})"\]\r?\n\[BlackElo "([0-9]{3,4})"\]\r?$/\1,\3,\4/
+# convert result 1 to 2
+s/^1,/2,/
+# convert result 1/2 into 1
+s/^1\/2/1/
+# print resulting csv line
+p
+' $1
