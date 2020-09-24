@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class LookUpTable {
-    private static boolean ready = false;
     private static final List<LookUpTableEntry> lookUpTable = Main.lookUpTable;
 
     private LookUpTable() {
@@ -26,7 +25,6 @@ public class LookUpTable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ready = true;
         return lookUpTableEntryArrayList;
     }
 
