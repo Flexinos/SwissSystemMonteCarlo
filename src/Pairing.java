@@ -35,7 +35,7 @@ public class Pairing {
     }
 
     public void simulateResult() {
-        result = GameResult.randomResult(player1, player2);
+        result = GameResult.randomResultLookUp(player1, player2);
         switch (result) {
             case WHITE_WIN -> {
                 player1.addGame(player2, 1, true);
