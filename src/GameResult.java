@@ -4,7 +4,7 @@ public class GameResult {
     private static final Random random = new Random();
 
     public static ResultOfGame randomResult(SimulatedPlayer whitePlayer, SimulatedPlayer blackPlayer) {
-        double eloDiff = whitePlayer.getParticipant().getElo() - blackPlayer.getParticipant().getElo();
+        double eloDiff = whitePlayer.getElo() - blackPlayer.getElo();
         double whiteScore = 1 / (1 + Math.pow(10, -eloDiff / 400));
         double underdogScore;
         if (whiteScore > 0.5) {
@@ -28,7 +28,7 @@ public class GameResult {
 
     public static ResultOfGame randomResultLookUp(SimulatedPlayer whitePlayer, SimulatedPlayer blackPlayer) {
         float randomValue = random.nextFloat();
-        float[] probabilitiesArray = LookUpTable.getProbabilities(whitePlayer.getParticipant().getElo(), blackPlayer.getParticipant().getElo());
+        float[] probabilitiesArray = LookUpTable.getProbabilities(whitePlayer.getElo(), blackPlayer.getElo());
         if (randomValue < probabilitiesArray[0]) {
             return ResultOfGame.BLACK_WIN;
         } else if (randomValue < probabilitiesArray[0] + probabilitiesArray[1]) {

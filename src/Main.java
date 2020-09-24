@@ -38,8 +38,7 @@ public class Main {
         topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
-        System.out.println("\n\nNumber of top three finishes:\n");
-        participantsWithTopThreeRanking.stream().map(participant -> participant.getName() + "\t" + "starting rank: " + participant.getStartingRank() + "\t" + "Elo: " + participant.getElo() + "\t" + participant.getNumberOfTopThreeFinishes()).forEach(System.out::println);
+        participantsWithTopThreeRanking.stream().map(participant -> participant.getName() + "\t" + "starting rank: " + participant.getStartingRank() + "\t" + "Elo: " + participant.getElo() + "\t" + "Top three finishes: " + participant.getNumberOfTopThreeFinishes()).forEach(System.out::println);
 
         long duration = (System.nanoTime() - startTime) / 1000000;
         System.out.println("\nTotal runtime: " + duration / 1000 + "." + duration % 1000 + "s");
