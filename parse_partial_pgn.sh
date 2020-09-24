@@ -1,11 +1,13 @@
 #!/bin/sh
 
-if [ $# -ne 1 ]; then
-	echo 'Please give the pgn file as the only argument.'
+if [ $# -ne 4 ]; then
+	echo "Usage: $0 startline endline infile outfile"
 	exit
 fi
 
 sed -nE '
+1,'"$1"' d
+'"$2"' q
 # Quit if line does not contain valid result
 /^\[Result "[01]/ !d
 # put result line into hold buffer
@@ -34,4 +36,4 @@ s/^1,/2,/
 s/^1\/2/1/
 # print resulting csv line
 p
-' $1
+' $3 > $4
