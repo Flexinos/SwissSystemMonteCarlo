@@ -17,7 +17,7 @@ public class Main {
     public static final int numberOfConcurrentThreads = 6;
     public static final LongAdder finishedSimulations = new LongAdder();
     public static final Map<Participant, LongAdder> topThreeCounter = new ConcurrentHashMap<>((int) (numberOfParticipants / 0.75), (float) 0.75, Main.numberOfConcurrentThreads);
-    public static final ArrayList<LookUpTableEntry> lookUpTable = LookUpTable.createLookUpTable();
+    public static final List<LookUpTableEntry> lookUpTable = LookUpTable.createLookUpTable();
 
     public static void main(String[] args) throws InterruptedException {
         long startTime = System.nanoTime();

@@ -7,7 +7,7 @@ import java.util.Scanner;
 
 public class LookUpTable {
     private static boolean ready = false;
-    private static final ArrayList<LookUpTableEntry> lookUpTable = Main.lookUpTable;
+    private static final List<LookUpTableEntry> lookUpTable = Main.lookUpTable;
 
     private LookUpTable() {
     }
@@ -38,6 +38,6 @@ public class LookUpTable {
                 System.out.println(e.toString());
             }
         }
-        return lookUpTable.get((EloWhite - 800) * 2000 + (EloBlack - 800)).getProbabilities();
+        return lookUpTable.get((EloWhite - 800) * 2200 + (EloBlack - 800)).getProbabilities();
     }
 }
