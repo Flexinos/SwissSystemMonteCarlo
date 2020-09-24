@@ -17,12 +17,12 @@ public class Main {
     public static final int numberOfConcurrentThreads = 6;
     public static final LongAdder finishedSimulations = new LongAdder();
     public static final Map<Participant, LongAdder> topThreeCounter = new ConcurrentHashMap<>((int) (numberOfParticipants / 0.75), (float) 0.75, Main.numberOfConcurrentThreads);
-    public static final List<LookUpTableEntry> lookUpTable = LookUpTable.createLookUpTable();
 
     public static void main(String[] args) throws InterruptedException {
         long startTime = System.nanoTime();
         final Random random = new Random();
         Tournament myTournament = new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, 1000 + random.nextInt(1600))).collect(Collectors.toList()));
+        LookUpTable.createLookUpTable();
 
         ExecutorService pool = Executors.newFixedThreadPool(numberOfConcurrentThreads);
         for (int i = 0; i < numberOfConcurrentThreads; i++) {
