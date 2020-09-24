@@ -22,7 +22,7 @@ public class Main {
     public static final LongAdder[][] rankingTable = new LongAdder[numberOfParticipants][numberOfParticipants];
 
     public static void main(String[] args) throws InterruptedException {
-        LookUpTable.createLookUpTable();
+        LookUpTable.createLookupTable();
         long startTime = System.nanoTime();
         final Random random = new Random();
         Tournament myTournament = new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo))).collect(Collectors.toList()));
