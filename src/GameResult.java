@@ -16,7 +16,7 @@ public class GameResult {
         double drawChance = underdogScore;
         double whiteWinChance = whiteScore - drawChance * 0.5;
 
-        double randomValue = random.nextFloat();
+        float randomValue = random.nextFloat();
         if (randomValue < whiteWinChance) {
             return ResultOfGame.WHITE_WIN;
         } else if (randomValue < whiteWinChance + drawChance) {
@@ -27,7 +27,7 @@ public class GameResult {
     }
 
     public static ResultOfGame randomResultLookUp(SimulatedPlayer whitePlayer, SimulatedPlayer blackPlayer) {
-        double randomValue = random.nextFloat();
+        float randomValue = random.nextFloat();
         float[] probabilitiesArray = LookUpTable.getProbabilities(whitePlayer.getParticipant().getElo(), blackPlayer.getParticipant().getElo());
         if (randomValue < probabilitiesArray[0]) {
             return ResultOfGame.BLACK_WIN;
