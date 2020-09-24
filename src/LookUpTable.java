@@ -31,13 +31,6 @@ public class LookUpTable {
     }
 
     public static float[] getProbabilities(int EloWhite, int EloBlack) {
-        while (!ready) {
-            try {
-                Thread.sleep(10000);
-            } catch (Exception e) {
-                System.out.println(e.toString());
-            }
-        }
         return lookUpTable.get((EloWhite - 800) * 2200 + (EloBlack - 800)).PROBABILITIES;
     }
 }
