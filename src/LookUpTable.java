@@ -12,7 +12,7 @@ public class LookUpTable {
     }
 
     public static ArrayList<LookUpTableEntry> createLookUpTable() {
-        ArrayList<LookUpTableEntry> lookUpTableEntryArrayList = new ArrayList<>(4000000);
+        ArrayList<LookUpTableEntry> lookUpTableEntryArrayList = new ArrayList<>(4840000);
         try (FileInputStream inputStream = new FileInputStream("C:\\Users\\Laurin\\Desktop\\lookuptable1.txt"); Scanner sc = new Scanner(inputStream, StandardCharsets.UTF_8)) {
             while (sc.hasNextLine()) {
                 String line = sc.nextLine();
