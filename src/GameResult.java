@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class GameResult {
@@ -29,7 +29,7 @@ public class GameResult {
 
     public static ResultOfGame randomResultLookUp(SimulatedPlayer whitePlayer, SimulatedPlayer blackPlayer) {
         double randomValue = random.nextFloat();
-        ArrayList<Float> probabilitiesArrayList = LookUpTable.getProbabilities(whitePlayer.getParticipant().getElo(), blackPlayer.getParticipant().getElo());
+        List<Float> probabilitiesArrayList = LookUpTable.getProbabilities(whitePlayer.getParticipant().getElo(), blackPlayer.getParticipant().getElo());
         if (randomValue < probabilitiesArrayList.get(0)) {
             return ResultOfGame.BLACK_WIN;
         } else if (randomValue < probabilitiesArrayList.get(0) + probabilitiesArrayList.get(1)) {

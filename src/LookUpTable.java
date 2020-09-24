@@ -2,11 +2,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class LookUpTable {
     private static boolean ready = false;
-    private static final ArrayList<LookUpTableEntry> lookUpTable = createLookUpTable();
+    private static final ArrayList<LookUpTableEntry> lookUpTable = Main.lookUpTable;
 
     private LookUpTable() {
     }
@@ -29,7 +30,7 @@ public class LookUpTable {
         return lookUpTableEntryArrayList;
     }
 
-    public static ArrayList<Float> getProbabilities(int EloWhite, int EloBlack) {
+    public static List<Float> getProbabilities(int EloWhite, int EloBlack) {
         while (!ready) {
             try {
                 Thread.sleep(10000);

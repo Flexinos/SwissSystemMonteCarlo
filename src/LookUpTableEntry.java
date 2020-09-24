@@ -1,18 +1,19 @@
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class LookUpTableEntry {
     private final int EloWhite;
     private final int EloBLack;
-    private final ArrayList<Float> probabilities;
+    private final Float[] probabilities;
 
     public LookUpTableEntry(String[] splitLine) {
         assert splitLine != null;
-        EloWhite = Integer.getInteger(splitLine[0]);
-        EloBLack = Integer.getInteger(splitLine[1]);
-        this.probabilities = new ArrayList<>(3);
-        for (String string : splitLine) {
-            probabilities.add(Float.parseFloat(string));
-        }
+        EloWhite = Integer.parseInt(splitLine[0]);
+        EloBLack = Integer.parseInt(splitLine[1]);
+        probabilities = new Float[3];
+        probabilities[0] = Float.parseFloat(splitLine[2]);
+        probabilities[1] = Float.parseFloat(splitLine[3]);
+        probabilities[2] = Float.parseFloat(splitLine[4]);
     }
 
     public int getEloWhite() {
@@ -23,7 +24,7 @@ public class LookUpTableEntry {
         return EloBLack;
     }
 
-    public ArrayList<Float> getProbabilities() {
-        return probabilities;
+    public List<Float> getProbabilities() {
+        return Arrays.asList(probabilities);
     }
 }
