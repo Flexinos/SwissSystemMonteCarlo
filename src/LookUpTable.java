@@ -30,7 +30,7 @@ public class LookUpTable {
         return lookUpTableEntryArrayList;
     }
 
-    public static List<Float> getProbabilities(int EloWhite, int EloBlack) {
+    public static float[] getProbabilities(int EloWhite, int EloBlack) {
         while (!ready) {
             try {
                 Thread.sleep(10000);
@@ -38,6 +38,6 @@ public class LookUpTable {
                 System.out.println(e.toString());
             }
         }
-        return lookUpTable.get((EloWhite - 800) * 2200 + (EloBlack - 800)).getProbabilities();
+        return lookUpTable.get((EloWhite - 800) * 2200 + (EloBlack - 800)).PROBABILITIES;
     }
 }
