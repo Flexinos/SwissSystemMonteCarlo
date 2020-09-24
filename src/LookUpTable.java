@@ -2,11 +2,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class LookUpTable {
-    private static final List<LookUpTableEntry> lookUpTable = Main.lookUpTable;
 
     private LookUpTable() {
     }
@@ -29,6 +27,6 @@ public class LookUpTable {
     }
 
     public static float[] getProbabilities(int EloWhite, int EloBlack) {
-        return lookUpTable.get((EloWhite - 800) * 2200 + (EloBlack - 800)).PROBABILITIES;
+        return Main.lookUpTable.get((EloWhite - 800) * 2200 + (EloBlack - 800)).PROBABILITIES;
     }
 }
