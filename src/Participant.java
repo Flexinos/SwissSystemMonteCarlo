@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Participant {
     private final String title;
     private final String name;
@@ -105,5 +108,38 @@ public class Participant {
                 " tieBreak1: " + tieBreak1 +
                 " tieBreak2: " + tieBreak2 +
                 " tieBreak3: " + tieBreak3;
+    }
+
+    public static void printSimulationResults(List<Participant> participants) {
+        String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes"};
+        int[] fieldLengths = new int[columnNames.length];
+        for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
+            fieldLengths[fieldNumber] = columnNames[fieldNumber].length();
+        }
+        List<String[]> allParticipantsEntries = new ArrayList<>();
+        for (Participant participant : participants) {
+            String[] participantEntries = new String[columnNames.length];
+            participantEntries[0] = participant.getName();
+            participantEntries[1] = Integer.toString(participant.getStartingRank());
+            participantEntries[2] = Integer.toString(participant.getElo());
+            participantEntries[3] = Integer.toString(participant.getNumberOfTopThreeFinishes());
+            for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
+                if (participantEntries[fieldNumber].length() > fieldLengths[fieldNumber]) {
+                    fieldLengths[fieldNumber] = participantEntries[fieldNumber].length();
+                }
+            }
+            allParticipantsEntries.add(participantEntries);
+        }
+        for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
+            System.out.printf("%-" + fieldLengths[fieldNumber] + "s  ", columnNames[fieldNumber]);
+        }
+        System.out.println();
+        for (String[] participantEntries : allParticipantsEntries) {
+            for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
+                System.out.printf("%" + fieldLengths[fieldNumber] + "s  ", participantEntries[fieldNumber]);
+            }
+            System.out.println();
+        }
+
     }
 }

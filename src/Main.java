@@ -39,7 +39,7 @@ public class Main {
         topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
-        participantsWithTopThreeRanking.stream().map(participant -> participant.getName() + "\t" + "starting rank: " + participant.getStartingRank() + "\t" + "Elo: " + participant.getElo() + "\t" + "Top three finishes: " + participant.getNumberOfTopThreeFinishes()).forEach(System.out::println);
+        Participant.printSimulationResults(participantsWithTopThreeRanking);
 
         long duration = (System.nanoTime() - startTime) / 1000000;
         System.out.println("\nTotal runtime: " + duration / 1000 + "." + duration % 1000 + "s");
@@ -57,7 +57,7 @@ public class Main {
         rankingTable[p.getParticipant().getStartingRank() - 1][rank].increment();
     }
 
-    synchronized public static int getSimulationTicket(){
+    synchronized public static int getSimulationTicket() {
         return finished_simulations++;
     }
 }
