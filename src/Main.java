@@ -23,7 +23,7 @@ public class Main {
 
     public static void main(String[] args) throws InterruptedException {
         LookUpTable.createLookupTable();
-        initializeRankinTable();
+        initializeRankingTable();
         long startTime = System.nanoTime();
         final Random random = new Random();
         Tournament myTournament = new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo))).collect(Collectors.toList()));
@@ -45,7 +45,7 @@ public class Main {
         System.out.println("\nTotal runtime: " + duration / 1000 + "." + duration % 1000 + "s");
     }
 
-    private static void initializeRankinTable(){
+    private static void initializeRankingTable(){
         for(int row = 0; row < rankingTable.length; ++row) {
             for (int column = 0; column < rankingTable.length; ++column) {
                 rankingTable[row][column] = new LongAdder();
