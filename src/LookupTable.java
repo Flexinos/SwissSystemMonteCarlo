@@ -31,6 +31,6 @@ public class LookupTable {
     }
 
     public static float[] getProbabilities(int EloWhite, int EloBlack) {
-        return lookupTable[EloBlack - LOWEST_ELO][EloWhite - LOWEST_ELO];
+        return lookupTable[EloWhite - LOWEST_ELO][EloBlack - LOWEST_ELO];
     }
 }
