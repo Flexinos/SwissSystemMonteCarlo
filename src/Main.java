@@ -13,8 +13,8 @@ import java.util.stream.IntStream;
 public class Main {
     public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 9;
-    public static final int numberOfSimulations = 2;
-    public static final int numberOfConcurrentThreads = 1;
+    public static final int numberOfSimulations = 100000;
+    public static final int numberOfConcurrentThreads = 10;
     public static final int minElo = 1000;
     public static final int maxElo = 2600;
     private static int finished_simulations = 0;
