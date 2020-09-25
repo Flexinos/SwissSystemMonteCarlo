@@ -119,10 +119,11 @@ public class Participant {
         List<String[]> allParticipantsEntries = new ArrayList<>();
         for (Participant participant : participants) {
             String[] participantEntries = new String[columnNames.length];
-            participantEntries[0] = participant.getName();
-            participantEntries[1] = Integer.toString(participant.getStartingRank());
-            participantEntries[2] = Integer.toString(participant.getElo());
-            participantEntries[3] = Integer.toString(participant.getNumberOfTopThreeFinishes());
+            int currentFieldNumber = 0;
+            participantEntries[currentFieldNumber++] = participant.getName();
+            participantEntries[currentFieldNumber++] = Integer.toString(participant.getStartingRank());
+            participantEntries[currentFieldNumber++] = Integer.toString(participant.getElo());
+            participantEntries[currentFieldNumber] = Integer.toString(participant.getNumberOfTopThreeFinishes());
             for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
                 if (participantEntries[fieldNumber].length() > fieldLengths[fieldNumber]) {
                     fieldLengths[fieldNumber] = participantEntries[fieldNumber].length();
