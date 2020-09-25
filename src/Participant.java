@@ -96,7 +96,8 @@ public class Participant {
     }
 
     public int compareToByTopThreeFinishes(Participant p2) {
-        return -1 * (Integer.compare(this.getNumberOfTopThreeFinishes(), p2.getNumberOfTopThreeFinishes()));
+        int result = Integer.compare(this.getNumberOfTopThreeFinishes(), p2.getNumberOfTopThreeFinishes());
+        return result != 0 ? result : compareToByElo(p2);
     }
 
     @Override
