@@ -17,7 +17,7 @@ public class Main {
     public static final int numberOfConcurrentThreads = 1;
     public static final int minElo = 1000;
     public static final int maxElo = 2600;
-    public static final LongAdder finishedSimulations = new LongAdder();
+    private static int finished_simulations = 0;
     public static final Map<Participant, LongAdder> topThreeCounter = new ConcurrentHashMap<>((int) (numberOfParticipants / 0.75), (float) 0.75, Main.numberOfConcurrentThreads);
     public static final LongAdder[][] rankingTable = new LongAdder[numberOfParticipants][numberOfParticipants];
 
@@ -30,7 +30,7 @@ public class Main {
 
         ExecutorService pool = Executors.newFixedThreadPool(numberOfConcurrentThreads);
         for (int i = 0; i < numberOfConcurrentThreads; i++) {
-            WorkerThread workerThread = new WorkerThread(myTournament, (int) Math.floor((double) numberOfSimulations / numberOfConcurrentThreads));
+            WorkerThread workerThread = new WorkerThread(myTournament, numberOfSimulations);
             pool.execute(workerThread);
         }
         pool.shutdown();
@@ -55,5 +55,9 @@ public class Main {
 
     public static void addRankToTable(SimulatedPlayer p, int i) {
         rankingTable[p.getParticipant().getStartingRank() - 1][i].increment();
+    }
+
+    synchronized public static int getSimulationTicket(){
+        return finished_simulations++;
     }
 }

@@ -9,13 +9,14 @@ public class WorkerThread implements Runnable {
 
     @Override
     public void run() {
-        for (int j = 0; j < numberOfSimulations; j++) {
+        int simulationTicket = Main.getSimulationTicket();
+        while(simulationTicket < numberOfSimulations) {
             SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
             simulatedTournament.simulateTournament();
-            Main.finishedSimulations.increment();
-            if (Main.finishedSimulations.intValue() % 10000 == 0) {
-                System.out.println(Main.finishedSimulations.intValue());
+            if (simulationTicket % 10000 == 0) {
+                System.out.println(simulationTicket);
             }
+            simulationTicket = Main.getSimulationTicket();
         }
     }
 }
