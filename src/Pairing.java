@@ -9,9 +9,7 @@ public class Pairing {
     }
 
     public Pairing(PossiblePairing pairing, boolean includesBye) {
-        // only call if it includes bye
-        this.player1 = pairing.getPlayer1();
-        this.player2 = pairing.getPlayer2();
+        this(pairing);
         if (includesBye) {
             result = GameResult.ResultOfGame.BYE;
             player1.addGame(player2, 1);
@@ -19,7 +17,6 @@ public class Pairing {
     }
 
     public static boolean pairingAllowed(SimulatedPlayer player1, SimulatedPlayer player2) {
-        //todo check if this really works
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");
             return false;
@@ -37,6 +34,9 @@ public class Pairing {
     }
 
     public void simulateResult() {
+        if (result != null) {
+            return;
+        }
         result = GameResult.randomResultLookUp(player1, player2);
         switch (result) {
             case WHITE_WIN -> {

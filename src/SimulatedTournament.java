@@ -9,16 +9,14 @@ public class SimulatedTournament {
     private int roundsFinished;
     private final List<SimulatedPlayer> simulatedPlayerList;
     private final List<Round> roundList;
-    private final List<Ranking> rankingByScoreThenEloList;
-    private final List<Ranking> rankingByScoreThenTieBreakList;
+    private Ranking rankingByScoreThenEloList;
+    private Ranking rankingByScoreThenTieBreakList;
     private BitSet gameMatrix;
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;
         this.roundsFinished = tournament.getFinishedRounds();
         this.roundList = new ArrayList<>(tournament.getTotalRounds());
-        this.rankingByScoreThenEloList = new ArrayList<>(tournament.getTotalRounds());
-        this.rankingByScoreThenTieBreakList = new ArrayList<>(tournament.getTotalRounds());
         this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerList::add);
         gameMatrix = new BitSet(simulatedPlayerList.size() ^ 2);
@@ -28,8 +26,6 @@ public class SimulatedTournament {
         this.tournament = tournament;
         this.roundsFinished = tournament.getFinishedRounds();
         this.roundList = new ArrayList<>(tournament.getTotalRounds());
-        this.rankingByScoreThenEloList = new ArrayList<>(tournament.getTotalRounds());
-        this.rankingByScoreThenTieBreakList = new ArrayList<>(tournament.getTotalRounds());
         this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerList::add);
     }
@@ -43,26 +39,27 @@ public class SimulatedTournament {
     }
 
     public void simulateTournament() {
-        rankingByScoreThenEloList.add(new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByELO));
+        rankingByScoreThenEloList = new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByELO);
         //rankingByScoreThenEloList.get(0).getRanking().stream().map(player -> player.getParticipant().getName() + "\t" + player.getParticipant().getElo()).forEach(System.out::println);
         while (roundsFinished < tournament.getTotalRounds()) {
             getNextRound();
+            roundsFinished++;
         }
         createRankingByScoreThenTieBreak();
-        IntStream.range(0, 3).forEach(i -> Main.topThreeCounter.computeIfAbsent(rankingByScoreThenTieBreakList.get(rankingByScoreThenTieBreakList.size() - 1).getRanking().get(i).getParticipant(), k -> new LongAdder()).increment());
+        IntStream.range(0, 3).forEach(i -> Main.topThreeCounter.computeIfAbsent(rankingByScoreThenTieBreakList.getRanking().get(i).getParticipant(), k -> new LongAdder()).increment());
         for (int i = 0, simulatedPlayerArrayListSize = simulatedPlayerList.size(); i < simulatedPlayerArrayListSize; i++) {
             Main.addRankToTable(simulatedPlayerList.get(i), i);
         }
     }
 
     private void getNextRound() {
-        roundList.add(new Round(tournament, rankingByScoreThenEloList.get(roundsFinished++)));
+        roundList.add(new Round(tournament, rankingByScoreThenEloList));
         roundList.get(roundList.size() - 1).createPairings();
-        rankingByScoreThenEloList.add(new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByELO));
+        rankingByScoreThenEloList = new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByELO);
     }
 
     private void createRankingByScoreThenTieBreak() {
         simulatedPlayerList.forEach(SimulatedPlayer::updateTieBreaks);
-        rankingByScoreThenTieBreakList.add(new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByBUCHHOLZ));
+        rankingByScoreThenTieBreakList = new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByBUCHHOLZ);
     }
 }
