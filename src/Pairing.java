@@ -23,7 +23,9 @@ public class Pairing {
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");
             return false;
-        } else return !player1.getSimulatedTournament().haveMet(player1, player2);
+        } else {
+            return !player1.getSimulatedTournament().haveMet(player1, player2);
+        }
     }
 
     public SimulatedPlayer getPlayer1() {
