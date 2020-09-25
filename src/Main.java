@@ -22,7 +22,7 @@ public class Main {
     public static final LongAdder[][] rankingTable = new LongAdder[numberOfParticipants][numberOfParticipants];
 
     public static void main(String[] args) throws InterruptedException {
-        LookUpTable.createLookupTable();
+        LookupTable.createLookupTable();
         initializeRankingTable();
         long startTime = System.nanoTime();
         final Random random = new Random();

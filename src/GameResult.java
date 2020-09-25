@@ -28,7 +28,7 @@ public class GameResult {
 
     public static ResultOfGame randomResultLookUp(SimulatedPlayer whitePlayer, SimulatedPlayer blackPlayer) {
         float randomValue = random.nextFloat();
-        float[] probabilitiesArray = LookUpTable.getProbabilities(whitePlayer.getElo(), blackPlayer.getElo());
+        float[] probabilitiesArray = LookupTable.getProbabilities(whitePlayer.getElo(), blackPlayer.getElo());
         if (randomValue < probabilitiesArray[0]) {
             return ResultOfGame.BLACK_WIN;
         } else if (randomValue < probabilitiesArray[0] + probabilitiesArray[1]) {

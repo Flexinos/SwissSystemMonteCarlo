@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
-public class LookUpTable {
+public class LookupTable {
 
     private static final int LOWEST_ELO = 800;
     private static final int HIGHEST_ELO = 2999;
@@ -12,7 +12,7 @@ public class LookUpTable {
 
     private static final float[][][] lookupTable = new float[ELO_RANGE][ELO_RANGE][3];
 
-    private LookUpTable() {
+    private LookupTable() {
     }
 
     public static void createLookupTable() {
@@ -20,7 +20,7 @@ public class LookUpTable {
         try (FileInputStream inputStream = new FileInputStream("C:\\Users\\Laurin\\Desktop\\lookuptable1.txt"); Scanner sc = new Scanner(inputStream, StandardCharsets.UTF_8)) {
             for (int row = 0; row < ELO_RANGE; ++row) {
                 for (int column = 0; column < ELO_RANGE; ++column) {
-                    lookupTable[row][column] = new LookUpTableEntry(sc.nextLine().split(" ")).PROBABILITIES;
+                    lookupTable[row][column] = new LookupTableEntry(sc.nextLine().split(" ")).PROBABILITIES;
                 }
             }
         } catch (IOException | NoSuchElementException e) {
