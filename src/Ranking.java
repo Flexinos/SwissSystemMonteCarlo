@@ -35,7 +35,7 @@ public class Ranking {
     @Override
     public String toString() {
         StringBuilder tmp = new StringBuilder("Rang:\tName:\tElo:\tScore:\tTieBreak1:\tTieBreak2:\tTieBreak3:");
-        for (int i = 0, rankingSize = ranking.size(); i < rankingSize; i++) {
+        for (int i = 0, rankingSize = ranking.size(); i < rankingSize; ++i) {
             SimulatedPlayer player = ranking.get(i);
             tmp.append(i).append(". ").append(player.toString());
         }
