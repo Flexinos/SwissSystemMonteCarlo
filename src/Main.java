@@ -45,15 +45,15 @@ public class Main {
         System.out.println("\nTotal runtime: " + duration / 1000 + "." + duration % 1000 + "s");
     }
 
-    private static void initializeRankingTable(){
-        for(int row = 0; row < rankingTable.length; ++row) {
+    private static void initializeRankingTable() {
+        for (int row = 0; row < rankingTable.length; ++row) {
             for (int column = 0; column < rankingTable.length; ++column) {
                 rankingTable[row][column] = new LongAdder();
             }
         }
     }
 
-    public static void addRankToTable(SimulatedPlayer p, int i) {
-        rankingTable[p.getParticipant().getStartingRank() - 1][i].increment();
+    public static void addRankToTable(SimulatedPlayer p, int rank) {
+        rankingTable[p.getParticipant().getStartingRank() - 1][rank].increment();
     }
 }
