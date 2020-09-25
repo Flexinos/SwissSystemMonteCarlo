@@ -18,7 +18,7 @@ public class Main {
     public static final int minElo = 1000;
     public static final int maxElo = 2600;
     private static int finished_simulations = 0;
-    public static final Map<Participant, LongAdder> topThreeCounter = new ConcurrentHashMap<>((int) (numberOfParticipants / 0.75), (float) 0.75, Main.numberOfConcurrentThreads);
+    public static final Map<Participant, LongAdder> topThreeCounter = new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
     public static final LongAdder[][] rankingTable = new LongAdder[numberOfParticipants][numberOfParticipants];
 
     public static void main(String[] args) throws InterruptedException {
