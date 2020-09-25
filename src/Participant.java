@@ -110,8 +110,22 @@ public class Participant {
                 " tieBreak3: " + tieBreak3;
     }
 
+    private enum Padding {LEFT, RIGHT}
+
+    private static String paddingToString(Padding padding) {
+        if (padding.equals(Padding.LEFT)) {
+            return "-";
+        } else {
+            return "";
+        }
+    }
+
     public static void printSimulationResults(List<Participant> participants) {
         String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes"};
+        Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
+        Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
+        assert columnNames.length == columnNamePaddings.length;
+        assert columnNames.length == participantFieldsPaddings.length;
         int[] fieldLengths = new int[columnNames.length];
         for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
             fieldLengths[fieldNumber] = columnNames[fieldNumber].length();
@@ -132,12 +146,12 @@ public class Participant {
             allParticipantsEntries.add(participantEntries);
         }
         for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
-            System.out.printf("%-" + fieldLengths[fieldNumber] + "s  ", columnNames[fieldNumber]);
+            System.out.printf("%" + paddingToString(columnNamePaddings[fieldNumber]) + fieldLengths[fieldNumber] + "s  ", columnNames[fieldNumber]);
         }
         System.out.println();
         for (String[] participantEntries : allParticipantsEntries) {
             for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
-                System.out.printf("%" + fieldLengths[fieldNumber] + "s  ", participantEntries[fieldNumber]);
+                System.out.printf("%" + paddingToString(participantFieldsPaddings[fieldNumber]) + fieldLengths[fieldNumber] + "s  ", participantEntries[fieldNumber]);
             }
             System.out.println();
         }
