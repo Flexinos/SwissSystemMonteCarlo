@@ -12,7 +12,7 @@ public class Tournament {
         this.totalRounds = totalRounds;
         this.participantArrayList.addAll(participants);
         this.participantArrayList.sort(Participant::compareToByElo);
-        for (int i = 0; i < participantArrayList.size(); i++) {
+        for (int i = 0; i < participantArrayList.size(); ++i) {
             participantArrayList.get(i).setStartingRank(i + 1);
         }
         if (participants.size() % 2 == 1) {
