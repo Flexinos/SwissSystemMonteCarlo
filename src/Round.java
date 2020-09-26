@@ -97,31 +97,6 @@ public class Round {
         }
     }
 
-    private void printPlayersInBracket(List<SimulatedPlayer> unpairedPlayersInBracket, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromUpperBracket) {
-        if (!downfloatersFromUpperBracket.isEmpty()) {
-            printPlayersInBracket(typeOfBracket.DOWNFLOATERS, downfloatersFromUpperBracket);
-            printPlayersInBracket(typeOfBracket.NONDOWNFLOATERS, nonDownfloaters);
-            printPlayersInBracket(typeOfBracket.TOTAL, unpairedPlayersInBracket);
-        } else {
-            System.out.println("\nNo downfloaters");
-            printPlayersInBracket(typeOfBracket.NONDOWNFLOATERS, nonDownfloaters);
-        }
-    }
-
-    private void printPlayersInBracket(typeOfBracket type, List<SimulatedPlayer> playersInBracket) {
-        System.out.println();
-        if (type == typeOfBracket.TOTAL) {
-            System.out.println("Total Players in this bracket: " + playersInBracket.size());
-        } else if (type == typeOfBracket.DOWNFLOATERS) {
-            System.out.println("Downfloaters from upper bracket with score " + playersInBracket.get(playersInBracket.size() - 1).getScore() + ": " + playersInBracket.size());
-        } else {
-            System.out.println("Players in this bracket for score " + playersInBracket.get(playersInBracket.size() - 1).getScore() + ": " + playersInBracket.size());
-        }
-        for (SimulatedPlayer player : playersInBracket) {
-            System.out.print(player.getParticipant().getName() + ", ");
-        }
-    }
-
     private void giveByeToLastEligiblePlayer(List<SimulatedPlayer> unpairedPlayers) {
         for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
             if (!unpairedPlayers.get(i).hasReceivedBye()) {
