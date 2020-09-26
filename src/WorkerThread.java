@@ -1,5 +1,5 @@
 public class WorkerThread implements Runnable {
-    private static final int simulationsPerProgressMessage = 10000;
+    private static final int simulationsPerProgressMessage = 1000;
     private final Tournament tournament;
     private final int numberOfSimulations;
     private final int numberOfSimulationsStringLength;
