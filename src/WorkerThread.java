@@ -1,10 +1,12 @@
 public class WorkerThread implements Runnable {
     private final Tournament tournament;
     private final int numberOfSimulations;
+    private final int numberOfSimulationsStringLength;
 
     public WorkerThread(Tournament tournament, int numberOfSimulations) {
         this.tournament = tournament;
         this.numberOfSimulations = numberOfSimulations;
+        this.numberOfSimulationsStringLength = Integer.toString(numberOfSimulations).length();
     }
 
     @Override
@@ -14,7 +16,11 @@ public class WorkerThread implements Runnable {
             SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
             simulatedTournament.simulateTournament();
             if (++simulationTicket % 10000 == 0) {
-                System.out.printf("Completed %7d / %7d simulations." + System.lineSeparator(), simulationTicket, numberOfSimulations);
+                System.out.printf(
+                        "Completed %" + numberOfSimulationsStringLength +
+                                "d / %" +  numberOfSimulationsStringLength +
+                                "d simulations." + System.lineSeparator(),
+                        simulationTicket, numberOfSimulations);
             }
             simulationTicket = Main.getSimulationTicket();
         }
