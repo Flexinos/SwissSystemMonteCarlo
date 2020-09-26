@@ -1,4 +1,5 @@
 public class WorkerThread implements Runnable {
+    private final int simulationsPerProgressMessage = 10000;
     private final Tournament tournament;
     private final int numberOfSimulations;
     private final int numberOfSimulationsStringLength;
@@ -15,7 +16,7 @@ public class WorkerThread implements Runnable {
         while(simulationTicket < numberOfSimulations) {
             SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
             simulatedTournament.simulateTournament();
-            if (++simulationTicket % 10000 == 0) {
+            if (++simulationTicket % simulationsPerProgressMessage == 0) {
                 System.out.printf(
                         "Completed %" + numberOfSimulationsStringLength +
                                 "d / %" +  numberOfSimulationsStringLength +
