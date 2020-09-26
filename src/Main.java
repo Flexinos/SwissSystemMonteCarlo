@@ -13,12 +13,16 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Main {
+    // Variables for configuration
     public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 9;
     public static final int numberOfSimulations = 100000;
     public static final int numberOfConcurrentThreads = 6;
+    // Used for randomly created participants
     public static final int minElo = 1000;
     public static final int maxElo = 2600;
+    // End of configuration
+
     private static int finished_simulations = 0;
     public static final Map<Participant, LongAdder> topThreeCounter =
             new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
