@@ -13,8 +13,8 @@ public class WorkerThread implements Runnable {
         while(simulationTicket < numberOfSimulations) {
             SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
             simulatedTournament.simulateTournament();
-            if (simulationTicket % 10000 == 0) {
-                System.out.println(simulationTicket);
+            if (++simulationTicket % 10000 == 0) {
+                System.out.printf("Completed %7d / %7d simulations." + System.lineSeparator(), simulationTicket, numberOfSimulations);
             }
             simulationTicket = Main.getSimulationTicket();
         }
