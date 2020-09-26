@@ -14,18 +14,18 @@ public class Round {
 
     public void createPairings() {
         //change to static method in future
-        //maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
+        //maybe change datatype of unpairedPlayers to TreeSet, allows faster filtering and faster removal
         List<SimulatedPlayer> unpairedPlayers = players.stream().sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
         List<SimulatedPlayer> pairedPlayers = new ArrayList<>();
         if (unpairedPlayers.size() % 2 == 1) {
             giveByeToLastEligiblePlayer(unpairedPlayers, pairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
         }
         List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();
-        List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
+        List<SimulatedPlayer> downfloatersToNextBracket;
         while (unpairedPlayers.size() > 0) {
             double highestUnpairedScore = unpairedPlayers.get(0).getScore();
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
-            pairBracket(nextBracket, downfloatersFromPreviousBracket, downfloatersToNextBracket, pairedPlayers);
+            downfloatersToNextBracket = pairBracket(nextBracket, downfloatersFromPreviousBracket, pairedPlayers);
             downfloatersFromPreviousBracket.clear();
             downfloatersFromPreviousBracket.addAll(downfloatersToNextBracket);
             downfloatersToNextBracket.clear();
@@ -35,17 +35,18 @@ public class Round {
         }
     }
 
-    private void pairBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket, List<SimulatedPlayer> pairedPlayers) {
+    private List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> pairedPlayers) {
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
         unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
         List<Pairing> proposedPairings = new ArrayList<>(unpairedPlayersInThisBracket.size() / 2);
+        List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
                 boolean proposedPairingIsValid = tryPairBracket(proposedPairings, pairedPlayers, unpairedPlayersInThisBracket);
                 if (proposedPairingIsValid) {
-                    getDownfloater(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
-                    return;
+                    getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
+                    return downfloatersToNextBracket;
                 }
                 if (!downfloatersToNextBracket.isEmpty()) {
                     unpairedPlayersInThisBracket.add(downfloatersToNextBracket.remove(0));
@@ -57,6 +58,7 @@ public class Round {
             }
         }
         downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
+        return downfloatersToNextBracket;
     }
 
     private boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPLayers, List<SimulatedPlayer> playersInBracket) {
@@ -82,7 +84,7 @@ public class Round {
         return true;
     }
 
-    private void getDownfloater(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> downfloatersToNextBracket) {
+    private void getDownfloaters(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> downfloatersToNextBracket) {
         unpairedPlayersInThisBracket.removeAll(pairedPlayers);
         downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
     }
@@ -95,11 +97,5 @@ public class Round {
             }
         }
 
-    }
-
-    private enum typeOfBracket {
-        DOWNFLOATERS,
-        NONDOWNFLOATERS,
-        TOTAL
     }
 }
