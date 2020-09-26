@@ -35,31 +35,43 @@ public class Main {
         System.out.println("Time spent creating lookupTable: " +
                 millisecondsToSecondsString(entireProcessTimer.elapsedMilliSeconds()) + System.lineSeparator());
 
-        final Random random = new Random();
-        Tournament myTournament =
-                new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants)
-                        .mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo)))
-                        .collect(Collectors.toList()));
+        Tournament myTournament = createTournament();
 
         Timer simulationsTimer = new Timer();
-        ExecutorService pool = Executors.newFixedThreadPool(numberOfConcurrentThreads);
-        for (int i = 0; i < numberOfConcurrentThreads; ++i) {
-            WorkerThread workerThread = new WorkerThread(myTournament, numberOfSimulations);
-            pool.execute(workerThread);
-        }
-        pool.shutdown();
-        pool.awaitTermination(1, TimeUnit.DAYS);
+
+        simulateTournament(myTournament);
 
         System.out.println("Simulation runtime: " +
                 millisecondsToSecondsString(simulationsTimer.elapsedMilliSeconds()) + System.lineSeparator());
 
+        showResults();
+
+        System.out.println(System.lineSeparator() + "Total runtime: " +
+                millisecondsToSecondsString(entireProcessTimer.elapsedMilliSeconds()));
+    }
+
+    private static Tournament createTournament() {
+        final Random random = new Random();
+        return new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants)
+                .mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo)))
+                .collect(Collectors.toList()));
+    }
+
+    private static void simulateTournament(Tournament tournament) throws InterruptedException {
+        ExecutorService pool = Executors.newFixedThreadPool(numberOfConcurrentThreads);
+        for (int i = 0; i < numberOfConcurrentThreads; ++i) {
+            WorkerThread workerThread = new WorkerThread(tournament, numberOfSimulations);
+            pool.execute(workerThread);
+        }
+        pool.shutdown();
+        pool.awaitTermination(1, TimeUnit.DAYS);
+    }
+
+    private static void showResults() {
         topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
         Participant.printSimulationResults(participantsWithTopThreeRanking);
-
-        System.out.println(System.lineSeparator() + "Total runtime: " +
-                millisecondsToSecondsString(entireProcessTimer.elapsedMilliSeconds()));
     }
 
     synchronized public static int getSimulationTicket() {
