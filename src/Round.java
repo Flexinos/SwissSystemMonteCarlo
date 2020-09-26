@@ -125,7 +125,7 @@ public class Round {
     private void giveByeToLastEligiblePlayer(List<SimulatedPlayer> unpairedPlayers) {
         for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
             if (!unpairedPlayers.get(i).hasReceivedBye()) {
-                unorderedPairings.add(new Pairing(unpairedPlayers.get(i), Tournament.BYE, true));
+                Pairing.giveBye(unpairedPlayers.get(i));
                 unpairedPlayers.get(i).setReceivedBye(true);
             }
         }
