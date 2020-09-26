@@ -6,18 +6,15 @@ import java.util.stream.Collectors;
 
 public class Round {
 
-    private final Tournament tournament;
     private Ranking rankingByScoreThenEloBeforeRound;
     private final List<Pairing> unorderedPairings;
 
-    public Round(Tournament tournament, Ranking rankingByScoreThenEloBeforeRound) {
-        this.tournament = tournament;
+    public Round(Ranking rankingByScoreThenEloBeforeRound) {
         this.rankingByScoreThenEloBeforeRound = rankingByScoreThenEloBeforeRound;
         this.unorderedPairings = new ArrayList<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
     }
 
-    public Round(Tournament tournament, List<Pairing> unorderedPairings) {
-        this.tournament = tournament;
+    public Round(List<Pairing> unorderedPairings) {
         this.unorderedPairings = unorderedPairings;
     }
 
@@ -25,7 +22,9 @@ public class Round {
         //change to static method in future
         //maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
         List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
-        giveByeIfNecessary(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
+        if (unpairedPlayers.size() % 2 == 1) {
+            giveByeToLastEligiblePlayer(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
+        }
         List<SimulatedPlayer> downfloatersFromPreviousBracket = new ArrayList<>();
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         while (unpairedPlayers.size() > 0) {
@@ -126,15 +125,14 @@ public class Round {
         }
     }
 
-    private void giveByeIfNecessary(List<SimulatedPlayer> unpairedPlayers) {
-        if (tournament.hasBye()) {
-            for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
-                if (!unpairedPlayers.get(i).hasReceivedBye()) {
-                    unorderedPairings.add(new Pairing(unpairedPlayers.get(i), tournament.getBye(), true));
-                    unpairedPlayers.get(i).setReceivedBye(true);
-                }
+    private void giveByeToLastEligiblePlayer(List<SimulatedPlayer> unpairedPlayers) {
+        for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
+            if (!unpairedPlayers.get(i).hasReceivedBye()) {
+                unorderedPairings.add(new Pairing(unpairedPlayers.get(i), Tournament.BYE, true));
+                unpairedPlayers.get(i).setReceivedBye(true);
             }
         }
+
     }
 
     private enum typeOfBracket {

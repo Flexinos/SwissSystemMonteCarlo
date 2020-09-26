@@ -5,8 +5,7 @@ public class Tournament {
     private final int totalRounds;
     private int finishedRounds = 0;
     private final List<Participant> participantArrayList = new ArrayList<>();
-    private boolean hasBye = false;
-    private SimulatedPlayer bye;
+    public static final SimulatedPlayer BYE = new SimulatedPlayer(new Participant("BYE", 0));
 
     public Tournament(int totalRounds, List<Participant> participants) {
         this.totalRounds = totalRounds;
@@ -14,10 +13,6 @@ public class Tournament {
         this.participantArrayList.sort(Participant::compareToByElo);
         for (int i = 0; i < participantArrayList.size(); ++i) {
             participantArrayList.get(i).setStartingRank(i + 1);
-        }
-        if (participants.size() % 2 == 1) {
-            hasBye = true;
-            bye = new SimulatedPlayer(new Participant("BYE", 0));
         }
     }
 
@@ -34,15 +29,7 @@ public class Tournament {
         return finishedRounds;
     }
 
-    public SimulatedPlayer getBye() {
-        return bye;
-    }
-
     public List<Participant> getPlayerArrayList() {
         return participantArrayList;
-    }
-
-    public boolean hasBye() {
-        return hasBye;
     }
 }

@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
@@ -159,7 +158,7 @@ public class Participant {
         }
     }
 
-    public float getAverageRank() {
+    private float getAverageRank() {
         float sum = 0;
         float longAdderCount = 0;
         for (int rank = 0; rank < rankingTable.length; rank++) {
@@ -167,10 +166,6 @@ public class Participant {
             longAdderCount += rankingTable[rank].longValue();
         }
         return sum / longAdderCount;
-    }
-
-    public int compareToByElo(Participant p2) {
-        return -Double.compare(this.getElo(), p2.getElo());
     }
 
     @Override
@@ -182,6 +177,10 @@ public class Participant {
                 " tieBreak1: " + tieBreak1 +
                 " tieBreak2: " + tieBreak2 +
                 " tieBreak3: " + tieBreak3;
+    }
+
+    public int compareToByElo(Participant p2) {
+        return -Double.compare(this.getElo(), p2.getElo());
     }
 
     public int compareToByTopThreeFinishes(Participant p2) {
