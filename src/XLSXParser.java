@@ -6,7 +6,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class XLSXParser {
     public static void main(String[] args) throws IOException {
@@ -215,4 +217,9 @@ public class XLSXParser {
     private static boolean isSex(String string) {
         return string.matches("sex|Sex");
     }
+
+    private enum RankingColumnType {
+        STARTING_RANK, TITLE, NAME, COUNTRY, BUNDESLAND, ELO, SCORE, TIE_BREAK_1, TIE_BREAK_2, TIE_BREAK_3, TYPE, SEX, IGNORE
+    }
+
 }
