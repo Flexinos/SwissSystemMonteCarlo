@@ -6,22 +6,19 @@ import java.util.stream.Collectors;
 
 public class Round {
 
-    private Ranking rankingByScoreThenEloBeforeRound;
+    private final List<SimulatedPlayer> players;
     private final List<Pairing> unorderedPairings;
 
-    public Round(Ranking rankingByScoreThenEloBeforeRound) {
-        this.rankingByScoreThenEloBeforeRound = rankingByScoreThenEloBeforeRound;
-        this.unorderedPairings = new ArrayList<>(rankingByScoreThenEloBeforeRound.getRanking().size() + 1);
-    }
-
-    public Round(List<Pairing> unorderedPairings) {
-        this.unorderedPairings = unorderedPairings;
+    public Round(List<SimulatedPlayer> players) {
+        this.players = players;
+        this.unorderedPairings = new ArrayList<>(players.size() + 1);
     }
 
     public void createPairings() {
         //change to static method in future
         //maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
-        List<SimulatedPlayer> unpairedPlayers = rankingByScoreThenEloBeforeRound.getRanking();
+        List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players);
+        unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         if (unpairedPlayers.size() % 2 == 1) {
             giveByeToLastEligiblePlayer(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
         }
