@@ -12,13 +12,13 @@ public class Ranking {
         }
     }
 
-    public void RankingByScoreThenElo(List<SimulatedPlayer> simulatedPlayerArrayList) {
+    private void RankingByScoreThenElo(List<SimulatedPlayer> simulatedPlayerArrayList) {
         List<SimulatedPlayer> tmpList = new ArrayList<>(simulatedPlayerArrayList);
         tmpList.sort(SimulatedPlayer::compareToByScoreThenElo);
         this.ranking = tmpList;
     }
 
-    public void RankingByScoreThenTieBreak(List<SimulatedPlayer> simulatedPlayerArrayList) {
+    private void RankingByScoreThenTieBreak(List<SimulatedPlayer> simulatedPlayerArrayList) {
         List<SimulatedPlayer> tmpList = new ArrayList<>(simulatedPlayerArrayList);
         tmpList.sort(SimulatedPlayer::compareToByTieBreak);
         this.ranking = tmpList;
