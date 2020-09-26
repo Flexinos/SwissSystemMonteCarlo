@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.LongAdder;
 
 public class Participant {
     private final String title;
@@ -91,40 +92,10 @@ public class Participant {
         this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
     }
 
-    public int compareToByElo(Participant p2) {
-        return -1 * (Double.compare(this.getElo(), p2.getElo()));
-    }
-
-    public int compareToByTopThreeFinishes(Participant p2) {
-        int result = Integer.compare(this.getNumberOfTopThreeFinishes(), p2.getNumberOfTopThreeFinishes());
-        return result != 0 ? result : compareToByElo(p2);
-    }
-
-    @Override
-    public String toString() {
-        return "Starting rank: " + startingRank +
-                " Name: " + name +
-                " Elo: " + elo +
-                " score: " + score +
-                " tieBreak1: " + tieBreak1 +
-                " tieBreak2: " + tieBreak2 +
-                " tieBreak3: " + tieBreak3;
-    }
-
-    private enum Padding {LEFT, RIGHT}
-
-    private static String paddingToString(Padding padding) {
-        if (padding.equals(Padding.LEFT)) {
-            return "-";
-        } else {
-            return "";
-        }
-    }
-
     public static void printSimulationResults(List<Participant> participants) {
-        String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes"};
-        Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
-        Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
+        String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
+        Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
+        Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
         assert columnNames.length == columnNamePaddings.length;
         assert columnNames.length == participantFieldsPaddings.length;
         int[] fieldLengths = new int[columnNames.length];
@@ -138,7 +109,8 @@ public class Participant {
             participantEntries[currentFieldNumber++] = participant.getName();
             participantEntries[currentFieldNumber++] = Integer.toString(participant.getStartingRank());
             participantEntries[currentFieldNumber++] = Integer.toString(participant.getElo());
-            participantEntries[currentFieldNumber] = Integer.toString(participant.getNumberOfTopThreeFinishes());
+            participantEntries[currentFieldNumber++] = Integer.toString(participant.getNumberOfTopThreeFinishes());
+            participantEntries[currentFieldNumber] = Float.toString(participant.getAverageRank());
             for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
                 if (participantEntries[fieldNumber].length() > fieldLengths[fieldNumber]) {
                     fieldLengths[fieldNumber] = participantEntries[fieldNumber].length();
@@ -158,4 +130,45 @@ public class Participant {
         }
 
     }
+
+    private static String paddingToString(Padding padding) {
+        if (padding.equals(Padding.LEFT)) {
+            return "-";
+        } else {
+            return "";
+        }
+    }
+
+    public float getAverageRank() {
+        float sum = 0;
+        float longAdderCount = 0;
+        LongAdder[] longAdders = Main.rankingTable[getStartingRank() - 1];
+        for (int rank = 1, longAddersLength = longAdders.length; rank <= longAddersLength; rank++) {
+            sum += longAdders[rank - 1].longValue() * rank;
+            longAdderCount += longAdders[rank - 1].longValue();
+        }
+        return sum / longAdderCount;
+    }
+
+    public int compareToByElo(Participant p2) {
+        return -Double.compare(this.getElo(), p2.getElo());
+    }
+
+    @Override
+    public String toString() {
+        return "Starting rank: " + startingRank +
+                " Name: " + name +
+                " Elo: " + elo +
+                " score: " + score +
+                " tieBreak1: " + tieBreak1 +
+                " tieBreak2: " + tieBreak2 +
+                " tieBreak3: " + tieBreak3;
+    }
+
+    public int compareToByTopThreeFinishes(Participant p2) {
+        int result = -Integer.compare(this.getNumberOfTopThreeFinishes(), p2.getNumberOfTopThreeFinishes());
+        return result != 0 ? result : compareToByElo(p2);
+    }
+
+    private enum Padding {LEFT, RIGHT}
 }
