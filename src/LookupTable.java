@@ -5,8 +5,6 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class LookupTable {
-    // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
-    private static final String lookupTableFile = "C:\\Users\\Laurin\\Desktop\\lookup_table.txt";
     private static final int LOWEST_ELO = 800;
     private static final int HIGHEST_ELO = 2999;
     private static final int ELO_RANGE = HIGHEST_ELO - LOWEST_ELO + 1;
@@ -16,7 +14,7 @@ public class LookupTable {
     private LookupTable() {
     }
 
-    public static void createLookupTable() {
+    public static void createLookupTable(String lookupTableFile) {
         assert HIGHEST_ELO >= LOWEST_ELO;
         try (FileInputStream inputStream = new FileInputStream(lookupTableFile); Scanner sc = new Scanner(inputStream, StandardCharsets.UTF_8)) {
             for (int row = 0; row < ELO_RANGE; ++row) {

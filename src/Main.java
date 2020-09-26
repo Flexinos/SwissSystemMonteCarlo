@@ -21,8 +21,14 @@ public class Main {
     public static final Map<Participant, LongAdder> topThreeCounter = new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
 
     public static void main(String[] args) throws InterruptedException {
+        if (args.length != 1) {
+            System.out.println("Specify the location of the lookup table as the only argument.");
+            System.exit(1);
+        }
         long startTime = System.nanoTime();
-        LookupTable.createLookupTable();
+        String lookupTableFile = args[0];
+        // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
+        LookupTable.createLookupTable(lookupTableFile);
         long timeSpentCreatingLookupTable = (System.nanoTime() - startTime) / 1000000;
         System.out.println("Time spent creating lookupTable: " + timeSpentCreatingLookupTable / 1000 + "." + timeSpentCreatingLookupTable % 1000 + "s\n");
 
