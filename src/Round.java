@@ -15,8 +15,7 @@ public class Round {
     public void createPairings() {
         //change to static method in future
         //maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
-        List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players);
-        unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
+        List<SimulatedPlayer> unpairedPlayers = players.stream().sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
         List<SimulatedPlayer> pairedPlayers = new ArrayList<>();
         if (unpairedPlayers.size() % 2 == 1) {
             giveByeToLastEligiblePlayer(unpairedPlayers, pairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
@@ -38,7 +37,6 @@ public class Round {
 
     private void pairBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket, List<SimulatedPlayer> pairedPlayers) {
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
-        //printPlayersInBracket(unpairedPlayersInThisBracket, nonDownfloaters, downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
         List<Pairing> proposedPairings = new ArrayList<>(unpairedPlayersInThisBracket.size() / 2);
@@ -85,10 +83,8 @@ public class Round {
     }
 
     private void getDownfloater(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> downfloatersToNextBracket) {
-        if (unpairedPlayersInThisBracket.size() != pairedPlayers.size()) {
-            unpairedPlayersInThisBracket.removeAll(pairedPlayers);
-            downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
-        }
+        unpairedPlayersInThisBracket.removeAll(pairedPlayers);
+        downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
     }
 
     private void giveByeToLastEligiblePlayer(List<SimulatedPlayer> unpairedPlayers, List<SimulatedPlayer> pairedPlayers) {
