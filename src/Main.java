@@ -63,7 +63,7 @@ public class Main {
     }
 
     synchronized public static int getSimulationTicket() {
-        return finished_simulations++;
+        return ++finished_simulations;
     }
 
     private static class Timer {
