@@ -19,14 +19,12 @@ public class Main {
     public static final int maxElo = 2600;
     private static int finished_simulations = 0;
     public static final Map<Participant, LongAdder> topThreeCounter = new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
-    public static final LongAdder[][] rankingTable = new LongAdder[numberOfParticipants][numberOfParticipants];
 
     public static void main(String[] args) throws InterruptedException {
         long startTime = System.nanoTime();
         LookupTable.createLookupTable();
         long timeSpentCreatingLookupTable = (System.nanoTime() - startTime) / 1000000;
         System.out.println("Time spent creating lookupTable: " + timeSpentCreatingLookupTable / 1000 + "." + timeSpentCreatingLookupTable % 1000 + "s\n");
-        initializeRankingTable();
 
         final Random random = new Random();
         Tournament myTournament = new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo))).collect(Collectors.toList()));
@@ -50,18 +48,6 @@ public class Main {
 
         long duration = (System.nanoTime() - startTime) / 1000000;
         System.out.println("\nTotal runtime: " + duration / 1000 + "." + duration % 1000 + "s");
-    }
-
-    private static void initializeRankingTable() {
-        for (int row = 0; row < rankingTable.length; ++row) {
-            for (int column = 0; column < rankingTable.length; ++column) {
-                rankingTable[row][column] = new LongAdder();
-            }
-        }
-    }
-
-    public static void addRankToTable(SimulatedPlayer p, int rank) {
-        rankingTable[p.getParticipant().getStartingRank() - 1][rank].increment();
     }
 
     synchronized public static int getSimulationTicket() {

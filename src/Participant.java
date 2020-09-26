@@ -16,6 +16,7 @@ public class Participant {
     private final boolean isFemale;
     private int startingRank;
     private int numberOfTopThreeFinishes;
+    public final LongAdder[] rankingTable = new LongAdder[Main.numberOfParticipants];
 
     public Participant(String name, int elo) {
         this(0, "", name, "", "", elo, 0, 0, 0, 0, "", false);
@@ -34,6 +35,9 @@ public class Participant {
         this.tieBreak3 = tieBreak3;
         this.type = type;
         this.isFemale = isFemale;
+        for (int i = 0; i < rankingTable.length; i++) {
+            rankingTable[i] = new LongAdder();
+        }
     }
 
     public int getStartingRank() {
@@ -92,6 +96,10 @@ public class Participant {
         this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
     }
 
+    public void addRankToTable(int rank) {
+        rankingTable[rank].increment();
+    }
+
     public static void printSimulationResults(List<Participant> participants) {
         String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
         Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
@@ -142,10 +150,9 @@ public class Participant {
     public float getAverageRank() {
         float sum = 0;
         float longAdderCount = 0;
-        LongAdder[] longAdders = Main.rankingTable[getStartingRank() - 1];
-        for (int rank = 1, longAddersLength = longAdders.length; rank <= longAddersLength; rank++) {
-            sum += longAdders[rank - 1].longValue() * rank;
-            longAdderCount += longAdders[rank - 1].longValue();
+        for (int rank = 0; rank < rankingTable.length; rank++) {
+            sum += rankingTable[rank].longValue() * rank;
+            longAdderCount += rankingTable[rank].longValue();
         }
         return sum / longAdderCount;
     }
