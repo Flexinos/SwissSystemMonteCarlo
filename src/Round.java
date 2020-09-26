@@ -30,10 +30,9 @@ public class Round {
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         while (unpairedPlayers.size() > 0) {
             double highestUnpairedScore = unpairedPlayers.get(0).getScore();
-            int board = unorderedPairings.size() + 1;
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
             downfloatersToNextBracket.clear();
-            pairBracket(board, nextBracket, downfloatersFromPreviousBracket, downfloatersToNextBracket);
+            pairBracket(nextBracket, downfloatersFromPreviousBracket, downfloatersToNextBracket);
             downfloatersFromPreviousBracket.clear();
             downfloatersFromPreviousBracket.addAll(downfloatersToNextBracket);
             for (Pairing pairing : unorderedPairings) {
@@ -45,7 +44,7 @@ public class Round {
         }
     }
 
-    private void pairBracket(int board, List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
+    private void pairBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> downfloatersToNextBracket) {
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
         //printPlayersInBracket(unpairedPlayersInThisBracket, nonDownfloaters, downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
@@ -54,7 +53,7 @@ public class Round {
         List<SimulatedPlayer> pairedPlayers = new ArrayList<>(unpairedPlayersInThisBracket.size());
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
-                boolean proposedPairingIsValid = tryPairBracket(proposedPairings, pairedPlayers, board, unpairedPlayersInThisBracket);
+                boolean proposedPairingIsValid = tryPairBracket(proposedPairings, pairedPlayers, unpairedPlayersInThisBracket);
                 if (proposedPairingIsValid) {
                     getDownfloater(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
                     unorderedPairings.addAll(proposedPairings);
@@ -72,15 +71,15 @@ public class Round {
         downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
     }
 
-    private boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPLayers, int board, List<SimulatedPlayer> playersInBracket) {
+    private boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPLayers, List<SimulatedPlayer> playersInBracket) {
         List<PossiblePairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         Random random = new Random();
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
                 if (random.nextBoolean()) {
-                    provisionalPairings.add(new PossiblePairing(board++, playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)));
+                    provisionalPairings.add(new PossiblePairing(playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)));
                 } else {
-                    provisionalPairings.add(new PossiblePairing(board++, playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
+                    provisionalPairings.add(new PossiblePairing(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
                 }
                 pairedPLayers.add(playersInBracket.get(i));
                 pairedPLayers.add(playersInBracket.get(i + playersInBracket.size() / 2));
@@ -129,10 +128,9 @@ public class Round {
 
     private void giveByeIfNecessary(List<SimulatedPlayer> unpairedPlayers) {
         if (tournament.hasBye()) {
-            int lastBoard = unpairedPlayers.size() / 2 + 1;
             for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
                 if (!unpairedPlayers.get(i).hasReceivedBye()) {
-                    unorderedPairings.add(new Pairing(new PossiblePairing(lastBoard, unpairedPlayers.get(i), tournament.getBye()), true));
+                    unorderedPairings.add(new Pairing(new PossiblePairing(unpairedPlayers.get(i), tournament.getBye()), true));
                     unpairedPlayers.get(i).setReceivedBye(true);
                 }
             }
