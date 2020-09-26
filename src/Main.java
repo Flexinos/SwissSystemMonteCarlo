@@ -32,22 +32,13 @@ public class Main {
         String lookupTableFile = args[0];
         // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
         LookupTable.createLookupTable(lookupTableFile);
-        System.out.println("Time spent creating lookupTable: " +
-                millisecondsToSecondsString(entireProcessTimer.elapsedMilliSeconds()) + System.lineSeparator());
-
+        entireProcessTimer.printElapsedSecondsMessage("Time spent creating lookupTable: ", System.lineSeparator());
         Tournament myTournament = createTournament();
-
         Timer simulationsTimer = new Timer();
-
         simulateTournament(myTournament);
-
-        System.out.println("Simulation runtime: " +
-                millisecondsToSecondsString(simulationsTimer.elapsedMilliSeconds()) + System.lineSeparator());
-
+        simulationsTimer.printElapsedSecondsMessage("Simulation runtime: ", System.lineSeparator());
         showResults();
-
-        System.out.println(System.lineSeparator() + "Total runtime: " +
-                millisecondsToSecondsString(entireProcessTimer.elapsedMilliSeconds()));
+        entireProcessTimer.printElapsedSecondsMessage(System.lineSeparator() + "Total runtime: ", "");
     }
 
     private static Tournament createTournament() {
@@ -85,8 +76,12 @@ public class Main {
             this.startTime = System.nanoTime();
         }
 
-        public long elapsedMilliSeconds() {
+        private long elapsedMilliSeconds() {
             return (System.nanoTime() - startTime) / 1000000;
+        }
+
+        private void printElapsedSecondsMessage(String beforeTime, String afterTime) {
+            System.out.println(beforeTime + millisecondsToSecondsString(elapsedMilliSeconds()) + afterTime);
         }
     }
 
