@@ -72,14 +72,14 @@ public class Round {
     }
 
     private boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPLayers, List<SimulatedPlayer> playersInBracket) {
-        List<PossiblePairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
+        List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         Random random = new Random();
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
                 if (random.nextBoolean()) {
-                    provisionalPairings.add(new PossiblePairing(playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)));
+                    provisionalPairings.add(new Pairing(playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)));
                 } else {
-                    provisionalPairings.add(new PossiblePairing(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
+                    provisionalPairings.add(new Pairing(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
                 }
                 pairedPLayers.add(playersInBracket.get(i));
                 pairedPLayers.add(playersInBracket.get(i + playersInBracket.size() / 2));
@@ -89,7 +89,7 @@ public class Round {
             }
         }
         proposedPairings.clear();
-        provisionalPairings.stream().map(Pairing::new).forEach(proposedPairings::add);
+        proposedPairings.addAll(provisionalPairings);
         proposedPairings.forEach(Pairing::simulateResult);
         return true;
     }
@@ -130,7 +130,7 @@ public class Round {
         if (tournament.hasBye()) {
             for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
                 if (!unpairedPlayers.get(i).hasReceivedBye()) {
-                    unorderedPairings.add(new Pairing(new PossiblePairing(unpairedPlayers.get(i), tournament.getBye()), true));
+                    unorderedPairings.add(new Pairing(unpairedPlayers.get(i), tournament.getBye(), true));
                     unpairedPlayers.get(i).setReceivedBye(true);
                 }
             }

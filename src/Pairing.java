@@ -6,13 +6,13 @@ public class Pairing {
     private static final Random random = new Random();
     private ResultOfGame result;
 
-    public Pairing(PossiblePairing pairing) {
-        this.player1 = pairing.getPlayer1();
-        this.player2 = pairing.getPlayer2();
+    public Pairing(SimulatedPlayer player1, SimulatedPlayer player2) {
+        this.player1 = player1;
+        this.player2 = player2;
     }
 
-    public Pairing(PossiblePairing pairing, boolean includesBye) {
-        this(pairing);
+    public Pairing(SimulatedPlayer player1, SimulatedPlayer player2, boolean includesBye) {
+        this(player1, player2);
         if (includesBye) {
             result = ResultOfGame.BYE;
             player1.addGame(player2, 1);
