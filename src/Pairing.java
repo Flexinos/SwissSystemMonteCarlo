@@ -11,6 +11,14 @@ public class Pairing {
         this.player2 = player2;
     }
 
+    public Pairing(SimulatedPlayer player1, SimulatedPlayer player2, boolean includesBye) {
+        this(player1, player2);
+        if (includesBye) {
+            result = ResultOfGame.BYE;
+            player1.addGame(player2, 1);
+        }
+    }
+
     public static void giveBye(SimulatedPlayer player1) {
         player1.addGame(Tournament.BYE, 1);
         player1.setReceivedBye(true);
