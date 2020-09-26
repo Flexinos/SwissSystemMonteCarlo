@@ -30,7 +30,7 @@ public class Main {
         // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
         LookupTable.createLookupTable(lookupTableFile);
         long timeSpentCreatingLookupTable = (System.nanoTime() - startTime) / 1000000;
-        System.out.println("Time spent creating lookupTable: " + timeSpentCreatingLookupTable / 1000 + "." + timeSpentCreatingLookupTable % 1000 + "s\n");
+        System.out.println("Time spent creating lookupTable: " + millisecondsToSecondsString(timeSpentCreatingLookupTable) + "\n");
 
         final Random random = new Random();
         Tournament myTournament = new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo))).collect(Collectors.toList()));
@@ -45,7 +45,7 @@ public class Main {
         pool.awaitTermination(1, TimeUnit.DAYS);
 
         long timeAfterSimulations = (System.nanoTime() - timeBeforeSimulations) / 1000000;
-        System.out.println("Simulation runtime: " + timeAfterSimulations / 1000 + "." + timeAfterSimulations % 1000 + "s\n");
+        System.out.println("Simulation runtime: " + millisecondsToSecondsString(timeAfterSimulations) + "\n");
 
         topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
@@ -53,10 +53,14 @@ public class Main {
         Participant.printSimulationResults(participantsWithTopThreeRanking);
 
         long duration = (System.nanoTime() - startTime) / 1000000;
-        System.out.println("\nTotal runtime: " + duration / 1000 + "." + duration % 1000 + "s");
+        System.out.println("\nTotal runtime: " + millisecondsToSecondsString(duration));
     }
 
     synchronized public static int getSimulationTicket() {
         return finished_simulations++;
+    }
+
+    private static String millisecondsToSecondsString(long milliseconds) {
+        return milliseconds / 1000 + "." + milliseconds % 1000 + "s";
     }
 }
