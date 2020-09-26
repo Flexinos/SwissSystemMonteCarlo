@@ -106,10 +106,4 @@ public class Round {
         }
 
     }
-
-    private enum typeOfBracket {
-        DOWNFLOATERS,
-        NONDOWNFLOATERS,
-        TOTAL
-    }
 }
