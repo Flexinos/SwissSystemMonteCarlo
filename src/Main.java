@@ -86,7 +86,7 @@ public class Main {
         }
 
         public long elapsedMilliSeconds() {
-            return (System.nanoTime() - startTime) / 1000;
+            return (System.nanoTime() - startTime) / 1000000;
         }
     }
 
