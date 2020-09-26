@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
+import java.util.stream.Collectors;
 
 public class Participant {
     private final String title;
@@ -100,43 +101,54 @@ public class Participant {
         rankingTable[rank].increment();
     }
 
+    // Customize the output of the simulation results here.
     public static void printSimulationResults(List<Participant> participants) {
+        // Set the name of each column here.
         String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
         Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
         Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
-        assert columnNames.length == columnNamePaddings.length;
-        assert columnNames.length == participantFieldsPaddings.length;
-        int[] fieldLengths = new int[columnNames.length];
-        for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
-            fieldLengths[fieldNumber] = columnNames[fieldNumber].length();
+        List<String[]> rows = participants.stream().map(participant -> new String[]{
+                // Add the functions to produce a participant's entry here.
+                participant.getName(),
+                Integer.toString(participant.getStartingRank()),
+                Integer.toString(participant.getElo()),
+                Integer.toString(participant.getNumberOfTopThreeFinishes()),
+                Float.toString(participant.getAverageRank())
+        }).collect(Collectors.toList());
+        int[] columnLengths = getColumnLengths(columnNames, rows);
+        printRow(columnNames, columnLengths, columnNamePaddings);
+        printAllRows(rows, columnLengths, participantFieldsPaddings);
+    }
+
+    private static int[] getColumnLengths(String[] columnNames, List<String[]> rows) {
+        int[] maxColumnLengths = new int[columnNames.length];
+        for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
+            maxColumnLengths[columnNumber] = columnNames[columnNumber].length();
         }
-        List<String[]> allParticipantsEntries = new ArrayList<>();
-        for (Participant participant : participants) {
-            String[] participantEntries = new String[columnNames.length];
-            int currentFieldNumber = 0;
-            participantEntries[currentFieldNumber++] = participant.getName();
-            participantEntries[currentFieldNumber++] = Integer.toString(participant.getStartingRank());
-            participantEntries[currentFieldNumber++] = Integer.toString(participant.getElo());
-            participantEntries[currentFieldNumber++] = Integer.toString(participant.getNumberOfTopThreeFinishes());
-            participantEntries[currentFieldNumber] = Float.toString(participant.getAverageRank());
-            for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
-                if (participantEntries[fieldNumber].length() > fieldLengths[fieldNumber]) {
-                    fieldLengths[fieldNumber] = participantEntries[fieldNumber].length();
+        for (String[] row : rows) {
+            for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
+                int fieldLength = row[columnNumber].length();
+                if (maxColumnLengths[columnNumber] < fieldLength) {
+                    maxColumnLengths[columnNumber] = fieldLength;
                 }
             }
-            allParticipantsEntries.add(participantEntries);
         }
-        for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
-            System.out.printf("%" + paddingToString(columnNamePaddings[fieldNumber]) + fieldLengths[fieldNumber] + "s  ", columnNames[fieldNumber]);
+        return maxColumnLengths;
+    }
+
+    private static void printAllRows(List<String[]> rows, int[] fieldLengths, Padding[] paddings) {
+        for (String[] row : rows) {
+            printRow(row, fieldLengths, paddings);
+        }
+    }
+
+    private static void printRow(String[] row, int[] fieldLengths, Padding[] paddings) {
+        assert row.length == fieldLengths.length;
+        assert row.length == paddings.length;
+        for (int columnNumber = 0; columnNumber < row.length; ++columnNumber) {
+            System.out.printf("%" + paddingToString(paddings[columnNumber]) + fieldLengths[columnNumber] + "s  ", row[columnNumber]);
         }
         System.out.println();
-        for (String[] participantEntries : allParticipantsEntries) {
-            for (int fieldNumber = 0; fieldNumber < columnNames.length; ++fieldNumber) {
-                System.out.printf("%" + paddingToString(participantFieldsPaddings[fieldNumber]) + fieldLengths[fieldNumber] + "s  ", participantEntries[fieldNumber]);
-            }
-            System.out.println();
-        }
-
     }
 
     private static String paddingToString(Padding padding) {
