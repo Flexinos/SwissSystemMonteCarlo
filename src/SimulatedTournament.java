@@ -9,8 +9,6 @@ public class SimulatedTournament {
     private int roundsFinished;
     private final List<SimulatedPlayer> simulatedPlayerList;
     private final List<Round> roundList;
-    private Ranking rankingByScoreThenElo;
-    private Ranking rankingByScoreThenTieBreak;
     private BitSet gameMatrix;
 
     public SimulatedTournament(Tournament tournament) {
@@ -39,27 +37,20 @@ public class SimulatedTournament {
     }
 
     public void simulateTournament() {
-        rankingByScoreThenElo = new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByELO);
-        //rankingByScoreThenEloList.get(0).getRanking().stream().map(player -> player.getParticipant().getName() + "\t" + player.getParticipant().getElo()).forEach(System.out::println);
         while (roundsFinished < tournament.getTotalRounds()) {
             getNextRound();
             roundsFinished++;
         }
-        createRankingByScoreThenTieBreak();
-        IntStream.range(0, 3).forEach(i -> Main.topThreeCounter.computeIfAbsent(rankingByScoreThenTieBreak.getRanking().get(i).getParticipant(), k -> new LongAdder()).increment());
-        for (int i = 0; i < rankingByScoreThenTieBreak.getRanking().size(); i++) {
-            rankingByScoreThenTieBreak.getRanking().get(i).getParticipant().addRankToTable(i);
+        simulatedPlayerList.forEach(SimulatedPlayer::updateTieBreaks);
+        simulatedPlayerList.sort(SimulatedPlayer::compareToByTieBreak);
+        IntStream.range(0, 3).forEach(i -> Main.topThreeCounter.computeIfAbsent(simulatedPlayerList.get(i).getParticipant(), k -> new LongAdder()).increment());
+        for (int i = 0; i < simulatedPlayerList.size(); i++) {
+            simulatedPlayerList.get(i).getParticipant().addRankToTable(i);
         }
     }
 
     private void getNextRound() {
-        roundList.add(new Round(rankingByScoreThenElo));
+        roundList.add(new Round(simulatedPlayerList));
         roundList.get(roundList.size() - 1).createPairings();
-        rankingByScoreThenElo = new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByELO);
-    }
-
-    private void createRankingByScoreThenTieBreak() {
-        simulatedPlayerList.forEach(SimulatedPlayer::updateTieBreaks);
-        rankingByScoreThenTieBreak = new Ranking(simulatedPlayerList, Ranking.TypesOfRanking.ByBUCHHOLZ);
     }
 }
