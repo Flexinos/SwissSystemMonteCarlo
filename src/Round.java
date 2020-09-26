@@ -6,10 +6,11 @@ import java.util.stream.Collectors;
 
 public class Round {
 
+    private static final Random random = new Random();
+
     public static void createPairings(List<SimulatedPlayer> players) {
         List<Pairing> unorderedPairings = new ArrayList<>();
-        //maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
-        List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players);
+        List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players); // maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
         unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         if (unpairedPlayers.size() % 2 == 1) {
             giveByeToLastEligiblePlayer(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
@@ -42,7 +43,7 @@ public class Round {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
                 boolean proposedPairingIsValid = tryPairBracket(proposedPairings, pairedPlayers, unpairedPlayersInThisBracket);
                 if (proposedPairingIsValid) {
-                    getDownfloater(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
+                    getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
                     unorderedPairings.addAll(proposedPairings);
                     return;
                 }
@@ -58,9 +59,8 @@ public class Round {
         downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
     }
 
-    private static boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPLayers, List<SimulatedPlayer> playersInBracket) {
+    private static boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> playersInBracket) {
         List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
-        Random random = new Random();
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
                 if (random.nextBoolean()) {
@@ -68,10 +68,10 @@ public class Round {
                 } else {
                     provisionalPairings.add(new Pairing(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
                 }
-                pairedPLayers.add(playersInBracket.get(i));
-                pairedPLayers.add(playersInBracket.get(i + playersInBracket.size() / 2));
+                pairedPlayers.add(playersInBracket.get(i));
+                pairedPlayers.add(playersInBracket.get(i + playersInBracket.size() / 2));
             } else {
-                pairedPLayers.clear();
+                pairedPlayers.clear();
                 return false;
             }
         }
@@ -81,7 +81,7 @@ public class Round {
         return true;
     }
 
-    private static void getDownfloater(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> downfloatersToNextBracket) {
+    private static void getDownfloaters(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> downfloatersToNextBracket) {
         if (unpairedPlayersInThisBracket.size() != pairedPlayers.size()) {
             unpairedPlayersInThisBracket.removeAll(pairedPlayers);
             downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
@@ -95,6 +95,5 @@ public class Round {
                 unpairedPlayers.get(i).setReceivedBye(true);
             }
         }
-
     }
 }
