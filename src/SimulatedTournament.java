@@ -8,13 +8,11 @@ public class SimulatedTournament {
     private final Tournament tournament;
     private int roundsFinished;
     private final List<SimulatedPlayer> simulatedPlayerList;
-    private final List<Round> roundList;
     private BitSet gameMatrix;
 
     public SimulatedTournament(Tournament tournament) {
         this.tournament = tournament;
         this.roundsFinished = tournament.getFinishedRounds();
-        this.roundList = new ArrayList<>(tournament.getTotalRounds());
         this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerList::add);
         gameMatrix = new BitSet(simulatedPlayerList.size() ^ 2);
@@ -23,7 +21,6 @@ public class SimulatedTournament {
     public SimulatedTournament(Tournament tournament, boolean isOngoing) {
         this.tournament = tournament;
         this.roundsFinished = tournament.getFinishedRounds();
-        this.roundList = new ArrayList<>(tournament.getTotalRounds());
         this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerList::add);
     }
@@ -50,7 +47,6 @@ public class SimulatedTournament {
     }
 
     private void getNextRound() {
-        roundList.add(new Round(simulatedPlayerList));
-        roundList.get(roundList.size() - 1).createPairings();
+        Round.createPairings(simulatedPlayerList);
     }
 }
