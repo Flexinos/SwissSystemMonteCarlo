@@ -5,7 +5,6 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Round {
-
     private static final Random random = new Random();
 
     public static void createPairings(List<SimulatedPlayer> players) {
