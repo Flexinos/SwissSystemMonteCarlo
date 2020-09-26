@@ -1,3 +1,5 @@
+import org.apache.poi.ss.formula.functions.T;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -26,13 +28,12 @@ public class Main {
             System.out.println("Specify the location of the lookup table as the only argument.");
             System.exit(1);
         }
-        long startTime = System.nanoTime();
+        Timer entireProcessTimer = new Timer();
         String lookupTableFile = args[0];
         // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
         LookupTable.createLookupTable(lookupTableFile);
-        long timeSpentCreatingLookupTable = (System.nanoTime() - startTime) / 1000000;
         System.out.println("Time spent creating lookupTable: " +
-                millisecondsToSecondsString(timeSpentCreatingLookupTable) + System.lineSeparator());
+                millisecondsToSecondsString(entireProcessTimer.elapsedMilliSeconds()) + System.lineSeparator());
 
         final Random random = new Random();
         Tournament myTournament =
@@ -40,7 +41,7 @@ public class Main {
                         .mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo)))
                         .collect(Collectors.toList()));
 
-        long timeBeforeSimulations = System.nanoTime();
+        Timer simulationsTimer = new Timer();
         ExecutorService pool = Executors.newFixedThreadPool(numberOfConcurrentThreads);
         for (int i = 0; i < numberOfConcurrentThreads; ++i) {
             WorkerThread workerThread = new WorkerThread(myTournament, numberOfSimulations);
@@ -49,20 +50,32 @@ public class Main {
         pool.shutdown();
         pool.awaitTermination(1, TimeUnit.DAYS);
 
-        long timeAfterSimulations = (System.nanoTime() - timeBeforeSimulations) / 1000000;
-        System.out.println("Simulation runtime: " + millisecondsToSecondsString(timeAfterSimulations) + System.lineSeparator());
+        System.out.println("Simulation runtime: " +
+                millisecondsToSecondsString(simulationsTimer.elapsedMilliSeconds()) + System.lineSeparator());
 
         topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
         Participant.printSimulationResults(participantsWithTopThreeRanking);
 
-        long duration = (System.nanoTime() - startTime) / 1000000;
-        System.out.println(System.lineSeparator() + "Total runtime: " + millisecondsToSecondsString(duration));
+        System.out.println(System.lineSeparator() + "Total runtime: " +
+                millisecondsToSecondsString(entireProcessTimer.elapsedMilliSeconds()));
     }
 
     synchronized public static int getSimulationTicket() {
         return finished_simulations++;
+    }
+
+    private static class Timer {
+        private final long startTime;
+
+        public Timer() {
+            this.startTime = System.nanoTime();
+        }
+
+        public long elapsedMilliSeconds() {
+            return (System.nanoTime() - startTime) / 1000;
+        }
     }
 
     private static String millisecondsToSecondsString(long milliseconds) {
