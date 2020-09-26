@@ -5,15 +5,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class Round {
-
-    private final List<SimulatedPlayer> players;
-
-    public Round(List<SimulatedPlayer> players) {
-        this.players = players;
-    }
-
-    public void createPairings() {
-        //change to static method in future
+    public static void createPairings(List<SimulatedPlayer> players) {
         //maybe change datatype of unpairedPlayers to TreeSet, allows faster filtering and faster removal
         List<SimulatedPlayer> unpairedPlayers = players.stream().sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
         List<SimulatedPlayer> pairedPlayers = new ArrayList<>();
@@ -35,7 +27,7 @@ public class Round {
         }
     }
 
-    private List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> pairedPlayers) {
+    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> pairedPlayers) {
         List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
         unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
         unpairedPlayersInThisBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
@@ -61,7 +53,7 @@ public class Round {
         return downfloatersToNextBracket;
     }
 
-    private boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPLayers, List<SimulatedPlayer> playersInBracket) {
+    private static boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPLayers, List<SimulatedPlayer> playersInBracket) {
         List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         Random random = new Random();
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
@@ -84,12 +76,12 @@ public class Round {
         return true;
     }
 
-    private void getDownfloaters(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> downfloatersToNextBracket) {
+    private static void getDownfloaters(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> downfloatersToNextBracket) {
         unpairedPlayersInThisBracket.removeAll(pairedPlayers);
         downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
     }
 
-    private void giveByeToLastEligiblePlayer(List<SimulatedPlayer> unpairedPlayers, List<SimulatedPlayer> pairedPlayers) {
+    private static void giveByeToLastEligiblePlayer(List<SimulatedPlayer> unpairedPlayers, List<SimulatedPlayer> pairedPlayers) {
         for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
             if (!unpairedPlayers.get(i).hasReceivedBye()) {
                 Pairing.giveBye(unpairedPlayers.get(i));
