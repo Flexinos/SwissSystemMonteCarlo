@@ -30,7 +30,7 @@ public class Main {
         // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
         LookupTable.createLookupTable(lookupTableFile);
         long timeSpentCreatingLookupTable = (System.nanoTime() - startTime) / 1000000;
-        System.out.println("Time spent creating lookupTable: " + millisecondsToSecondsString(timeSpentCreatingLookupTable) + "\n");
+        System.out.println("Time spent creating lookupTable: " + millisecondsToSecondsString(timeSpentCreatingLookupTable) + System.lineSeparator());
 
         final Random random = new Random();
         Tournament myTournament = new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants).mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo))).collect(Collectors.toList()));
@@ -45,7 +45,7 @@ public class Main {
         pool.awaitTermination(1, TimeUnit.DAYS);
 
         long timeAfterSimulations = (System.nanoTime() - timeBeforeSimulations) / 1000000;
-        System.out.println("Simulation runtime: " + millisecondsToSecondsString(timeAfterSimulations) + "\n");
+        System.out.println("Simulation runtime: " + millisecondsToSecondsString(timeAfterSimulations) + System.lineSeparator());
 
         topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
@@ -53,7 +53,7 @@ public class Main {
         Participant.printSimulationResults(participantsWithTopThreeRanking);
 
         long duration = (System.nanoTime() - startTime) / 1000000;
-        System.out.println("\nTotal runtime: " + millisecondsToSecondsString(duration));
+        System.out.println(System.lineSeparator() + "Total runtime: " + millisecondsToSecondsString(duration));
     }
 
     synchronized public static int getSimulationTicket() {
