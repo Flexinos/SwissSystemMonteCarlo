@@ -38,7 +38,7 @@ public class SimulatedTournament {
             if (listOfRounds.size() <= finishedRounds) {
                 listOfRounds.add(Round.createPairings(simulatedPlayerList));
             }
-            for (Pairing pairing : listOfRounds.get(finishedRounds + 1)) {
+            for (Pairing pairing : listOfRounds.get(finishedRounds)) {
                 pairing.simulateResult();
             }
         }
