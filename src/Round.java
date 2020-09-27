@@ -20,6 +20,7 @@ public class Round {
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
             nextBracket.addAll(downfloaters);
             nextBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
+            pairedPlayers.clear();
             downfloaters = pairBracket(nextBracket, pairedPlayers);
             unpairedPlayers.removeAll(pairedPlayers);
             unpairedPlayers.removeAll(downfloaters);
@@ -53,17 +54,14 @@ public class Round {
         List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
-                if (random.nextBoolean()) {
-                    provisionalPairings.add(new Pairing(playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)));
-                } else {
-                    provisionalPairings.add(new Pairing(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
-                }
-                pairedPlayers.add(playersInBracket.get(i));
-                pairedPlayers.add(playersInBracket.get(i + playersInBracket.size() / 2));
+                provisionalPairings.add(random.nextBoolean() ? new Pairing(playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)) : new Pairing(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
             } else {
-                pairedPlayers.clear();
                 return false;
             }
+        }
+        for (Pairing pairings : provisionalPairings) {
+            pairedPlayers.add(pairings.getPlayer1());
+            pairedPlayers.add(pairings.getPlayer2());
         }
         provisionalPairings.forEach(Pairing::simulateResult);
         return true;
