@@ -184,13 +184,13 @@ public class Participant {
                 " tieBreak3: " + tieBreak3;
     }
 
-    public int compareToByElo(Participant p2) {
+    public int compareToByEloDescending(Participant p2) {
         return -Double.compare(this.getElo(), p2.getElo());
     }
 
-    public int compareToByTopThreeFinishes(Participant p2) {
+    public int compareToByTopThreeFinishesDescending(Participant p2) {
         int result = -Integer.compare(this.getNumberOfTopThreeFinishes(), p2.getNumberOfTopThreeFinishes());
-        return result != 0 ? result : compareToByElo(p2);
+        return result != 0 ? result : compareToByEloDescending(p2);
     }
 
     private enum Padding {LEFT, RIGHT}
