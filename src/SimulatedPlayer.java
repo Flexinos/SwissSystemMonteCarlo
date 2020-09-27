@@ -4,8 +4,8 @@ import java.util.List;
 public class SimulatedPlayer {
     private final Participant participant;
     private SimulatedTournament simulatedTournament = null;
-    private double score;
     private final List<SimulatedPlayer> pastOpponents;
+    private double score;
     private double tieBreak1;
     private double tieBreak2;
     private double tieBreak3;
