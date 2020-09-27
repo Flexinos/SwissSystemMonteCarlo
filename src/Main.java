@@ -58,7 +58,7 @@ public class Main {
     private static void showResults() {
         topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
-        participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishes);
+        participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishesDescending);
         Participant.printSimulationResults(participantsWithTopThreeRanking);
     }
 
