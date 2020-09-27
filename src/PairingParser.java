@@ -20,10 +20,10 @@ public class PairingParser {
         String improvedLink = improveLink(link);
         Scanner scanner = null;
         try {
-            scanner = new Scanner(new URL(link).openStream());
+            scanner = new Scanner(new URL(improvedLink).openStream());
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Could not get valid data from link: " + link);
+            System.out.println("Could not get valid data from link: " + improvedLink);
             System.exit(1);
         }
         List<int[]> pairings = new ArrayList<>();
