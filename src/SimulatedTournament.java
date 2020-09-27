@@ -20,7 +20,11 @@ public class SimulatedTournament {
             List<int[]> givenPairings = tournament.getGivenPairings();
             List<Pairing> round = new ArrayList<>();
             for (int[] givenPairing : givenPairings) {
-                round.add(new Pairing(simulatedPlayerList.get(givenPairing[0]), simulatedPlayerList.get(givenPairing[1])));
+                if (givenPairing[1] == 0) {
+                    Pairing.giveBye(simulatedPlayerList.get(givenPairing[0] - 1));
+                } else {
+                    round.add(new Pairing(simulatedPlayerList.get(givenPairing[0] - 1), simulatedPlayerList.get(givenPairing[1] - 1)));
+                }
             }
             roundList.add(round);
         }
@@ -40,7 +44,6 @@ public class SimulatedTournament {
                 roundList.add(Round.createPairings(simulatedPlayerList));
             }
             for (Pairing pairing : roundList.get(finishedRounds)) {
-                System.out.println("penis");
                 pairing.simulateResult();
             }
         }
