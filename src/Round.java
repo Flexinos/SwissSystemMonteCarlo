@@ -23,7 +23,6 @@ public class Round {
             downfloaters = pairBracket(nextBracket, pairedPlayers);
             unpairedPlayers.removeAll(pairedPlayers);
             unpairedPlayers.removeAll(downfloaters);
-            unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         }
     }
 
