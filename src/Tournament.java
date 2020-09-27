@@ -10,7 +10,7 @@ public class Tournament {
     public Tournament(int roundsToBeSimulated, List<Participant> participants) {
         this.roundsToBeSimulated = roundsToBeSimulated;
         this.participantList.addAll(participants);
-        this.participantList.sort(Participant::compareToByElo);
+        this.participantList.sort(Participant::compareToByEloDescending);
         for (int i = 0; i < participantList.size(); ++i) {
             participantList.get(i).setStartingRank(i + 1);
         }
@@ -19,7 +19,7 @@ public class Tournament {
     public Tournament(int roundsToBeSimulated, List<Participant> participants, List<int[]> givenPairings) {
         this.roundsToBeSimulated = roundsToBeSimulated;
         this.participantList.addAll(participants);
-        this.participantList.sort(Participant::compareToByElo);
+        this.participantList.sort(Participant::compareToByEloDescending);
         for (int i = 0; i < participantList.size(); ++i) {
             participantList.get(i).setStartingRank(i + 1);
         }
