@@ -14,7 +14,7 @@ public class SimulatedTournament {
         this.tournament = tournament;
         this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerList::add);
-        listOfRounds = new ArrayList<>(tournament.getTotalRounds());
+        listOfRounds = new ArrayList<>(tournament.getRoundsToBeSimulated());
         gameMatrix = new BitSet(simulatedPlayerList.size() ^ 2);
         if (tournament.getGivenPairings() != null) {
             List<int[]> givenPairings = tournament.getGivenPairings();
@@ -34,7 +34,7 @@ public class SimulatedTournament {
     }
 
     public void simulateTournament() {
-        for (int finishedRounds = 0; finishedRounds < tournament.getTotalRounds(); finishedRounds++) {
+        for (int finishedRounds = 0; finishedRounds < tournament.getRoundsToBeSimulated(); finishedRounds++) {
             if (listOfRounds.size() <= finishedRounds) {
                 listOfRounds.add(Round.createPairings(simulatedPlayerList));
             }

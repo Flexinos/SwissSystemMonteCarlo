@@ -2,13 +2,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tournament {
-    private final int totalRounds;
+    private final int roundsToBeSimulated;
     private final List<Participant> participantList = new ArrayList<>();
     private List<int[]> givenPairings;
     public static final SimulatedPlayer BYE = new SimulatedPlayer(new Participant("BYE", 0));
 
-    public Tournament(int totalRounds, List<Participant> participants) {
-        this.totalRounds = totalRounds;
+    public Tournament(int roundsToBeSimulated, List<Participant> participants) {
+        this.roundsToBeSimulated = roundsToBeSimulated;
         this.participantList.addAll(participants);
         this.participantList.sort(Participant::compareToByElo);
         for (int i = 0; i < participantList.size(); ++i) {
@@ -16,8 +16,8 @@ public class Tournament {
         }
     }
 
-    public Tournament(int totalRounds, List<Participant> participants, List<int[]> givenPairings) {
-        this.totalRounds = totalRounds;
+    public Tournament(int roundsToBeSimulated, List<Participant> participants, List<int[]> givenPairings) {
+        this.roundsToBeSimulated = roundsToBeSimulated;
         this.participantList.addAll(participants);
         this.participantList.sort(Participant::compareToByElo);
         for (int i = 0; i < participantList.size(); ++i) {
@@ -26,8 +26,8 @@ public class Tournament {
         this.givenPairings = givenPairings;
     }
 
-    public int getTotalRounds() {
-        return totalRounds;
+    public int getRoundsToBeSimulated() {
+        return roundsToBeSimulated;
     }
 
     public List<int[]> getGivenPairings() {
