@@ -1,3 +1,4 @@
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
@@ -106,14 +107,14 @@ public class Participant {
         String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
         Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
         Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
-        List<String[]> rows = participants.stream().map(participant -> new String[]{
+        List<String[]> rows = participants.stream().map(participant -> Arrays.stream(new Object[]{
                 // Add the functions to produce a participant's entry here.
                 participant.getName(),
-                Integer.toString(participant.getStartingRank()),
-                Integer.toString(participant.getElo()),
-                Integer.toString(participant.getNumberOfTopThreeFinishes()),
-                Float.toString(participant.getAverageRank())
-        }).collect(Collectors.toList());
+                participant.getStartingRank(),
+                participant.getElo(),
+                participant.getNumberOfTopThreeFinishes(),
+                participant.getAverageRank()
+        }).map(String::valueOf).toArray(String[]::new)).collect(Collectors.toList());
         int[] columnLengths = getColumnLengths(columnNames, rows);
         printRow(columnNames, columnLengths, columnNamePaddings);
         printAllRows(rows, columnLengths, participantFieldsPaddings);
