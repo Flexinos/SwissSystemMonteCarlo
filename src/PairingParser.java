@@ -74,8 +74,7 @@ public class PairingParser {
             blackStartingRank = 0;
         } else if (lastEntry.equals("nicht ausgelost")) {
             return null;
-        }
-        else {
+        } else {
             String lastEntryNumbersOnly = lastEntry.replaceAll("[^0-9]+", "");
             String blackStartingRankString;
             // The input data has no separator between black elo and black starting rank,
