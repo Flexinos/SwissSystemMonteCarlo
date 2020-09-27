@@ -34,16 +34,6 @@ public class SimulatedPlayer {
         return score;
     }
 
-    public static int compareToByTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
-        if (p1.getScore() < p2.getScore()) {
-            return 1;
-        } else if (p1.getScore() > p2.getScore()) {
-            return -1;
-        } else {
-            return Double.compare(p2.getTieBreak1(), p1.getTieBreak1());
-        }
-    }
-
     public double getTieBreak1() {
         return tieBreak1;
     }
@@ -69,13 +59,14 @@ public class SimulatedPlayer {
         }
     }
 
+    public static int compareToByScoreTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
+        int result = -Double.compare(p1.getScore(), p2.getScore());
+        return result != 0 ? result : Double.compare(p2.getTieBreak1(), p1.getTieBreak1());
+    }
+
     public static int compareToByScoreThenElo(SimulatedPlayer p1, SimulatedPlayer p2) {
-        if (p1.getScore() > p2.getScore()) {
-            return -1;
-        } else if (p1.getScore() < p2.getScore()) {
-            return 1;
-        }
-        return Double.compare(p2.getElo(), p1.getElo());
+        int result = -Double.compare(p1.getScore(), p2.getScore());
+        return result != 0 ? result : Double.compare(p2.getElo(), p1.getElo());
     }
 
     public SimulatedTournament getSimulatedTournament() {
