@@ -27,33 +27,33 @@ public class Round {
         }
     }
 
-    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers) {
+    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> playersInThisBracket, List<SimulatedPlayer> pairedPlayers) {
+        if (playersInThisBracket.size() < 2) {
+            return playersInThisBracket;
+        }
         SimulatedPlayer swappedOutPlayer = null;
         outsideLoops:
-        for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; --i) {
-            for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; --j) {
-                for (int k = unpairedPlayersInThisBracket.size() - 1; k >= 0; --k) {
-                    boolean proposedPairingIsValid = tryPairBracket(unpairedPlayersInThisBracket, pairedPlayers);
+        for (int i = playersInThisBracket.size() - 1; i >= 0; --i) {
+            for (int j = playersInThisBracket.size() - 1; j >= 0; --j) {
+                for (int k = playersInThisBracket.size() - 1; k >= 0; --k) {
+                    boolean proposedPairingIsValid = tryPairBracket(playersInThisBracket, pairedPlayers);
                     if (proposedPairingIsValid) {
                         break outsideLoops;
                     }
                     if (swappedOutPlayer != null) {
-                        unpairedPlayersInThisBracket.add(swappedOutPlayer);
+                        playersInThisBracket.add(swappedOutPlayer);
                     }
-                    Collections.swap(unpairedPlayersInThisBracket, j, k);
-                    if (unpairedPlayersInThisBracket.size() % 2 == 1) {
-                        swappedOutPlayer = unpairedPlayersInThisBracket.remove(i);
+                    Collections.swap(playersInThisBracket, j, k);
+                    if (playersInThisBracket.size() % 2 == 1) {
+                        swappedOutPlayer = playersInThisBracket.remove(i);
                     }
                 }
             }
         }
-        return getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, swappedOutPlayer);
+        return getDownfloaters(playersInThisBracket, pairedPlayers, swappedOutPlayer);
     }
 
     private static boolean tryPairBracket(List<SimulatedPlayer> playersInBracket, List<SimulatedPlayer> pairedPlayers) {
-        if (playersInBracket.size() < 2) {
-            return false;
-        }
         List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
