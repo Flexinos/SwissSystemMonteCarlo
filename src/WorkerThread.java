@@ -16,6 +16,7 @@ public class WorkerThread implements Runnable {
         while(simulationTicket <= numberOfSimulations) {
             SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
             simulatedTournament.simulateTournament();
+            simulatedTournament.analyseThisSimulatedTournament();
             if (simulationTicket % simulationsPerProgressMessage == 0) {
                 System.out.printf(
                         "Completed %" + numberOfSimulationsStringLength +

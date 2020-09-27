@@ -6,7 +6,8 @@ import java.util.stream.Collectors;
 
 public class Round {
 
-    public static void createPairings(List<SimulatedPlayer> players) {
+    public static List<Pairing> createPairings(List<SimulatedPlayer> players) {
+        List<Pairing> unorderedPairings = new ArrayList<>();
         List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players);
         unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         if (unpairedPlayers.size() % 2 == 1) {
@@ -20,13 +21,14 @@ public class Round {
             nextBracket.addAll(downfloaters);
             nextBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
             pairedPlayers.clear();
-            downfloaters = pairBracket(nextBracket, pairedPlayers);
+            downfloaters = pairBracket(nextBracket, pairedPlayers, unorderedPairings);
             unpairedPlayers.removeAll(pairedPlayers);
             unpairedPlayers.removeAll(downfloaters);
         }
+        return unorderedPairings;
     }
 
-    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> playersInThisBracket, List<SimulatedPlayer> pairedPlayers) {
+    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> playersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<Pairing> unorderedPairings) {
         if (playersInThisBracket.size() < 2) {
             return playersInThisBracket;
         }
@@ -35,7 +37,7 @@ public class Round {
         for (int i = playersInThisBracket.size() - 1; i >= 0; --i) {
             for (int j = playersInThisBracket.size() - 1; j >= 0; --j) {
                 for (int k = playersInThisBracket.size() - 1; k >= 0; --k) {
-                    boolean proposedPairingIsValid = tryPairBracket(playersInThisBracket, pairedPlayers);
+                    boolean proposedPairingIsValid = tryPairBracket(playersInThisBracket, pairedPlayers, unorderedPairings);
                     if (proposedPairingIsValid) {
                         break outsideLoops;
                     }
@@ -52,7 +54,7 @@ public class Round {
         return getDownfloaters(playersInThisBracket, pairedPlayers, swappedOutPlayer);
     }
 
-    private static boolean tryPairBracket(List<SimulatedPlayer> playersInBracket, List<SimulatedPlayer> pairedPlayers) {
+    private static boolean tryPairBracket(List<SimulatedPlayer> playersInBracket, List<SimulatedPlayer> pairedPlayers, List<Pairing> unorderedPairings) {
         List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
@@ -65,7 +67,7 @@ public class Round {
             pairedPlayers.add(pairings.getPlayer1());
             pairedPlayers.add(pairings.getPlayer2());
         }
-        provisionalPairings.forEach(Pairing::simulateResult);
+        unorderedPairings.addAll(provisionalPairings);
         return true;
     }
 
