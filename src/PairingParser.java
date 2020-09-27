@@ -43,7 +43,7 @@ public class PairingParser {
         return link
                 .replaceFirst("turdet=[^&]*", "turdet=NO")
                 .replaceFirst("flag=[^&]*", "flag=NO")
-                .replaceFirst("lan=[^&]*", "lan=1")
+                .replaceFirst("lan=[^&]*", "lan=0")
                 .replaceFirst("art=[^&]*", "art=2")
                 .replaceFirst("&zeilen=[^&]*", "")
                 .replaceFirst("&prt=[^&]*", "")
