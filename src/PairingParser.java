@@ -7,7 +7,8 @@ import java.util.Scanner;
 public class PairingParser {
     // For testing
     public static void main(String[] args) {
-        getPairings("https://chess-results.com/tnr535000.aspx?lan=0&art=2&rd=6&turdet=NO&prt=7");
+        //getPairings("https://chess-results.com/tnr535000.aspx?lan=0&art=2&rd=6&turdet=NO&prt=7");
+        getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=9&turdet=YES&flag=30&prt=7");
     }
 
     public static List<int[]> getPairings(int tournamentNumber, int round) {
@@ -30,10 +31,13 @@ public class PairingParser {
                     paringsStarted = true;
                 }
             } else {
-                if (line.length() == 0) {
+                if (!line.matches("^\\d.*")) {
                     break;
                 }
-                pairings.add(parseLine(line));
+                int[] pairing = parseLine(line);
+                if (pairing != null) {
+                    pairings.add(pairing);
+                }
             }
         }
         return pairings;
@@ -62,22 +66,26 @@ public class PairingParser {
     }
 
     private static int[] parseLine(String line) {
-        String[] lineEntries = line.split("[; ]");
-        int whiteStartingRank = Integer.parseInt(lineEntries[1]);
+        String[] lineEntries = line.split("[;]");
+        int whiteStartingRank = Integer.parseInt(lineEntries[1].replaceAll("[^0-9]+", ""));
         String lastEntry = lineEntries[lineEntries.length - 1];
         int blackStartingRank;
         if (lastEntry.equals("spielfrei")) {
             blackStartingRank = 0;
-        } else {
+        } else if (lastEntry.equals("nicht ausgelost")) {
+            return null;
+        }
+        else {
+            String lastEntryNumbersOnly = lastEntry.replaceAll("[^0-9]+", "");
             String blackStartingRankString;
             // The input data has no separator between black elo and black starting rank,
             // so this is necessary.
-            if (lastEntry.startsWith("0")) {
-                blackStartingRankString = lastEntry.substring(1);
-            } else if (lastEntry.matches("^[12]\\d+")) {
-                blackStartingRankString = lastEntry.substring(4);
+            if (lastEntryNumbersOnly.startsWith("0")) {
+                blackStartingRankString = lastEntryNumbersOnly.substring(1);
+            } else if (lastEntryNumbersOnly.matches("^[12]\\d+")) {
+                blackStartingRankString = lastEntryNumbersOnly.substring(4);
             } else {
-                blackStartingRankString = lastEntry.substring(3);
+                blackStartingRankString = lastEntryNumbersOnly.substring(3);
             }
             blackStartingRank = Integer.parseInt(blackStartingRankString);
         }
