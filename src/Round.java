@@ -32,7 +32,7 @@ public class Round {
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
-                boolean proposedPairingIsValid = tryPairBracket(pairedPlayers, unpairedPlayersInThisBracket);
+                boolean proposedPairingIsValid = tryPairBracket(unpairedPlayersInThisBracket, pairedPlayers);
                 if (proposedPairingIsValid) {
                     getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
                     return downfloatersToNextBracket;
@@ -50,7 +50,7 @@ public class Round {
         return downfloatersToNextBracket;
     }
 
-    private static boolean tryPairBracket(List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> playersInBracket) {
+    private static boolean tryPairBracket(List<SimulatedPlayer> playersInBracket, List<SimulatedPlayer> pairedPlayers) {
         List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
