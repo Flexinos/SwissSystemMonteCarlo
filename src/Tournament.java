@@ -8,6 +8,16 @@ public class Tournament {
     public static final SimulatedPlayer BYE = new SimulatedPlayer(new Participant("BYE", 0));
 
     public Tournament(int roundsToBeSimulated, List<Participant> participants) {
+        try {
+            if (roundsToBeSimulated < 0) {
+                throw new IllegalArgumentException("roundsToBeSimulated must be non-negative");
+            }
+            if (participants.size() < 2) {
+                throw new IllegalArgumentException("participants must contain two or more players");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.roundsToBeSimulated = roundsToBeSimulated;
         this.participantList.addAll(participants);
         this.participantList.sort(Participant::compareToByEloDescending);
@@ -17,6 +27,19 @@ public class Tournament {
     }
 
     public Tournament(int roundsToBeSimulated, List<Participant> participants, List<int[]> givenPairings) {
+        try {
+            if (roundsToBeSimulated < 0) {
+                throw new IllegalArgumentException("roundsToBeSimulated must be non-negative");
+            }
+            if (participants.size() < 2) {
+                throw new IllegalArgumentException("participants must contain two or more players");
+            }
+            if (givenPairings.size() < 1) {
+                throw new IllegalArgumentException("givenPairings must contain one or more pairings");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         this.roundsToBeSimulated = roundsToBeSimulated;
         this.participantList.addAll(participants);
         this.participantList.sort(Participant::compareToByEloDescending);
