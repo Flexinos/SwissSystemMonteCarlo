@@ -27,7 +27,7 @@ public class Round {
     }
 
     private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers) {
-        List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
+        SimulatedPlayer swappedOutPlayer = null;
         outsideLoops:
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
@@ -35,17 +35,16 @@ public class Round {
                 if (proposedPairingIsValid) {
                     break outsideLoops;
                 }
-                if (!downfloatersToNextBracket.isEmpty()) {
-                    unpairedPlayersInThisBracket.add(downfloatersToNextBracket.remove(0));
+                if (swappedOutPlayer != null) {
+                    unpairedPlayersInThisBracket.add(swappedOutPlayer);
                 }
                 Collections.swap(unpairedPlayersInThisBracket, i, j);
                 if (unpairedPlayersInThisBracket.size() % 2 == 1) {
-                    downfloatersToNextBracket.add(unpairedPlayersInThisBracket.remove(unpairedPlayersInThisBracket.size() - 1));
+                    swappedOutPlayer = unpairedPlayersInThisBracket.remove(unpairedPlayersInThisBracket.size() - 1);
                 }
             }
         }
-        getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
-        return downfloatersToNextBracket;
+        return getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, swappedOutPlayer);
     }
 
     private static boolean tryPairBracket(List<SimulatedPlayer> playersInBracket, List<SimulatedPlayer> pairedPlayers) {
@@ -68,11 +67,16 @@ public class Round {
         return true;
     }
 
-    private static void getDownfloaters(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> downfloatersToNextBracket) {
+    private static List<SimulatedPlayer> getDownfloaters(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, SimulatedPlayer swappedOutPlayer) {
+        List<SimulatedPlayer> downfloaters = new ArrayList<>();
+        if (swappedOutPlayer != null) {
+            downfloaters.add(swappedOutPlayer);
+        }
         if (unpairedPlayersInThisBracket.size() != pairedPlayers.size()) {
             unpairedPlayersInThisBracket.removeAll(pairedPlayers);
-            downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
+            downfloaters.addAll(unpairedPlayersInThisBracket);
         }
+        return downfloaters;
     }
 
     private static void giveByeToLastEligiblePlayer(List<SimulatedPlayer> unpairedPlayers) {
