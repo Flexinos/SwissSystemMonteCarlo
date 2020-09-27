@@ -27,14 +27,18 @@ public class PairingParser {
                     .replaceAll("<[^>]*>", "")
                     .replaceAll("&#\\d*;", "");
             if (!paringsStarted) {
+                // Find the start of the table.
                 if (line.startsWith("Br.;Nr.;Name;")) {
+                    // Parse pairings starting from the next line.
                     paringsStarted = true;
                 }
             } else {
+                // Stop parsing pairings on the first line which does not start with a digit.
                 if (!line.matches("^\\d.*")) {
                     break;
                 }
                 int[] pairing = parseLine(line);
+                // "nicht ausgelost" pairings return null and should not be added to the list.
                 if (pairing != null) {
                     pairings.add(pairing);
                 }
@@ -67,23 +71,31 @@ public class PairingParser {
 
     private static int[] parseLine(String line) {
         String[] lineEntries = line.split("[;]");
+        // White's starting rank and title are not separated.
+        // Only using the digits in the string hopefully solves this issue.
         int whiteStartingRank = Integer.parseInt(lineEntries[1].replaceAll("[^0-9]+", ""));
         String lastEntry = lineEntries[lineEntries.length - 1];
         int blackStartingRank;
         if (lastEntry.equals("spielfrei")) {
             blackStartingRank = 0;
         } else if (lastEntry.equals("nicht ausgelost")) {
+            // Pairing will not be returned.
             return null;
         } else {
+            // In some cases separators are missing.
+            // Only using the digits in the string hopefully solves this issue.
             String lastEntryNumbersOnly = lastEntry.replaceAll("[^0-9]+", "");
             String blackStartingRankString;
             // The input data has no separator between black elo and black starting rank,
             // so this is necessary.
             if (lastEntryNumbersOnly.startsWith("0")) {
+                // Elo is zero.
                 blackStartingRankString = lastEntryNumbersOnly.substring(1);
             } else if (lastEntryNumbersOnly.matches("^[12]\\d+")) {
+                // Elo has four digits.
                 blackStartingRankString = lastEntryNumbersOnly.substring(4);
             } else {
+                // Elo has three digits.
                 blackStartingRankString = lastEntryNumbersOnly.substring(3);
             }
             blackStartingRank = Integer.parseInt(blackStartingRankString);
