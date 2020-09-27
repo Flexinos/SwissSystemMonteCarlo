@@ -166,9 +166,9 @@ public class Participant {
     private float getAverageRank() {
         float sum = 0;
         float longAdderCount = 0;
-        for (int rank = 0; rank < rankingTable.length; rank++) {
-            sum += rankingTable[rank].longValue() * rank;
-            longAdderCount += rankingTable[rank].longValue();
+        for (int rank = 1; rank <= rankingTable.length; rank++) {
+            sum += rankingTable[rank - 1].longValue() * rank;
+            longAdderCount += rankingTable[rank - 1].longValue();
         }
         return sum / longAdderCount;
     }
@@ -177,12 +177,12 @@ public class Participant {
     public String toString() {
         return
                 "Name: " + name + System.lineSeparator() +
-                "Elo: " + elo + System.lineSeparator() +
-                "Starting Rank: " + startingRank + System.lineSeparator() +
-                "Score: " + score + System.lineSeparator() +
-                "Tie Break 1: " + tieBreak1 + System.lineSeparator() +
-                "Tie Break 2: " + tieBreak2 + System.lineSeparator() +
-                "Tie Break 3: " + tieBreak3 + System.lineSeparator();
+                        "Elo: " + elo + System.lineSeparator() +
+                        "Starting Rank: " + startingRank + System.lineSeparator() +
+                        "Score: " + score + System.lineSeparator() +
+                        "Tie Break 1: " + tieBreak1 + System.lineSeparator() +
+                        "Tie Break 2: " + tieBreak2 + System.lineSeparator() +
+                        "Tie Break 3: " + tieBreak3 + System.lineSeparator();
     }
 
     public int compareToByEloDescending(Participant p2) {
