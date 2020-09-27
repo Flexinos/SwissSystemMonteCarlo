@@ -29,18 +29,20 @@ public class Round {
     private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers) {
         SimulatedPlayer swappedOutPlayer = null;
         outsideLoops:
-        for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
-            for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
-                boolean proposedPairingIsValid = tryPairBracket(unpairedPlayersInThisBracket, pairedPlayers);
-                if (proposedPairingIsValid) {
-                    break outsideLoops;
-                }
-                if (swappedOutPlayer != null) {
-                    unpairedPlayersInThisBracket.add(swappedOutPlayer);
-                }
-                Collections.swap(unpairedPlayersInThisBracket, i, j);
-                if (unpairedPlayersInThisBracket.size() % 2 == 1) {
-                    swappedOutPlayer = unpairedPlayersInThisBracket.remove(unpairedPlayersInThisBracket.size() - 1);
+        for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; --i) {
+            for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; --j) {
+                for (int k = unpairedPlayersInThisBracket.size() - 1; k >= 0; --k) {
+                    boolean proposedPairingIsValid = tryPairBracket(unpairedPlayersInThisBracket, pairedPlayers);
+                    if (proposedPairingIsValid) {
+                        break outsideLoops;
+                    }
+                    if (swappedOutPlayer != null) {
+                        unpairedPlayersInThisBracket.add(swappedOutPlayer);
+                    }
+                    Collections.swap(unpairedPlayersInThisBracket, j, k);
+                    if (unpairedPlayersInThisBracket.size() % 2 == 1) {
+                        swappedOutPlayer = unpairedPlayersInThisBracket.remove(i);
+                    }
                 }
             }
         }
