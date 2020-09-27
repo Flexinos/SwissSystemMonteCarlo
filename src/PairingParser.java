@@ -17,15 +17,7 @@ public class PairingParser {
     }
 
     public static List<int[]> getPairings(String link) {
-        String improvedLink = improveLink(link);
-        Scanner scanner = null;
-        try {
-            scanner = new Scanner(new URL(improvedLink).openStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Could not get valid data from link: " + improvedLink);
-            System.exit(1);
-        }
+        Scanner scanner = getScanner(improveLink(link));
         List<int[]> pairings = new ArrayList<>();
         boolean paringsStarted = false;
         while (scanner.hasNextLine()) {
@@ -41,26 +33,7 @@ public class PairingParser {
                 if (line.length() == 0) {
                     break;
                 }
-                String[] lineEntries = line.split("[; ]");
-                int whiteStartingRank = Integer.parseInt(lineEntries[1]);
-                String lastEntry = lineEntries[lineEntries.length - 1];
-                int blackStartingRank;
-                if (lastEntry.equals("spielfrei")) {
-                    blackStartingRank = 0;
-                } else {
-                    String blackStartingRankString;
-                    // The input data has no separator between black elo and black starting rank,
-                    // so this is necessary.
-                    if (lastEntry.startsWith("0")) {
-                        blackStartingRankString = lastEntry.substring(1);
-                    } else if (lastEntry.matches("^[12]\\d+")) {
-                        blackStartingRankString = lastEntry.substring(4);
-                    } else {
-                        blackStartingRankString = lastEntry.substring(3);
-                    }
-                    blackStartingRank = Integer.parseInt(blackStartingRankString);
-                }
-                pairings.add(new int[]{whiteStartingRank, blackStartingRank});
+                pairings.add(parseLine(line));
             }
         }
         return pairings;
@@ -75,5 +48,39 @@ public class PairingParser {
                 .replaceFirst("&zeilen=[^&]*", "")
                 .replaceFirst("&prt=[^&]*", "")
                 .concat("&prt=7");
+    }
+
+    private static Scanner getScanner(String link) {
+        try {
+            return new Scanner(new URL(link).openStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println("Could not get valid data from link: " + link);
+            System.exit(1);
+            return null; // Unreachable but necessary for compilation
+        }
+    }
+
+    private static int[] parseLine(String line) {
+        String[] lineEntries = line.split("[; ]");
+        int whiteStartingRank = Integer.parseInt(lineEntries[1]);
+        String lastEntry = lineEntries[lineEntries.length - 1];
+        int blackStartingRank;
+        if (lastEntry.equals("spielfrei")) {
+            blackStartingRank = 0;
+        } else {
+            String blackStartingRankString;
+            // The input data has no separator between black elo and black starting rank,
+            // so this is necessary.
+            if (lastEntry.startsWith("0")) {
+                blackStartingRankString = lastEntry.substring(1);
+            } else if (lastEntry.matches("^[12]\\d+")) {
+                blackStartingRankString = lastEntry.substring(4);
+            } else {
+                blackStartingRankString = lastEntry.substring(3);
+            }
+            blackStartingRank = Integer.parseInt(blackStartingRankString);
+        }
+        return new int[]{whiteStartingRank, blackStartingRank};
     }
 }
