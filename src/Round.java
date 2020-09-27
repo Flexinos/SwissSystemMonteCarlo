@@ -8,7 +8,6 @@ public class Round {
     private static final Random random = new Random();
 
     public static void createPairings(List<SimulatedPlayer> players) {
-        List<Pairing> unorderedPairings = new ArrayList<>();
         List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players); // maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
         unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         if (unpairedPlayers.size() % 2 == 1) {
@@ -21,14 +20,14 @@ public class Round {
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
             nextBracket.addAll(downfloaters);
             nextBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
-            downfloaters = pairBracket(nextBracket, pairedPlayers, unorderedPairings);
+            downfloaters = pairBracket(nextBracket, pairedPlayers);
             unpairedPlayers.removeAll(pairedPlayers);
             unpairedPlayers.removeAll(downfloaters);
             unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         }
     }
 
-    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<Pairing> unorderedPairings) {
+    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers) {
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
