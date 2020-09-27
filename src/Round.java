@@ -1,11 +1,10 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 public class Round {
-    private static final Random random = new Random();
 
     public static void createPairings(List<SimulatedPlayer> players) {
         List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players);
@@ -57,7 +56,7 @@ public class Round {
         List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
-                provisionalPairings.add(random.nextBoolean() ? new Pairing(playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)) : new Pairing(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
+                provisionalPairings.add(ThreadLocalRandom.current().nextBoolean() ? new Pairing(playersInBracket.get(i + playersInBracket.size() / 2), playersInBracket.get(i)) : new Pairing(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2)));
             } else {
                 return false;
             }

@@ -1,9 +1,8 @@
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Pairing {
     private final SimulatedPlayer player1;
     private final SimulatedPlayer player2;
-    private static final Random random = new Random();
     private ResultOfGame result;
 
     public Pairing(SimulatedPlayer player1, SimulatedPlayer player2) {
@@ -35,7 +34,7 @@ public class Pairing {
     }
 
     private static ResultOfGame randomResultLookUp(SimulatedPlayer whitePlayer, SimulatedPlayer blackPlayer) {
-        float randomValue = random.nextFloat();
+        float randomValue = ThreadLocalRandom.current().nextFloat();
         float[] probabilitiesArray = LookupTable.getProbabilities(whitePlayer.getElo(), blackPlayer.getElo());
         if (randomValue < probabilitiesArray[0]) {
             return ResultOfGame.BLACK_WIN;

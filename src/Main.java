@@ -1,11 +1,7 @@
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -14,7 +10,7 @@ public class Main {
     // Variables for configuration
     public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 9;
-    public static final int numberOfSimulations = 10000;
+    public static final int numberOfSimulations = 100000;
     public static final int numberOfConcurrentThreads = 6;
     // Used for randomly created participants
     public static final int minElo = 1000;
@@ -44,9 +40,8 @@ public class Main {
     }
 
     private static Tournament createTournament() {
-        final Random random = new Random();
         return new Tournament(numberOfRounds, IntStream.range(0, numberOfParticipants)
-                .mapToObj(i -> new Participant("player " + i, minElo + random.nextInt(maxElo - minElo)))
+                .mapToObj(i -> new Participant("player " + i, minElo + ThreadLocalRandom.current().nextInt(maxElo - minElo)))
                 .collect(Collectors.toList()));
     }
 
