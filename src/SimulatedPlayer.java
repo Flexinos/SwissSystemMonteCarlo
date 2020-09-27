@@ -27,6 +27,28 @@ public class SimulatedPlayer {
         this.pastOpponents = new ArrayList<>(Main.numberOfRounds);
     }
 
+    public static int compareToByScoreTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
+        int result = -Double.compare(p1.getScore(), p2.getScore());
+        if (result != 0) {
+            return result;
+        }
+        result = -Double.compare(p1.getTieBreak1(), p2.getTieBreak1());
+        if (result != 0) {
+            return result;
+        }
+        result = -Double.compare(p1.getTieBreak2(), p2.getTieBreak2());
+        if (result != 0) {
+            return result;
+        }
+        result = -Double.compare(p1.getTieBreak3(), p2.getTieBreak3());
+        return result;
+    }
+
+    public static int compareToByScoreThenElo(SimulatedPlayer p1, SimulatedPlayer p2) {
+        int result = -Double.compare(p1.getScore(), p2.getScore());
+        return result != 0 ? result : -Double.compare(p1.getElo(), p2.getElo());
+    }
+
     public double getScore() {
         return score;
     }
@@ -43,27 +65,6 @@ public class SimulatedPlayer {
         pastOpponents.add(opponent);
         simulatedTournament.addGame(this, opponent);
         score += result;
-    }
-
-    public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
-        pastOpponents.add(opponent);
-        simulatedTournament.addGame(this, opponent);
-        score += result;
-        if (isWhite) {
-            colorDifference++;
-        } else {
-            colorDifference--;
-        }
-    }
-
-    public static int compareToByScoreTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
-        int result = -Double.compare(p1.getScore(), p2.getScore());
-        return result != 0 ? result : Double.compare(p2.getTieBreak1(), p1.getTieBreak1());
-    }
-
-    public static int compareToByScoreThenElo(SimulatedPlayer p1, SimulatedPlayer p2) {
-        int result = -Double.compare(p1.getScore(), p2.getScore());
-        return result != 0 ? result : Double.compare(p2.getElo(), p1.getElo());
     }
 
     public SimulatedTournament getSimulatedTournament() {
@@ -94,15 +95,26 @@ public class SimulatedPlayer {
         this.receivedBye = receivedBye;
     }
 
-    public double getTieBreak3() {
-        return tieBreak3;
-    }
-
     public void updateTieBreaks() {
         tieBreak1 = 0;
         for (SimulatedPlayer opponent : pastOpponents) {
             tieBreak1 += opponent.getScore();
         }
+    }
+
+    public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
+        pastOpponents.add(opponent);
+        simulatedTournament.addGame(this, opponent);
+        score += result;
+        if (isWhite) {
+            colorDifference++;
+        } else {
+            colorDifference--;
+        }
+    }
+
+    public double getTieBreak3() {
+        return tieBreak3;
     }
 
     @Override
