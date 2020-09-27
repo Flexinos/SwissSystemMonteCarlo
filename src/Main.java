@@ -10,7 +10,7 @@ public class Main {
     // Variables for configuration
     public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 9;
-    public static final int numberOfSimulations = 100000;
+    public static final int numberOfSimulations = 10000;
     public static final int numberOfConcurrentThreads = 6;
     // Used for randomly created participants
     public static final int minElo = 1000;
