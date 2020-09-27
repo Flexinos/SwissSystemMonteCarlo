@@ -19,7 +19,9 @@ public class Round {
         while (unpairedPlayers.size() > 0) {
             double highestUnpairedScore = unpairedPlayers.get(0).getScore();
             List<SimulatedPlayer> nextBracket = unpairedPlayers.stream().filter(p -> p.getScore() == highestUnpairedScore).sorted(SimulatedPlayer::compareToByScoreThenElo).collect(Collectors.toList());
-            downfloaters = pairBracket(nextBracket, downfloaters, pairedPlayers, unorderedPairings);
+            nextBracket.addAll(downfloaters);
+            nextBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
+            downfloaters = pairBracket(nextBracket, pairedPlayers, unorderedPairings);
             for (Pairing pairing : unorderedPairings) {
                 unpairedPlayers.remove(pairing.getPlayer1());
                 unpairedPlayers.remove(pairing.getPlayer2());
@@ -29,18 +31,13 @@ public class Round {
         }
     }
 
-    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> nonDownfloaters, List<SimulatedPlayer> downfloatersFromPreviousBracket, List<SimulatedPlayer> pairedPlayers, List<Pairing> unorderedPairings) {
-        List<SimulatedPlayer> unpairedPlayersInThisBracket = new ArrayList<>(nonDownfloaters);
-        unpairedPlayersInThisBracket.addAll(downfloatersFromPreviousBracket);
-        unpairedPlayersInThisBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
-        List<Pairing> proposedPairings = new ArrayList<>(unpairedPlayersInThisBracket.size() / 2);
+    private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers, List<Pairing> unorderedPairings) {
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
-                boolean proposedPairingIsValid = tryPairBracket(proposedPairings, pairedPlayers, unpairedPlayersInThisBracket);
+                boolean proposedPairingIsValid = tryPairBracket(unorderedPairings, pairedPlayers, unpairedPlayersInThisBracket);
                 if (proposedPairingIsValid) {
                     getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
-                    unorderedPairings.addAll(proposedPairings);
                     return downfloatersToNextBracket;
                 }
                 if (!downfloatersToNextBracket.isEmpty()) {
