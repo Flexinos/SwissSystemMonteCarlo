@@ -12,7 +12,11 @@ import java.util.List;
 
 public class XLSXParser {
     public static void main(String[] args) throws IOException {
-        getPairings("https://chess-results.com/tnr507449.aspx?lan=0&zeilen=0&art=1&rd=7&turdet=YES&flag=30&prt=4&excel=2010");
+        //getPairings("https://chess-results.com/tnr507449.aspx?lan=0&zeilen=0&art=1&rd=7&turdet=YES&flag=30&prt=4&excel=2010");
+        List<Participant> participants = getParticipantsFromRanking("https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010");
+        for (Participant participant : participants) {
+            System.out.println(participant);
+        }
     }
 
     public static void getPairings(String link) throws IOException {
@@ -195,7 +199,7 @@ public class XLSXParser {
     }
 
     private static boolean isScore(String string) {
-        return string.matches("pkt|Pkt\\.");
+        return string.matches("pkt|Pkt\\. ");
     }
 
     private static boolean isTieBreak1(String string) {
