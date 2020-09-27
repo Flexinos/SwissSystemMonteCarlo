@@ -28,12 +28,12 @@ public class Round {
 
     private static List<SimulatedPlayer> pairBracket(List<SimulatedPlayer> unpairedPlayersInThisBracket, List<SimulatedPlayer> pairedPlayers) {
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
+        outsideLoops:
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
                 boolean proposedPairingIsValid = tryPairBracket(unpairedPlayersInThisBracket, pairedPlayers);
                 if (proposedPairingIsValid) {
-                    getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
-                    return downfloatersToNextBracket;
+                    break outsideLoops;
                 }
                 if (!downfloatersToNextBracket.isEmpty()) {
                     unpairedPlayersInThisBracket.add(downfloatersToNextBracket.remove(0));
@@ -44,7 +44,7 @@ public class Round {
                 }
             }
         }
-        downfloatersToNextBracket.addAll(unpairedPlayersInThisBracket);
+        getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
         return downfloatersToNextBracket;
     }
 
