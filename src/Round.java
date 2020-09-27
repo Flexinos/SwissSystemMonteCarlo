@@ -84,6 +84,7 @@ public class Round {
             if (!unpairedPlayers.get(i).hasReceivedBye()) {
                 Pairing.giveBye(unpairedPlayers.get(i));
                 unpairedPlayers.get(i).setReceivedBye(true);
+                unpairedPlayers.remove(i);
             }
         }
     }
