@@ -1,7 +1,7 @@
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Participant {
     private final String title;
@@ -65,6 +65,25 @@ public class Participant {
         return elo;
     }
 
+    // Customize the output of the simulation results here.
+    public static void printSimulationResults(List<Participant> participants) {
+        // Set the name of each column here.
+        String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
+        Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
+        Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
+        // Add the functions to produce a participant's entry here.
+        List<String[]> rows = participants.stream().map(participant -> Stream.of(
+                participant.getName(),
+                participant.getStartingRank(),
+                participant.getElo(),
+                participant.getNumberOfTopThreeFinishes(),
+                participant.getAverageRank()
+        ).map(String::valueOf).toArray(String[]::new)).collect(Collectors.toList());
+        int[] columnLengths = getColumnLengths(columnNames, rows);
+        printRow(columnNames, columnLengths, columnNamePaddings);
+        printAllRows(rows, columnLengths, participantFieldsPaddings);
+    }
+
     public double getScore() {
         return score;
     }
@@ -101,23 +120,8 @@ public class Participant {
         rankingTable[rank].increment();
     }
 
-    // Customize the output of the simulation results here.
-    public static void printSimulationResults(List<Participant> participants) {
-        // Set the name of each column here.
-        String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
-        Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
-        Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
-        List<String[]> rows = participants.stream().map(participant -> Arrays.stream(new Object[]{
-                // Add the functions to produce a participant's entry here.
-                participant.getName(),
-                participant.getStartingRank(),
-                participant.getElo(),
-                participant.getNumberOfTopThreeFinishes(),
-                participant.getAverageRank()
-        }).map(String::valueOf).toArray(String[]::new)).collect(Collectors.toList());
-        int[] columnLengths = getColumnLengths(columnNames, rows);
-        printRow(columnNames, columnLengths, columnNamePaddings);
-        printAllRows(rows, columnLengths, participantFieldsPaddings);
+    public String getBundesland() {
+        return bundesland;
     }
 
     private static int[] getColumnLengths(String[] columnNames, List<String[]> rows) {
