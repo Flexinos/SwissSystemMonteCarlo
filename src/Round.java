@@ -8,7 +8,7 @@ public class Round {
     private static final Random random = new Random();
 
     public static void createPairings(List<SimulatedPlayer> players) {
-        List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players); // maybe change datatype of unpairedPlayers to treeset, allows faster filtering and faster removal
+        List<SimulatedPlayer> unpairedPlayers = new ArrayList<>(players);
         unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         if (unpairedPlayers.size() % 2 == 1) {
             giveByeToLastEligiblePlayer(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
