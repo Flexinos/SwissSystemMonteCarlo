@@ -175,13 +175,14 @@ public class Participant {
 
     @Override
     public String toString() {
-        return "Starting rank: " + startingRank +
-                " Name: " + name +
-                " Elo: " + elo +
-                " score: " + score +
-                " tieBreak1: " + tieBreak1 +
-                " tieBreak2: " + tieBreak2 +
-                " tieBreak3: " + tieBreak3;
+        return
+                "Name: " + name + System.lineSeparator() +
+                "Elo: " + elo + System.lineSeparator() +
+                "Starting Rank: " + startingRank + System.lineSeparator() +
+                "Score: " + score + System.lineSeparator() +
+                "Tie Break 1: " + tieBreak1 + System.lineSeparator() +
+                "Tie Break 2: " + tieBreak2 + System.lineSeparator() +
+                "Tie Break 3: " + tieBreak3 + System.lineSeparator();
     }
 
     public int compareToByEloDescending(Participant p2) {
