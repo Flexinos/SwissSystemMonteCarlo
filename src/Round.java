@@ -22,10 +22,7 @@ public class Round {
             nextBracket.addAll(downfloaters);
             nextBracket.sort(SimulatedPlayer::compareToByScoreThenElo);
             downfloaters = pairBracket(nextBracket, pairedPlayers, unorderedPairings);
-            for (Pairing pairing : unorderedPairings) {
-                unpairedPlayers.remove(pairing.getPlayer1());
-                unpairedPlayers.remove(pairing.getPlayer2());
-            }
+            unpairedPlayers.removeAll(pairedPlayers);
             unpairedPlayers.removeAll(downfloaters);
             unpairedPlayers.sort(SimulatedPlayer::compareToByScoreThenElo);
         }
@@ -35,7 +32,7 @@ public class Round {
         List<SimulatedPlayer> downfloatersToNextBracket = new ArrayList<>();
         for (int i = unpairedPlayersInThisBracket.size() - 1; i >= 0; i--) {
             for (int j = unpairedPlayersInThisBracket.size() - 1; j >= 0; j--) {
-                boolean proposedPairingIsValid = tryPairBracket(unorderedPairings, pairedPlayers, unpairedPlayersInThisBracket);
+                boolean proposedPairingIsValid = tryPairBracket(pairedPlayers, unpairedPlayersInThisBracket);
                 if (proposedPairingIsValid) {
                     getDownfloaters(unpairedPlayersInThisBracket, pairedPlayers, downfloatersToNextBracket);
                     return downfloatersToNextBracket;
@@ -53,7 +50,7 @@ public class Round {
         return downfloatersToNextBracket;
     }
 
-    private static boolean tryPairBracket(List<Pairing> proposedPairings, List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> playersInBracket) {
+    private static boolean tryPairBracket(List<SimulatedPlayer> pairedPlayers, List<SimulatedPlayer> playersInBracket) {
         List<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         for (int i = 0; i < playersInBracket.size() / 2; i++) {
             if (Pairing.pairingAllowed(playersInBracket.get(i), playersInBracket.get(i + playersInBracket.size() / 2))) {
@@ -69,9 +66,7 @@ public class Round {
                 return false;
             }
         }
-        proposedPairings.clear();
-        proposedPairings.addAll(provisionalPairings);
-        proposedPairings.forEach(Pairing::simulateResult);
+        provisionalPairings.forEach(Pairing::simulateResult);
         return true;
     }
 
