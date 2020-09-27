@@ -26,11 +26,11 @@ public class SimulatedTournament {
     }
 
     public void addGame(SimulatedPlayer player1, SimulatedPlayer player2) {
-        gameMatrix.set((player1.getParticipant().getStartingRank() - 1) * simulatedPlayerList.size() + player2.getParticipant().getStartingRank() - 1);
+        gameMatrix.set((player1.getStartingRank() - 1) * simulatedPlayerList.size() + player2.getStartingRank() - 1);
     }
 
     public boolean haveMet(SimulatedPlayer player1, SimulatedPlayer player2) {
-        return gameMatrix.get((player1.getParticipant().getStartingRank() - 1) * simulatedPlayerList.size() + player2.getParticipant().getStartingRank() - 1);
+        return gameMatrix.get((player1.getStartingRank() - 1) * simulatedPlayerList.size() + player2.getStartingRank() - 1);
     }
 
     public void simulateTournament() {

@@ -4,7 +4,6 @@ import java.util.List;
 public class SimulatedPlayer {
     private final Participant participant;
     private SimulatedTournament simulatedTournament = null;
-    private final int elo;
     private double score;
     private final List<SimulatedPlayer> pastOpponents;
     private double tieBreak1;
@@ -15,13 +14,11 @@ public class SimulatedPlayer {
 
     public SimulatedPlayer(Participant participant) {
         this.participant = participant;
-        elo = participant.getElo();
         this.pastOpponents = new ArrayList<>(Main.numberOfRounds);
     }
 
     public SimulatedPlayer(Participant participant, SimulatedTournament simulatedTournament) {
         this.participant = participant;
-        elo = participant.getElo();
         this.score = participant.getScore();
         this.tieBreak1 = participant.getTieBreak1();
         this.tieBreak2 = participant.getTieBreak2();
@@ -74,7 +71,11 @@ public class SimulatedPlayer {
     }
 
     public int getElo() {
-        return elo;
+        return participant.getElo();
+    }
+
+    public int getStartingRank() {
+        return participant.getStartingRank();
     }
 
     public List<SimulatedPlayer> getPastOpponents() {
