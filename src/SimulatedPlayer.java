@@ -1,10 +1,10 @@
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SimulatedPlayer {
     private final Participant participant;
     private SimulatedTournament simulatedTournament = null;
-    private final List<SimulatedPlayer> pastOpponents;
+    private final Map<SimulatedPlayer, Float> pastGames;
     private float score;
     private float buchholz;
     private float buchholzCutOne;
@@ -15,7 +15,7 @@ public class SimulatedPlayer {
 
     public SimulatedPlayer(Participant participant) {
         this.participant = participant;
-        this.pastOpponents = new ArrayList<>(Main.numberOfRounds);
+        this.pastGames = new HashMap<>(Main.numberOfRounds);
     }
 
     public SimulatedPlayer(Participant participant, SimulatedTournament simulatedTournament) {
@@ -26,7 +26,7 @@ public class SimulatedPlayer {
         this.sonnenbornBerger = participant.getSonnenbornBerger();
         this.averageEloOpponents = participant.getSonnenbornBerger();
         this.simulatedTournament = simulatedTournament;
-        this.pastOpponents = new ArrayList<>(Main.numberOfRounds);
+        this.pastGames = new HashMap<>(Main.numberOfRounds);
     }
 
     public static int compareToByScoreThenTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
@@ -50,27 +50,50 @@ public class SimulatedPlayer {
         return result != 0 ? result : -Double.compare(p1.getElo(), p2.getElo());
     }
 
-    public static float getBuchholz(List<SimulatedPlayer> opponents) {
+    private float calculateBuchholz() {
         float buchholz = 0;
-        for (SimulatedPlayer opponent : opponents) {
+        for (SimulatedPlayer opponent : pastGames.keySet()) {
             buchholz += opponent.getScore();
         }
         return buchholz;
     }
 
-    public static float getBuchholzCutOne(List<SimulatedPlayer> opponents) {
-        if (opponents.size() == 0) {
+    private float calculateBuchholzCutOne() {
+        if (pastGames.size() == 0) {
             return 0;
         }
         float buchholz = 0;
         float lowestScore = Float.MAX_VALUE;
-        for (SimulatedPlayer opponent : opponents) {
+        for (SimulatedPlayer opponent : pastGames.keySet()) {
             if (opponent.getScore() <= lowestScore) {
                 lowestScore = opponent.getScore();
             }
             buchholz += opponent.getScore();
         }
         return buchholz - lowestScore;
+    }
+
+    private float calculateSonnenbornBerger() {
+        float sonnenbornBerger = 0;
+        for (SimulatedPlayer opponent : pastGames.keySet()) {
+            sonnenbornBerger += opponent.getScore() * pastGames.get(opponent);
+        }
+        return sonnenbornBerger;
+    }
+
+    private float calculateAverageEloOpponents() {
+        float sum = 0;
+        for (SimulatedPlayer opponent : pastGames.keySet()) {
+            sum += opponent.getElo();
+        }
+        return sum / pastGames.size();
+    }
+
+    public void updateTiebreaks() {
+        buchholz = calculateBuchholz();
+        buchholzCutOne = calculateBuchholzCutOne();
+        averageEloOpponents = calculateAverageEloOpponents();
+        sonnenbornBerger = calculateSonnenbornBerger();
     }
 
     public float getScore() {
@@ -97,8 +120,8 @@ public class SimulatedPlayer {
         return participant.getStartingRank();
     }
 
-    public List<SimulatedPlayer> getPastOpponents() {
-        return pastOpponents;
+    public Map<SimulatedPlayer, Float> getPastGames() {
+        return pastGames;
     }
 
     public Participant getParticipant() {
@@ -114,13 +137,13 @@ public class SimulatedPlayer {
     }
 
     public void addGame(SimulatedPlayer opponent, double result) {
-        pastOpponents.add(opponent);
+        pastGames.put(opponent, (float) result);
         simulatedTournament.addGame(this, opponent);
         score += result;
     }
 
     public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
-        pastOpponents.add(opponent);
+        pastGames.put(opponent, (float) result);
         simulatedTournament.addGame(this, opponent);
         score += result;
         if (isWhite) {
