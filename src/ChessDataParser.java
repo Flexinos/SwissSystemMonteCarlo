@@ -34,6 +34,9 @@ public class ChessDataParser {
         return getPairings(buildLinkFromValues(tournamentNumber, round, ChessDataType.PAIRING));
     }
 
+    // Prevent instantiation
+    private ChessDataParser(){}
+
     private static List<int[]> getPairings(URL link) {
         Scanner scanner = getScanner(link);
         List<int[]> pairings = new ArrayList<>();
