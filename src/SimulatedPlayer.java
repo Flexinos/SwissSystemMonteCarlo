@@ -38,11 +38,11 @@ public class SimulatedPlayer {
             } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.BUCHHOLZ) {
                 result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
             } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.BUCHHOLZCUTONE) {
-                result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
+                result = -Float.compare(p1.getBuchholzCutOne(), p2.getBuchholzCutOne());
             } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.AVERAGEELOOPPONENTS) {
-                result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
+                result = -Float.compare(p1.getAverageEloOpponents(), p2.getAverageEloOpponents());
             } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.SONNENBORNBERGER) {
-                result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
+                result = -Float.compare(p1.getSonnenbornBerger(), p2.getScore());
             }
             if (result != 0) {
                 return result;
