@@ -3,8 +3,8 @@ import java.util.Map;
 
 public class SimulatedPlayer {
     private final Participant participant;
-    private SimulatedTournament simulatedTournament = null;
     private final Map<SimulatedPlayer, Float> pastGames;
+    private SimulatedTournament simulatedTournament = null;
     private float score;
     private float buchholz;
     private float buchholzCutOne;
@@ -15,7 +15,7 @@ public class SimulatedPlayer {
 
     public SimulatedPlayer(Participant participant) {
         this.participant = participant;
-        this.pastGames = new HashMap<>(Main.numberOfRounds);
+        this.pastGames = new HashMap<>();
     }
 
     public SimulatedPlayer(Participant participant, SimulatedTournament simulatedTournament) {
@@ -26,7 +26,7 @@ public class SimulatedPlayer {
         this.sonnenbornBerger = participant.getSonnenbornBerger();
         this.averageEloOpponents = participant.getSonnenbornBerger();
         this.simulatedTournament = simulatedTournament;
-        this.pastGames = new HashMap<>(Main.numberOfRounds);
+        this.pastGames = new HashMap<>(participant.getPastGames());
     }
 
     public static int compareToByScoreThenTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
@@ -96,6 +96,23 @@ public class SimulatedPlayer {
         sonnenbornBerger = calculateSonnenbornBerger();
     }
 
+    public void addGame(SimulatedPlayer opponent, double result) {
+        pastGames.put(opponent, (float) result);
+        simulatedTournament.addGame(this, opponent);
+        score += result;
+    }
+
+    public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
+        pastGames.put(opponent, (float) result);
+        simulatedTournament.addGame(this, opponent);
+        score += result;
+        if (isWhite) {
+            colorDifference++;
+        } else {
+            colorDifference--;
+        }
+    }
+
     public float getScore() {
         return score;
     }
@@ -134,23 +151,6 @@ public class SimulatedPlayer {
 
     public void setReceivedBye(boolean receivedBye) {
         this.receivedBye = receivedBye;
-    }
-
-    public void addGame(SimulatedPlayer opponent, double result) {
-        pastGames.put(opponent, (float) result);
-        simulatedTournament.addGame(this, opponent);
-        score += result;
-    }
-
-    public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
-        pastGames.put(opponent, (float) result);
-        simulatedTournament.addGame(this, opponent);
-        score += result;
-        if (isWhite) {
-            colorDifference++;
-        } else {
-            colorDifference--;
-        }
     }
 
     public float getSonnenbornBerger() {
