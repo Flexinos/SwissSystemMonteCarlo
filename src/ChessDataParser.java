@@ -48,6 +48,19 @@ public class ChessDataParser {
         }
     }
 
+    private static URL buildLinkFromValues(int tournamentNumber, int roundNumber, ChessDataType type) {
+        int art = type.equals(ChessDataType.PAIRING) ? 2 : 1;
+        try {
+            return new URL("https://chess-results.com/tnr" + tournamentNumber +
+                    ".aspx?lan=0&art=" + art + "&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7");
+        } catch (MalformedURLException e) {
+            // This block should never be reached.
+            e.printStackTrace();
+            System.exit(1);
+            return null;
+        }
+    }
+
     private static int getTournamentNumber(String inputLink) {
         try {
             return Integer.parseInt(inputLink.replaceFirst(".*tnr(\\d+).*", "$1"));
@@ -67,19 +80,6 @@ public class ChessDataParser {
                     "Make sure that the \"rd\" key in the link is set to a valid integer.");
             System.exit(1);
             return -1; // Unreachable, but required for compiling.
-        }
-    }
-
-    private static URL buildLinkFromValues(int tournamentNumber, int roundNumber, ChessDataType type) {
-        int art = type.equals(ChessDataType.PAIRING) ? 2 : 1;
-        try {
-            return new URL("https://chess-results.com/tnr" + tournamentNumber +
-                    ".aspx?lan=0&art=" + art + "&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7");
-        } catch (MalformedURLException e) {
-            // This block should never be reached.
-            e.printStackTrace();
-            System.exit(1);
-            return null;
         }
     }
 
