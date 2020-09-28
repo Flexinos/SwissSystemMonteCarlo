@@ -6,7 +6,6 @@ public class SimulatedPlayer {
     private SimulatedTournament simulatedTournament = null;
     private final List<SimulatedPlayer> pastOpponents;
     private float score;
-    private float tieBreak1;
     private float buchholz;
     private float buchholzCutOne;
     private float sonnenbornBerger;
@@ -112,13 +111,6 @@ public class SimulatedPlayer {
 
     public void setReceivedBye(boolean receivedBye) {
         this.receivedBye = receivedBye;
-    }
-
-    public void updateTieBreaks() {
-        tieBreak1 = 0;
-        for (SimulatedPlayer opponent : pastOpponents) {
-            tieBreak1 += opponent.getScore();
-        }
     }
 
     public void addGame(SimulatedPlayer opponent, double result) {
