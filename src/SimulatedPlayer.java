@@ -42,7 +42,7 @@ public class SimulatedPlayer {
                 return result;
             }
         }
-        return 0;
+        return -Double.compare(p1.getElo(), p2.getElo());
     }
 
     public static int compareToByScoreThenElo(SimulatedPlayer p1, SimulatedPlayer p2) {
