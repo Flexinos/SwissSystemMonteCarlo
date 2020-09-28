@@ -1,3 +1,4 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,38 +11,39 @@ class SimulatedPlayerTest {
     private final Participant participant2 = new Participant("", 0);
     private final Participant participant3 = new Participant("", 1000);
     private final Participant participant4 = new Participant("", 2000);
-    private final Participant participant5 = new Participant("", 2000);
-    private final Participant participant6 = new Participant("", 2000);
-    private final Participant participant7 = new Participant("", 2000);
-    private final Participant participant8 = new Participant("", 2000);
-    private final List<Participant> participantList = new ArrayList<>();
+    private final Participant participant5 = new Participant("", 1600);
+    private final Participant participant6 = new Participant("", 1890);
+    private final Participant participant7 = new Participant("", 2120);
+    private final Participant participant8 = new Participant("", 2670);
+    private final List<Participant> participants = new ArrayList<>(List.of(participant1, participant2, participant3, participant4, participant5, participant6, participant7, participant8));
+    private final List<SimulatedPlayer> simulatedPlayers = new ArrayList<>();
+    Tournament tournament = new Tournament(0, participants);
+    SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
+    SimulatedPlayer simulatedPlayer1;
+    SimulatedPlayer simulatedPlayer2;
+    SimulatedPlayer simulatedPlayer3;
+    SimulatedPlayer simulatedPlayer4;
+    SimulatedPlayer simulatedPlayer5;
+    SimulatedPlayer simulatedPlayer6;
+    SimulatedPlayer simulatedPlayer7;
+    SimulatedPlayer simulatedPlayer8;
+
+    @BeforeEach
+    private void createSimulatedPlayers() {
+        simulatedPlayer1 = new SimulatedPlayer(participant1, simulatedTournament);
+        simulatedPlayer2 = new SimulatedPlayer(participant2, simulatedTournament);
+        simulatedPlayer3 = new SimulatedPlayer(participant3, simulatedTournament);
+        simulatedPlayer4 = new SimulatedPlayer(participant4, simulatedTournament);
+        simulatedPlayer5 = new SimulatedPlayer(participant5, simulatedTournament);
+        simulatedPlayer6 = new SimulatedPlayer(participant6, simulatedTournament);
+        simulatedPlayer7 = new SimulatedPlayer(participant7, simulatedTournament);
+        simulatedPlayer8 = new SimulatedPlayer(participant8, simulatedTournament);
+        simulatedPlayers.addAll(List.of(simulatedPlayer1, simulatedPlayer2, simulatedPlayer3, simulatedPlayer4, simulatedPlayer5, simulatedPlayer6, simulatedPlayer7, simulatedPlayer8));
+    }
+
 
     @Test
     void compareToByScoreTieBreak() {
-    }
-
-    @Test
-    void compareToByScoreThenElo() {
-        participantList.add(participant1);
-        participantList.add(participant2);
-        participantList.add(participant3);
-        participantList.add(participant4);
-        participantList.add(participant5);
-        participantList.add(participant6);
-        participantList.add(participant7);
-        participantList.add(participant8);
-        Tournament tournament = new Tournament(0, participantList);
-        SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
-        SimulatedPlayer simulatedPlayer1 = new SimulatedPlayer(participant1, simulatedTournament);
-        SimulatedPlayer simulatedPlayer2 = new SimulatedPlayer(participant2, simulatedTournament);
-        SimulatedPlayer simulatedPlayer3 = new SimulatedPlayer(participant3, simulatedTournament);
-        SimulatedPlayer simulatedPlayer4 = new SimulatedPlayer(participant4, simulatedTournament);
-        SimulatedPlayer simulatedPlayer5 = new SimulatedPlayer(participant5, simulatedTournament);
-        SimulatedPlayer simulatedPlayer6 = new SimulatedPlayer(participant6, simulatedTournament);
-        SimulatedPlayer simulatedPlayer7 = new SimulatedPlayer(participant7, simulatedTournament);
-        SimulatedPlayer simulatedPlayer8 = new SimulatedPlayer(participant8, simulatedTournament);
-
-
         simulatedPlayer1.addGame(simulatedPlayer5, 1);
         simulatedPlayer2.addGame(simulatedPlayer6, 1);
         simulatedPlayer3.addGame(simulatedPlayer7, 0.5);
@@ -83,6 +85,51 @@ class SimulatedPlayerTest {
         assertEquals(simulatedPlayer7.getScore(), 1);
         assertEquals(simulatedPlayer8.getScore(), 1.5);
 
-        // test tie breaks
+        for (SimulatedPlayer simulatedPlayer : simulatedPlayers) {
+            simulatedPlayer.updateTiebreaks();
+        }
+
+        assertEquals(simulatedPlayer1.getBuchholz(), 2);
+        assertEquals(simulatedPlayer2.getBuchholz(), 2);
+        assertEquals(simulatedPlayer3.getBuchholz(), 2.5);
+        assertEquals(simulatedPlayer4.getBuchholz(), 2.5);
+        assertEquals(simulatedPlayer5.getBuchholz(), 2);
+        assertEquals(simulatedPlayer6.getBuchholz(), 2);
+        assertEquals(simulatedPlayer7.getBuchholz(), 1.5);
+        assertEquals(simulatedPlayer8.getBuchholz(), 1.5);
+
+        assertEquals(simulatedPlayer1.getBuchholzCutOne(), 1);
+        assertEquals(simulatedPlayer2.getBuchholzCutOne(), 2);
+        assertEquals(simulatedPlayer3.getBuchholzCutOne(), 1.5);
+        assertEquals(simulatedPlayer4.getBuchholzCutOne(), 1.5);
+        assertEquals(simulatedPlayer5.getBuchholzCutOne(), 2);
+        assertEquals(simulatedPlayer6.getBuchholzCutOne(), 1);
+        assertEquals(simulatedPlayer7.getBuchholzCutOne(), 1);
+        assertEquals(simulatedPlayer8.getBuchholzCutOne(), 1);
+
+        assertEquals(simulatedPlayer1.getSonnenbornBerger(), 2);
+        assertEquals(simulatedPlayer2.getSonnenbornBerger(), 0);
+        assertEquals(simulatedPlayer3.getSonnenbornBerger(), 1.25);
+        assertEquals(simulatedPlayer4.getSonnenbornBerger(), 0.5);
+        assertEquals(simulatedPlayer5.getSonnenbornBerger(), 0);
+        assertEquals(simulatedPlayer6.getSonnenbornBerger(), 0);
+        assertEquals(simulatedPlayer7.getSonnenbornBerger(), 0.75);
+        assertEquals(simulatedPlayer8.getSonnenbornBerger(), 1);
+
+        List<SimulatedPlayer> rankingByScoreThenTiebreak = new ArrayList<>();
+        rankingByScoreThenTiebreak.add(simulatedPlayer1);
+        rankingByScoreThenTiebreak.add(simulatedPlayer8);
+        rankingByScoreThenTiebreak.add(simulatedPlayer5);
+        rankingByScoreThenTiebreak.add(simulatedPlayer2);
+        rankingByScoreThenTiebreak.add(simulatedPlayer3);
+        rankingByScoreThenTiebreak.add(simulatedPlayer7);
+        rankingByScoreThenTiebreak.add(simulatedPlayer4);
+        rankingByScoreThenTiebreak.add(simulatedPlayer6);
+        simulatedPlayers.sort(SimulatedPlayer::compareToByScoreThenTieBreak);
+        assertEquals(simulatedPlayers, rankingByScoreThenTiebreak);
+    }
+
+    @Test
+    void compareToByScoreThenElo() {
     }
 }
