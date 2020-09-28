@@ -55,7 +55,7 @@ public class PairingParser {
 
     private static int getTournamentNumber(String inputLink) {
         try {
-            return Integer.parseInt(inputLink.replaceFirst(".*tnr=(\\d+).*", "$1"));
+            return Integer.parseInt(inputLink.replaceFirst(".*tnr(\\d+).*", "$1"));
         } catch (NumberFormatException e) {
             System.out.println("Could not get tournament number from link: " + inputLink + System.lineSeparator() +
                     "Make sure that the \"tnr\" key in the link is set to a valid integer.");
