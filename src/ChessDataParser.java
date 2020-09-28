@@ -72,7 +72,7 @@ public class ChessDataParser {
         }
     }
 
-    private static int getRound(String inputLink) throws NumberFormatException {
+    private static int getRound(String inputLink) {
         try {
             return Integer.parseInt(inputLink.replaceFirst(".*rd=(\\d+).*", "$1"));
         } catch (NumberFormatException e) {
