@@ -6,6 +6,7 @@ public class Tournament {
     private final List<Participant> participantList = new ArrayList<>();
     private List<int[]> givenPairings;
     public static final SimulatedPlayer BYE = new SimulatedPlayer(new Participant("BYE", 0));
+    public static final List<rankingBy> rankingOrder = new ArrayList<>(List.of(rankingBy.SCORE, rankingBy.BUCHHOLZCUTONE, rankingBy.BUCHHOLZ, rankingBy.AVERAGEELOOPPONENTS));
 
     public Tournament(int roundsToBeSimulated, List<Participant> participants) {
         if (roundsToBeSimulated < 0) {
@@ -52,4 +53,6 @@ public class Tournament {
     public List<Participant> getPlayerArrayList() {
         return participantList;
     }
+
+    public enum rankingBy {SCORE, BUCHHOLZ, BUCHHOLZCUTONE, SONNENBORNBERGER, AVERAGEELOOPPONENTS}
 }

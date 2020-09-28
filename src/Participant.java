@@ -9,10 +9,11 @@ public class Participant {
     private final String country;
     private final int elo;
     private final String bundesland;
-    private final double score;
-    private final double tieBreak1;
-    private final double tieBreak2;
-    private final double tieBreak3;
+    private final float score;
+    private final float buchholzCutOne;
+    private final float buchholz;
+    private final float averageEloOpponents;
+    private final float sonnenbornBerger;
     private final String type;
     private final boolean isFemale;
     private int startingRank;
@@ -20,10 +21,10 @@ public class Participant {
     public final LongAdder[] rankingTable = new LongAdder[Main.numberOfParticipants];
 
     public Participant(String name, int elo) {
-        this(0, "", name, "", "", elo, 0, 0, 0, 0, "", false);
+        this(0, "", name, "", "", elo, 0, 0, 0, 0, 0, "", false);
     }
 
-    public Participant(int startingRank, String title, String name, String country, String bundesland, int elo, double score, double tieBreak1, double tieBreak2, double tieBreak3, String type, boolean isFemale) {
+    public Participant(int startingRank, String title, String name, String country, String bundesland, int elo, float score, float buchholz, float buchholzCutOne, float averageEloOpponents, float sonnenbornBerger, String type, boolean isFemale) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -31,9 +32,10 @@ public class Participant {
         this.bundesland = bundesland;
         this.elo = elo;
         this.score = score;
-        this.tieBreak1 = tieBreak1;
-        this.tieBreak2 = tieBreak2;
-        this.tieBreak3 = tieBreak3;
+        this.buchholz = buchholz;
+        this.buchholzCutOne = buchholzCutOne;
+        this.sonnenbornBerger = sonnenbornBerger;
+        this.averageEloOpponents = averageEloOpponents;
         this.type = type;
         this.isFemale = isFemale;
         for (int i = 0; i < rankingTable.length; i++) {
@@ -84,20 +86,24 @@ public class Participant {
         printAllRows(rows, columnLengths, participantFieldsPaddings);
     }
 
-    public double getScore() {
+    public float getScore() {
         return score;
     }
 
-    public double getTieBreak1() {
-        return tieBreak1;
+    public float getBuchholzCutOne() {
+        return buchholzCutOne;
     }
 
-    public double getTieBreak2() {
-        return tieBreak2;
+    public float getBuchholz() {
+        return buchholz;
     }
 
-    public double getTieBreak3() {
-        return tieBreak3;
+    public float getAverageEloOpponents() {
+        return averageEloOpponents;
+    }
+
+    public float getSonnenbornBerger() {
+        return sonnenbornBerger;
     }
 
     public String getType() {
@@ -180,9 +186,9 @@ public class Participant {
                         "Elo: " + elo + System.lineSeparator() +
                         "Starting Rank: " + startingRank + System.lineSeparator() +
                         "Score: " + score + System.lineSeparator() +
-                        "Tie Break 1: " + tieBreak1 + System.lineSeparator() +
-                        "Tie Break 2: " + tieBreak2 + System.lineSeparator() +
-                        "Tie Break 3: " + tieBreak3 + System.lineSeparator();
+                        "Tie Break 1: " + buchholz + System.lineSeparator() +
+                        "Tie Break 2: " + buchholzCutOne + System.lineSeparator() +
+                        "Tie Break 3: " + sonnenbornBerger + System.lineSeparator();
     }
 
     public int compareToByEloDescending(Participant p2) {

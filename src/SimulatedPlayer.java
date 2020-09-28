@@ -5,10 +5,12 @@ public class SimulatedPlayer {
     private final Participant participant;
     private SimulatedTournament simulatedTournament = null;
     private final List<SimulatedPlayer> pastOpponents;
-    private double score;
-    private double tieBreak1;
-    private double tieBreak2;
-    private double tieBreak3;
+    private float score;
+    private float tieBreak1;
+    private float buchholz;
+    private float buchholzCutOne;
+    private float sonnenbornBerger;
+    private float averageEloOpponents;
     private boolean receivedBye = false;
     private int colorDifference = 0;
 
@@ -20,28 +22,33 @@ public class SimulatedPlayer {
     public SimulatedPlayer(Participant participant, SimulatedTournament simulatedTournament) {
         this.participant = participant;
         this.score = participant.getScore();
-        this.tieBreak1 = participant.getTieBreak1();
-        this.tieBreak2 = participant.getTieBreak2();
-        this.tieBreak3 = participant.getTieBreak3();
+        this.buchholz = participant.getBuchholz();
+        this.buchholzCutOne = participant.getBuchholzCutOne();
+        this.sonnenbornBerger = participant.getSonnenbornBerger();
+        this.averageEloOpponents = participant.getSonnenbornBerger();
         this.simulatedTournament = simulatedTournament;
         this.pastOpponents = new ArrayList<>(Main.numberOfRounds);
     }
 
     public static int compareToByScoreThenTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
-        int result = -Double.compare(p1.getScore(), p2.getScore());
-        if (result != 0) {
-            return result;
+        int result = 0;
+        for (int i = 0; i < Tournament.rankingOrder.size(); i++) {
+            if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.SCORE) {
+                result = -Float.compare(p1.getScore(), p2.getScore());
+            } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.BUCHHOLZ) {
+                result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
+            } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.BUCHHOLZCUTONE) {
+                result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
+            } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.AVERAGEELOOPPONENTS) {
+                result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
+            } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.SONNENBORNBERGER) {
+                result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
+            }
+            if (result != 0) {
+                return result;
+            }
         }
-        result = -Double.compare(p1.getTieBreak1(), p2.getTieBreak1());
-        if (result != 0) {
-            return result;
-        }
-        result = -Double.compare(p1.getTieBreak2(), p2.getTieBreak2());
-        if (result != 0) {
-            return result;
-        }
-        result = -Double.compare(p1.getTieBreak3(), p2.getTieBreak3());
-        return result;
+        return 0;
     }
 
     public static int compareToByScoreThenElo(SimulatedPlayer p1, SimulatedPlayer p2) {
@@ -49,20 +56,39 @@ public class SimulatedPlayer {
         return result != 0 ? result : -Double.compare(p1.getElo(), p2.getElo());
     }
 
-    public double getScore() {
+    public static float getBuchholz(List<SimulatedPlayer> opponents) {
+        float buchholz = 0;
+        for (SimulatedPlayer opponent : opponents) {
+            buchholz += opponent.getScore();
+        }
+        return buchholz;
+    }
+
+    public static float getBuchholzCutOne(List<SimulatedPlayer> opponents) {
+        if (opponents.size() == 0) {
+            return 0;
+        }
+        float buchholz = 0;
+        float lowestScore = Float.MAX_VALUE;
+        for (SimulatedPlayer opponent : opponents) {
+            if (opponent.getScore() <= lowestScore) {
+                lowestScore = opponent.getScore();
+            }
+            buchholz += opponent.getScore();
+        }
+        return buchholz - lowestScore;
+    }
+
+    public float getScore() {
         return score;
     }
 
-    public double getTieBreak1() {
-        return tieBreak1;
+    public float getBuchholz() {
+        return buchholz;
     }
 
-    public double getTieBreak2() {
-        return tieBreak2;
-    }
-
-    public double getTieBreak3() {
-        return tieBreak3;
+    public float getBuchholzCutOne() {
+        return buchholzCutOne;
     }
 
     public SimulatedTournament getSimulatedTournament() {
@@ -117,13 +143,21 @@ public class SimulatedPlayer {
         }
     }
 
+    public float getSonnenbornBerger() {
+        return sonnenbornBerger;
+    }
+
+    public float getAverageEloOpponents() {
+        return averageEloOpponents;
+    }
+
     @Override
     public String toString() {
-        return "Name: " + participant.getName() +
-                "\tElo: " + participant.getElo() +
-                "\tscore: " + score +
-                "\ttieBreak1: " + tieBreak1 +
-                "\ttieBreak2: " + tieBreak2 +
-                "\ttieBreak3: " + tieBreak3;
+        return "SimulatedPlayer{" +
+                "score=" + score +
+                ", buchholzCutOne=" + buchholzCutOne +
+                ", buchholz=" + buchholz +
+                ", averageEloOpponents=" + averageEloOpponents +
+                '}';
     }
 }
