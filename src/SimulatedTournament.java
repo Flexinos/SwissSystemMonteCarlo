@@ -50,7 +50,7 @@ public class SimulatedTournament {
     }
 
     public void analyseThisSimulatedTournament() {
-        simulatedPlayerList.forEach(SimulatedPlayer::updateTieBreaks);
+        //simulatedPlayerList.forEach(SimulatedPlayer::updateTieBreaks);
         simulatedPlayerList.sort(SimulatedPlayer::compareToByScoreThenTieBreak);
         IntStream.range(0, 3).forEach(i -> Main.topThreeCounter.computeIfAbsent(simulatedPlayerList.get(i).getParticipant(), k -> new LongAdder()).increment());
         for (int i = 0; i < simulatedPlayerList.size(); i++) {
