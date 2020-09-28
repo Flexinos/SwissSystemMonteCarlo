@@ -18,7 +18,7 @@ public class PairingParser {
     }
 
     public static List<int[]> getPairings(String link) {
-        Scanner scanner = getScanner(improveLink(link));
+        Scanner scanner = getScanner(buildValidLink(link));
         List<int[]> pairings = new ArrayList<>();
         boolean paringsStarted = false;
         while (scanner.hasNextLine()) {
@@ -47,15 +47,37 @@ public class PairingParser {
         return pairings;
     }
 
-    private static String improveLink(String link) {
-        return link
-                .replaceFirst("turdet=[^&]*", "turdet=NO")
-                .replaceFirst("flag=[^&]*", "flag=NO")
-                .replaceFirst("lan=[^&]*", "lan=0")
-                .replaceFirst("art=[^&]*", "art=2")
-                .replaceFirst("&zeilen=[^&]*", "")
-                .replaceFirst("&prt=[^&]*", "")
-                .concat("&prt=7");
+    private static String buildValidLink(String inputLink) {
+        int tournamentNumber = getTournamentNumber(inputLink);
+        int round = getRound(inputLink);
+        return getPairingDataLink(tournamentNumber, round);
+    }
+
+    private static int getTournamentNumber(String inputLink) {
+        try {
+            return Integer.parseInt(inputLink.replaceFirst(".*tnr=(\\d+).*", "$1"));
+        } catch (NumberFormatException e) {
+            System.out.println("Could not get tournament number from link: " + inputLink + System.lineSeparator() +
+                    "Make sure that the \"tnr\" key in the link is set to a valid integer.");
+            System.exit(1);
+            return -1; // Unreachable, but required for compiling.
+        }
+    }
+
+    private static int getRound(String inputLink) throws NumberFormatException {
+        try {
+            return Integer.parseInt(inputLink.replaceFirst(".*rd=(\\d+).*", "$1"));
+        } catch (NumberFormatException e) {
+            System.out.println("Could not get the round from link: " + inputLink + System.lineSeparator() +
+                    "Make sure that the \"rd\" key in the link is set to a valid integer.");
+            System.exit(1);
+            return -1; // Unreachable, but required for compiling.
+        }
+    }
+
+    private static String getPairingDataLink(int tournamentNumber, int roundNumber) {
+        return "https://chess-results.com/tnr" + tournamentNumber +
+                ".aspx?lan=0&art=2&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7";
     }
 
     private static Scanner getScanner(String link) {
