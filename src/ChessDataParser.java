@@ -97,32 +97,44 @@ public class ChessDataParser {
     private static class PairingUtilities {
         private static List<int[]> getPairings(URL link) {
             Scanner scanner = getScanner(link);
+            advanceScannerToTableStart(scanner);
             List<int[]> pairings = new ArrayList<>();
-            boolean paringsStarted = false;
             while (scanner.hasNextLine()) {
-                // Remove HTML tags and numerical character code points.
-                String line = scanner.nextLine()
-                        .replaceAll("<[^>]*>", "")
-                        .replaceAll("&#\\d*;", "");
-                if (!paringsStarted) {
-                    // Find the start of the table.
-                    if (line.startsWith("Br.;Nr.;Name;")) {
-                        // Parse pairings starting from the next line.
-                        paringsStarted = true;
-                    }
-                } else {
-                    // Stop parsing pairings on the first line which does not start with a digit.
-                    if (!line.matches("^\\d.*")) {
-                        break;
-                    }
-                    int[] pairing = parsePairingLine(line);
-                    // "nicht ausgelost" pairings return null and should not be added to the list.
-                    if (pairing != null) {
-                        pairings.add(pairing);
-                    }
+                String line = cleanUpLine(scanner.nextLine());
+                if (!isPairingLine(line)) {
+                    break;
+                }
+                int[] pairing = parsePairingLine(line);
+                // "nicht ausgelost" pairings return null and should not be added to the list.
+                if (pairing != null) {
+                    pairings.add(pairing);
                 }
             }
             return pairings;
+        }
+
+        private static void advanceScannerToTableStart(Scanner scanner) {
+            while (scanner.hasNextLine()) {
+                if(isTableHeader(cleanUpLine(scanner.nextLine()))) {
+                    return;
+                }
+            }
+        }
+
+        private static String cleanUpLine(String line) {
+            // Remove HTML tags and numerical character code points.
+            return line
+                    .replaceAll("<[^>]*>", "")
+                    .replaceAll("&#\\d*;", "");
+        }
+
+        private static boolean isTableHeader(String line) {
+            return line.startsWith("Br.;Nr.;Name;");
+        }
+
+        private static boolean isPairingLine(String line) {
+            // Pairing lines start with a digit.
+            return line.matches("^\\d.*");
         }
 
         private static int[] parsePairingLine(String line) {
