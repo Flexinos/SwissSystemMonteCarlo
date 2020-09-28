@@ -1,9 +1,12 @@
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Participant {
+    public final LongAdder[] rankingTable = new LongAdder[Main.numberOfParticipants];
     private final String title;
     private final String name;
     private final String country;
@@ -16,15 +19,15 @@ public class Participant {
     private final float sonnenbornBerger;
     private final String type;
     private final boolean isFemale;
+    private final Map<SimulatedPlayer, Float> pastGames;
     private int startingRank;
     private int numberOfTopThreeFinishes;
-    public final LongAdder[] rankingTable = new LongAdder[Main.numberOfParticipants];
 
     public Participant(String name, int elo) {
-        this(0, "", name, "", "", elo, 0, 0, 0, 0, 0, "", false);
+        this(0, "", name, "", "", elo, 0, 0, 0, 0, 0, "", false, new HashMap<>());
     }
 
-    public Participant(int startingRank, String title, String name, String country, String bundesland, int elo, float score, float buchholz, float buchholzCutOne, float averageEloOpponents, float sonnenbornBerger, String type, boolean isFemale) {
+    public Participant(int startingRank, String title, String name, String country, String bundesland, int elo, float score, float buchholz, float buchholzCutOne, float averageEloOpponents, float sonnenbornBerger, String type, boolean isFemale, Map<SimulatedPlayer, Float> pastGames) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -38,8 +41,67 @@ public class Participant {
         this.averageEloOpponents = averageEloOpponents;
         this.type = type;
         this.isFemale = isFemale;
+        this.pastGames = pastGames;
         for (int i = 0; i < rankingTable.length; i++) {
             rankingTable[i] = new LongAdder();
+        }
+    }
+
+    // Customize the output of the simulation results here.
+    public static void printSimulationResults(List<Participant> participants) {
+        // Set the name of each column here.
+        String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
+        Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
+        Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
+        // Add the functions to produce a participant's entry here.
+        List<String[]> rows = participants.stream().map(participant -> Stream.of(
+                participant.getName(),
+                participant.getStartingRank(),
+                participant.getElo(),
+                participant.getNumberOfTopThreeFinishes(),
+                participant.getAverageRank()
+        ).map(String::valueOf).toArray(String[]::new)).collect(Collectors.toList());
+        int[] columnLengths = getColumnLengths(columnNames, rows);
+        printRow(columnNames, columnLengths, columnNamePaddings);
+        printAllRows(rows, columnLengths, participantFieldsPaddings);
+    }
+
+    private static int[] getColumnLengths(String[] columnNames, List<String[]> rows) {
+        int[] maxColumnLengths = new int[columnNames.length];
+        for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
+            maxColumnLengths[columnNumber] = columnNames[columnNumber].length();
+        }
+        for (String[] row : rows) {
+            for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
+                int fieldLength = row[columnNumber].length();
+                if (maxColumnLengths[columnNumber] < fieldLength) {
+                    maxColumnLengths[columnNumber] = fieldLength;
+                }
+            }
+        }
+        return maxColumnLengths;
+    }
+
+    private static void printAllRows(List<String[]> rows, int[] fieldLengths, Padding[] paddings) {
+        for (String[] row : rows) {
+            printRow(row, fieldLengths, paddings);
+        }
+    }
+
+    private static void printRow(String[] row, int[] fieldLengths, Padding[] paddings) {
+        assert row.length == fieldLengths.length;
+        assert row.length == paddings.length;
+        for (int columnNumber = 0; columnNumber < row.length; ++columnNumber) {
+            System.out.printf("%" + paddingToString(paddings[columnNumber]) + fieldLengths[columnNumber] + "s  ", row[columnNumber]);
+        }
+        System.out.println();
+    }
+
+    private static String paddingToString(Padding padding) {
+        if (padding.equals(Padding.LEFT)) {
+            return "-";
+        } else {
+            return "";
         }
     }
 
@@ -65,25 +127,6 @@ public class Participant {
 
     public int getElo() {
         return elo;
-    }
-
-    // Customize the output of the simulation results here.
-    public static void printSimulationResults(List<Participant> participants) {
-        // Set the name of each column here.
-        String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
-        Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
-        Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
-        // Add the functions to produce a participant's entry here.
-        List<String[]> rows = participants.stream().map(participant -> Stream.of(
-                participant.getName(),
-                participant.getStartingRank(),
-                participant.getElo(),
-                participant.getNumberOfTopThreeFinishes(),
-                participant.getAverageRank()
-        ).map(String::valueOf).toArray(String[]::new)).collect(Collectors.toList());
-        int[] columnLengths = getColumnLengths(columnNames, rows);
-        printRow(columnNames, columnLengths, columnNamePaddings);
-        printAllRows(rows, columnLengths, participantFieldsPaddings);
     }
 
     public float getScore() {
@@ -130,43 +173,8 @@ public class Participant {
         return bundesland;
     }
 
-    private static int[] getColumnLengths(String[] columnNames, List<String[]> rows) {
-        int[] maxColumnLengths = new int[columnNames.length];
-        for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
-            maxColumnLengths[columnNumber] = columnNames[columnNumber].length();
-        }
-        for (String[] row : rows) {
-            for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
-                int fieldLength = row[columnNumber].length();
-                if (maxColumnLengths[columnNumber] < fieldLength) {
-                    maxColumnLengths[columnNumber] = fieldLength;
-                }
-            }
-        }
-        return maxColumnLengths;
-    }
-
-    private static void printAllRows(List<String[]> rows, int[] fieldLengths, Padding[] paddings) {
-        for (String[] row : rows) {
-            printRow(row, fieldLengths, paddings);
-        }
-    }
-
-    private static void printRow(String[] row, int[] fieldLengths, Padding[] paddings) {
-        assert row.length == fieldLengths.length;
-        assert row.length == paddings.length;
-        for (int columnNumber = 0; columnNumber < row.length; ++columnNumber) {
-            System.out.printf("%" + paddingToString(paddings[columnNumber]) + fieldLengths[columnNumber] + "s  ", row[columnNumber]);
-        }
-        System.out.println();
-    }
-
-    private static String paddingToString(Padding padding) {
-        if (padding.equals(Padding.LEFT)) {
-            return "-";
-        } else {
-            return "";
-        }
+    public Map<SimulatedPlayer, Float> getPastGames() {
+        return pastGames;
     }
 
     private float getAverageRank() {

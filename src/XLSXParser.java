@@ -7,6 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -111,7 +112,7 @@ public class XLSXParser {
             }
         }
         boolean isFemale = sex.matches("w");
-        return new Participant(startingRank, title, name, country, bundesland, elo, (float) score, (float) tieBreak1, (float) tieBreak2, (float) tieBreak3, 0, type, isFemale);
+        return new Participant(startingRank, title, name, country, bundesland, elo, (float) score, (float) tieBreak1, (float) tieBreak2, (float) tieBreak3, 0, type, isFemale, new HashMap<>());
     }
 
     private static RankingColumnType getColumnType(String columnName) {
