@@ -1,24 +1,41 @@
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class PairingParser {
+public class ChessDataParser {
+
     // For testing
     public static void main(String[] args) {
-        //getPairings("https://chess-results.com/tnr535000.aspx?lan=0&art=2&rd=6&turdet=NO&prt=7");
-        getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=9&turdet=YES&flag=30&prt=7");
+        List<int[]> test1 = getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=9&turdet=YES&flag=30&prt=7");
+        List<int[]> test2 = getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=3&turdet=YES&flag=30&prt=7", 9);
+        List<int[]> test3 = getPairings(507448, 9);
+        assert test1.equals(test2);
+        assert test1.equals(test3);
+    }
+
+    private enum ChessDataType { PAIRING, RANKING}
+
+    // inputLink should contain a valid link to a tournament on chess-results.com,
+    // from a page which shows the desired round.
+    public static List<int[]> getPairings(String inputLink) {
+        return getPairings(buildLinkFromString(inputLink, ChessDataType.PAIRING));
+    }
+
+    // This method allows using any link from the tournament, the round in the link is ignored.
+    // The desired round is set via the method's argument.
+    public static List<int[]> getPairings(String inputLink, int round) {
+        return getPairings(buildLinkFromValues(getTournamentNumber(inputLink), round, ChessDataType.PAIRING));
     }
 
     public static List<int[]> getPairings(int tournamentNumber, int round) {
-        return getPairings(
-                "https://chess-results.com/tnr" + tournamentNumber + ".aspx" +
-                        "?lan=0&art=2&rd=" + round + "&flag=NO&turdet=NO");
+        return getPairings(buildLinkFromValues(tournamentNumber, round, ChessDataType.PAIRING));
     }
 
-    public static List<int[]> getPairings(String link) {
-        Scanner scanner = getScanner(buildValidLink(link));
+    public static List<int[]> getPairings(URL link) {
+        Scanner scanner = getScanner(link);
         List<int[]> pairings = new ArrayList<>();
         boolean paringsStarted = false;
         while (scanner.hasNextLine()) {
@@ -37,7 +54,7 @@ public class PairingParser {
                 if (!line.matches("^\\d.*")) {
                     break;
                 }
-                int[] pairing = parseLine(line);
+                int[] pairing = parsePairingLine(line);
                 // "nicht ausgelost" pairings return null and should not be added to the list.
                 if (pairing != null) {
                     pairings.add(pairing);
@@ -47,10 +64,15 @@ public class PairingParser {
         return pairings;
     }
 
-    private static String buildValidLink(String inputLink) {
+    private static URL buildLinkFromString(String inputLink, ChessDataType type) {
         int tournamentNumber = getTournamentNumber(inputLink);
         int round = getRound(inputLink);
-        return getPairingDataLink(tournamentNumber, round);
+        if (type.equals(ChessDataType.PAIRING)) {
+            return buildLinkFromValues(tournamentNumber, round, type);
+        } else {
+            // TODO refactor ranking parsing to call it from here
+            return null;
+        }
     }
 
     private static int getTournamentNumber(String inputLink) {
@@ -75,14 +97,22 @@ public class PairingParser {
         }
     }
 
-    private static String getPairingDataLink(int tournamentNumber, int roundNumber) {
-        return "https://chess-results.com/tnr" + tournamentNumber +
-                ".aspx?lan=0&art=2&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7";
+    private static URL buildLinkFromValues(int tournamentNumber, int roundNumber, ChessDataType type) {
+        int art = type.equals(ChessDataType.PAIRING) ? 2 : 1;
+        try {
+            return new URL("https://chess-results.com/tnr" + tournamentNumber +
+                    ".aspx?lan=0&art=" + art + "&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7");
+        } catch (MalformedURLException e) {
+            // This block should never be reached.
+            e.printStackTrace();
+            System.exit(1);
+            return null;
+        }
     }
 
-    private static Scanner getScanner(String link) {
+    private static Scanner getScanner(URL link) {
         try {
-            return new Scanner(new URL(link).openStream());
+            return new Scanner(link.openStream());
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Could not get valid data from link: " + link);
@@ -91,7 +121,7 @@ public class PairingParser {
         }
     }
 
-    private static int[] parseLine(String line) {
+    private static int[] parsePairingLine(String line) {
         String[] lineEntries = line.split("[;]");
         // White's starting rank and title are not separated.
         // Only using the digits in the string hopefully solves this issue.
