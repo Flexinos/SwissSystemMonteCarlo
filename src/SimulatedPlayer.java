@@ -31,19 +31,14 @@ public class SimulatedPlayer {
     }
 
     public static int compareToByScoreThenTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
-        int result = 0;
         for (int i = 0; i < Tournament.rankingOrder.size(); i++) {
-            if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.SCORE) {
-                result = -Float.compare(p1.getScore(), p2.getScore());
-            } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.BUCHHOLZ) {
-                result = -Float.compare(p1.getBuchholz(), p2.getBuchholz());
-            } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.BUCHHOLZCUTONE) {
-                result = -Float.compare(p1.getBuchholzCutOne(), p2.getBuchholzCutOne());
-            } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.AVERAGEELOOPPONENTS) {
-                result = -Float.compare(p1.getAverageEloOpponents(), p2.getAverageEloOpponents());
-            } else if (Tournament.rankingOrder.get(i) == Tournament.rankingBy.SONNENBORNBERGER) {
-                result = -Float.compare(p1.getSonnenbornBerger(), p2.getScore());
-            }
+            int result = switch (Tournament.rankingOrder.get(i)) {
+                case SCORE -> -Float.compare(p1.getScore(), p2.getScore());
+                case BUCHHOLZ -> -Float.compare(p1.getBuchholz(), p2.getBuchholz());
+                case BUCHHOLZCUTONE -> -Float.compare(p1.getBuchholzCutOne(), p2.getBuchholzCutOne());
+                case AVERAGEELOOPPONENTS -> -Float.compare(p1.getAverageEloOpponents(), p2.getAverageEloOpponents());
+                case SONNENBORNBERGER -> -Float.compare(p1.getSonnenbornBerger(), p2.getScore());
+            };
             if (result != 0) {
                 return result;
             }
