@@ -16,5 +16,5 @@ use "elo" or "Elo" if present, else use "EloI" or "eloi" ::int
 "bdld" possibly "Bdld"
 "pkt" possibly "Pkt." ::double
 "wtgx" possibly "Wtgx" ::double or ::int
-"typ" possibly "Typ" ::String
+"typ" possibly "Typ" (age class) ::String
 "sex" possibly "Sex" ::String
