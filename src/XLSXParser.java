@@ -12,29 +12,9 @@ import java.util.List;
 
 public class XLSXParser {
     public static void main(String[] args) throws IOException {
-        //getPairings("https://chess-results.com/tnr507449.aspx?lan=0&zeilen=0&art=1&rd=7&turdet=YES&flag=30&prt=4&excel=2010");
         List<Participant> participants = getParticipantsFromRanking("https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010");
         for (Participant participant : participants) {
             System.out.println(participant);
-        }
-    }
-
-    public static void getPairings(String link) throws IOException {
-        XSSFSheet worksheet = getWorksheet(improveLink(link));
-        for (Iterator<Row> rowIterator = worksheet.rowIterator(); rowIterator.hasNext(); ) {
-            Row row = rowIterator.next();
-            for (Iterator<Cell> cellIterator = row.cellIterator(); cellIterator.hasNext(); ) {
-                Cell cell = cellIterator.next();
-                if (cell.getCellType().equals(CellType.STRING)) {
-                    System.out.print(cell.getStringCellValue());
-                } else if (cell.getCellType().equals(CellType.NUMERIC)) {
-                    System.out.print(cell.getNumericCellValue());
-                }
-                if (cellIterator.hasNext()) {
-                    System.out.print(",");
-                }
-            }
-            System.out.println();
         }
     }
 
