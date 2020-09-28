@@ -34,7 +34,7 @@ public class ChessDataParser {
         return getPairings(buildLinkFromValues(tournamentNumber, round, ChessDataType.PAIRING));
     }
 
-    public static List<int[]> getPairings(URL link) {
+    private static List<int[]> getPairings(URL link) {
         Scanner scanner = getScanner(link);
         List<int[]> pairings = new ArrayList<>();
         boolean paringsStarted = false;
