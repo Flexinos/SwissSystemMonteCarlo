@@ -60,7 +60,7 @@ public class ChessDataParser {
         int art = type.equals(ChessDataType.PAIRING) ? 2 : 1;
         try {
             return new URL("https://chess-results.com/tnr" + tournamentNumber +
-                    ".aspx?lan=0&art=" + art + "&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7");
+                    ".aspx?lan=0&art=" + art + "&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7&zeilen=99999");
         } catch (MalformedURLException e) {
             // This block should never be reached.
             e.printStackTrace();
