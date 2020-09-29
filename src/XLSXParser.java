@@ -56,7 +56,7 @@ public class XLSXParser {
     private static boolean isTableHeader(final Row row) {
         final Iterator<Cell> cellIterator = row.cellIterator();
         final Cell cell = cellIterator.next();
-        if (cell.getCellType().equals(CellType.STRING)) {
+        if (cell.getCellType() == CellType.STRING) {
             return cell.getStringCellValue().matches("rg\\.|Rg\\.|Nr\\.");
         }
         return false;
