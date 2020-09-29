@@ -60,7 +60,7 @@ public final class Round {
     private static boolean tryPairBracket(final List<SimulatedPlayer> playersInBracket, final Collection<SimulatedPlayer> pairedPlayers, final Collection<Pairing> unorderedPairings) {
         final Collection<Pairing> provisionalPairings = new ArrayList<>(playersInBracket.size() / 2);
         for (int i = 0; i < (playersInBracket.size() / 2); i++) {
-            if (Pairing.isAllowed(playersInBracket.get(i), playersInBracket.get(i + (playersInBracket.size() / 2)))) {
+            if (Pairing.canBePaired(playersInBracket.get(i), playersInBracket.get(i + (playersInBracket.size() / 2)))) {
                 provisionalPairings.add(ThreadLocalRandom.current().nextBoolean() ? new Pairing(playersInBracket.get(i + (playersInBracket.size() / 2)), playersInBracket.get(i)) : new Pairing(playersInBracket.get(i), playersInBracket.get(i + (playersInBracket.size() / 2))));
             } else {
                 return false;
