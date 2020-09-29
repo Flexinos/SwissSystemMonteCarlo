@@ -13,12 +13,12 @@ public class SimulatedPlayer {
     private boolean receivedBye = false;
     private int colorDifference = 0;
 
-    public SimulatedPlayer(Participant participant) {
+    public SimulatedPlayer(final Participant participant) {
         this.participant = participant;
         this.pastGames = new HashMap<>();
     }
 
-    public SimulatedPlayer(Participant participant, SimulatedTournament simulatedTournament) {
+    public SimulatedPlayer(final Participant participant, final SimulatedTournament simulatedTournament) {
         this.participant = participant;
         this.score = participant.getScore();
         this.buchholz = participant.getBuchholz();
@@ -29,14 +29,14 @@ public class SimulatedPlayer {
         this.pastGames = new HashMap<>(participant.getPastGames());
     }
 
-    public static int compareToByScoreThenTieBreak(SimulatedPlayer p1, SimulatedPlayer p2) {
+    public static int compareToByScoreThenTieBreak(final SimulatedPlayer p1, final SimulatedPlayer p2) {
         for (int i = 0; i < Tournament.rankingOrder.size(); i++) {
-            int result = switch (Tournament.rankingOrder.get(i)) {
-                case SCORE -> -Float.compare(p1.getScore(), p2.getScore());
-                case BUCHHOLZ -> -Float.compare(p1.getBuchholz(), p2.getBuchholz());
-                case BUCHHOLZCUTONE -> -Float.compare(p1.getBuchholzCutOne(), p2.getBuchholzCutOne());
-                case AVERAGEELOOPPONENTS -> -Float.compare(p1.getAverageEloOpponents(), p2.getAverageEloOpponents());
-                case SONNENBORNBERGER -> -Float.compare(p1.getSonnenbornBerger(), p2.getScore());
+            final int result = switch (Tournament.rankingOrder.get(i)) {
+                case SCORE -> -Float.compare(p1.score, p2.score);
+                case BUCHHOLZ -> -Float.compare(p1.buchholz, p2.buchholz);
+                case BUCHHOLZCUTONE -> -Float.compare(p1.buchholzCutOne, p2.buchholzCutOne);
+                case AVERAGEELOOPPONENTS -> -Float.compare(p1.averageEloOpponents, p2.averageEloOpponents);
+                case SONNENBORNBERGER -> -Float.compare(p1.sonnenbornBerger, p2.score);
             };
             if (result != 0) {
                 return result;
@@ -45,45 +45,45 @@ public class SimulatedPlayer {
         return -Double.compare(p1.getElo(), p2.getElo());
     }
 
-    public static int compareToByScoreThenElo(SimulatedPlayer p1, SimulatedPlayer p2) {
-        int result = -Double.compare(p1.getScore(), p2.getScore());
+    public static int compareToByScoreThenElo(final SimulatedPlayer p1, final SimulatedPlayer p2) {
+        final int result = -Double.compare(p1.score, p2.score);
         return result != 0 ? result : -Double.compare(p1.getElo(), p2.getElo());
     }
 
     private float calculateBuchholz() {
         float buchholz = 0;
-        for (SimulatedPlayer opponent : pastGames.keySet()) {
-            buchholz += opponent.getScore();
+        for (final SimulatedPlayer opponent : pastGames.keySet()) {
+            buchholz += opponent.score;
         }
         return buchholz;
     }
 
     private float calculateBuchholzCutOne() {
-        if (pastGames.size() == 0) {
+        if (pastGames.isEmpty()) {
             return 0;
         }
         float buchholz = 0;
         float lowestScore = Float.MAX_VALUE;
-        for (SimulatedPlayer opponent : pastGames.keySet()) {
-            if (opponent.getScore() <= lowestScore) {
-                lowestScore = opponent.getScore();
+        for (final SimulatedPlayer opponent : pastGames.keySet()) {
+            if (opponent.score <= lowestScore) {
+                lowestScore = opponent.score;
             }
-            buchholz += opponent.getScore();
+            buchholz += opponent.score;
         }
         return buchholz - lowestScore;
     }
 
     private float calculateSonnenbornBerger() {
         float sonnenbornBerger = 0;
-        for (SimulatedPlayer opponent : pastGames.keySet()) {
-            sonnenbornBerger += opponent.getScore() * pastGames.get(opponent);
+        for (final Map.Entry<SimulatedPlayer, Float> entry : pastGames.entrySet()) {
+            sonnenbornBerger += entry.getKey().score * entry.getValue();
         }
         return sonnenbornBerger;
     }
 
     private float calculateAverageEloOpponents() {
         float sum = 0;
-        for (SimulatedPlayer opponent : pastGames.keySet()) {
+        for (final SimulatedPlayer opponent : pastGames.keySet()) {
             sum += opponent.getElo();
         }
         return sum / pastGames.size();
@@ -96,13 +96,13 @@ public class SimulatedPlayer {
         sonnenbornBerger = calculateSonnenbornBerger();
     }
 
-    public void addGame(SimulatedPlayer opponent, double result) {
+    public void addGame(final SimulatedPlayer opponent, final double result) {
         pastGames.put(opponent, (float) result);
         simulatedTournament.addGame(this, opponent);
         score += result;
     }
 
-    public void addGame(SimulatedPlayer opponent, double result, boolean isWhite) {
+    public void addGame(final SimulatedPlayer opponent, final double result, final boolean isWhite) {
         pastGames.put(opponent, (float) result);
         simulatedTournament.addGame(this, opponent);
         score += result;
@@ -149,7 +149,7 @@ public class SimulatedPlayer {
         return receivedBye;
     }
 
-    public void setReceivedBye(boolean receivedBye) {
+    public void setReceivedBye(final boolean receivedBye) {
         this.receivedBye = receivedBye;
     }
 
