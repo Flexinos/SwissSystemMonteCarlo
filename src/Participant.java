@@ -23,11 +23,11 @@ public class Participant {
     private int startingRank;
     private int numberOfTopThreeFinishes;
 
-    public Participant(String name, int elo) {
+    public Participant(final String name, final int elo) {
         this(0, "", name, "", "", elo, 0, 0, 0, 0, 0, "", false, new HashMap<>());
     }
 
-    public Participant(int startingRank, String title, String name, String country, String bundesland, int elo, float score, float buchholz, float buchholzCutOne, float averageEloOpponents, float sonnenbornBerger, String type, boolean isFemale, Map<SimulatedPlayer, Float> pastGames) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final float score, final float buchholz, final float buchholzCutOne, final float averageEloOpponents, final float sonnenbornBerger, final String type, final boolean isFemale, final Map<SimulatedPlayer, Float> pastGames) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -48,32 +48,32 @@ public class Participant {
     }
 
     // Customize the output of the simulation results here.
-    public static void printSimulationResults(List<Participant> participants) {
+    public static void printSimulationResults(final List<Participant> participants) {
         // Set the name of each column here.
-        String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
-        Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
-        Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
+        final String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
+        final Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
+        final Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
         // Add the functions to produce a participant's entry here.
-        List<String[]> rows = participants.stream().map(participant -> Stream.of(
-                participant.getName(),
-                participant.getStartingRank(),
-                participant.getElo(),
-                participant.getNumberOfTopThreeFinishes(),
+        final List<String[]> rows = participants.stream().map(participant -> Stream.of(
+                participant.name,
+                participant.startingRank,
+                participant.elo,
+                participant.numberOfTopThreeFinishes,
                 participant.getAverageRank()
         ).map(String::valueOf).toArray(String[]::new)).collect(Collectors.toList());
-        int[] columnLengths = getColumnLengths(columnNames, rows);
+        final int[] columnLengths = getColumnLengths(columnNames, rows);
         printRow(columnNames, columnLengths, columnNamePaddings);
         printAllRows(rows, columnLengths, participantFieldsPaddings);
     }
 
-    private static int[] getColumnLengths(String[] columnNames, List<String[]> rows) {
-        int[] maxColumnLengths = new int[columnNames.length];
+    private static int[] getColumnLengths(final String[] columnNames, final List<String[]> rows) {
+        final int[] maxColumnLengths = new int[columnNames.length];
         for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
             maxColumnLengths[columnNumber] = columnNames[columnNumber].length();
         }
-        for (String[] row : rows) {
+        for (final String[] row : rows) {
             for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
-                int fieldLength = row[columnNumber].length();
+                final int fieldLength = row[columnNumber].length();
                 if (maxColumnLengths[columnNumber] < fieldLength) {
                     maxColumnLengths[columnNumber] = fieldLength;
                 }
@@ -82,13 +82,13 @@ public class Participant {
         return maxColumnLengths;
     }
 
-    private static void printAllRows(List<String[]> rows, int[] fieldLengths, Padding[] paddings) {
-        for (String[] row : rows) {
+    private static void printAllRows(final List<String[]> rows, final int[] fieldLengths, final Padding[] paddings) {
+        for (final String[] row : rows) {
             printRow(row, fieldLengths, paddings);
         }
     }
 
-    private static void printRow(String[] row, int[] fieldLengths, Padding[] paddings) {
+    private static void printRow(final String[] row, final int[] fieldLengths, final Padding[] paddings) {
         assert row.length == fieldLengths.length;
         assert row.length == paddings.length;
         for (int columnNumber = 0; columnNumber < row.length; ++columnNumber) {
@@ -97,7 +97,7 @@ public class Participant {
         System.out.println();
     }
 
-    private static String paddingToString(Padding padding) {
+    private static String paddingToString(final Padding padding) {
         if (padding.equals(Padding.LEFT)) {
             return "-";
         } else {
@@ -109,7 +109,7 @@ public class Participant {
         return startingRank;
     }
 
-    public void setStartingRank(int startingRank) {
+    public void setStartingRank(final int startingRank) {
         this.startingRank = startingRank;
     }
 
@@ -161,11 +161,11 @@ public class Participant {
         return numberOfTopThreeFinishes;
     }
 
-    public void setNumberOfTopThreeFinishes(int numberOfTopThreeFinishes) {
+    public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
         this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
     }
 
-    public void addRankToTable(int rank) {
+    public void addRankToTable(final int rank) {
         rankingTable[rank].increment();
     }
 
@@ -199,12 +199,12 @@ public class Participant {
                         "Tie Break 3: " + sonnenbornBerger + System.lineSeparator();
     }
 
-    public int compareToByEloDescending(Participant p2) {
-        return -Double.compare(this.getElo(), p2.getElo());
+    public int compareToByEloDescending(final Participant p2) {
+        return -Integer.compare(this.elo, p2.elo);
     }
 
-    public int compareToByTopThreeFinishesDescending(Participant p2) {
-        int result = -Integer.compare(this.getNumberOfTopThreeFinishes(), p2.getNumberOfTopThreeFinishes());
+    public int compareToByTopThreeFinishesDescending(final Participant p2) {
+        final int result = -Integer.compare(this.numberOfTopThreeFinishes, p2.numberOfTopThreeFinishes);
         return result != 0 ? result : compareToByEloDescending(p2);
     }
 

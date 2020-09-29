@@ -4,7 +4,7 @@ public class WorkerThread implements Runnable {
     private final int numberOfSimulations;
     private final int numberOfSimulationsStringLength;
 
-    public WorkerThread(Tournament tournament, int numberOfSimulations) {
+    public WorkerThread(final Tournament tournament, final int numberOfSimulations) {
         this.tournament = tournament;
         this.numberOfSimulations = numberOfSimulations;
         this.numberOfSimulationsStringLength = Integer.toString(numberOfSimulations).length();
@@ -13,14 +13,14 @@ public class WorkerThread implements Runnable {
     @Override
     public void run() {
         int simulationTicket = Main.getSimulationTicket();
-        while(simulationTicket <= numberOfSimulations) {
-            SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
+        while (simulationTicket <= numberOfSimulations) {
+            final SimulatedTournament simulatedTournament = new SimulatedTournament(tournament);
             simulatedTournament.simulateTournament();
             simulatedTournament.analyseThisSimulatedTournament();
             if (simulationTicket % simulationsPerProgressMessage == 0) {
                 System.out.printf(
                         "Completed %" + numberOfSimulationsStringLength +
-                                "d / %" +  numberOfSimulationsStringLength +
+                                "d / %" + numberOfSimulationsStringLength +
                                 "d simulations." + System.lineSeparator(),
                         simulationTicket, numberOfSimulations);
             }

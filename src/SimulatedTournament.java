@@ -10,16 +10,16 @@ public class SimulatedTournament {
     private final List<List<Pairing>> roundList;
     private final BitSet gameMatrix;
 
-    public SimulatedTournament(Tournament tournament) {
+    public SimulatedTournament(final Tournament tournament) {
         this.tournament = tournament;
         this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
         tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(simulatedPlayerList::add);
         roundList = new ArrayList<>(tournament.getRoundsToBeSimulated());
         gameMatrix = new BitSet(simulatedPlayerList.size() ^ 2);
         if (tournament.getGivenPairings() != null) {
-            List<int[]> givenPairings = tournament.getGivenPairings();
-            List<Pairing> round = new ArrayList<>();
-            for (int[] givenPairing : givenPairings) {
+            final List<int[]> givenPairings = tournament.getGivenPairings();
+            final List<Pairing> round = new ArrayList<>();
+            for (final int[] givenPairing : givenPairings) {
                 if (givenPairing[1] == 0) {
                     Pairing.giveBye(simulatedPlayerList.get(givenPairing[0] - 1));
                 } else {
@@ -30,11 +30,11 @@ public class SimulatedTournament {
         }
     }
 
-    public void addGame(SimulatedPlayer player1, SimulatedPlayer player2) {
+    public void addGame(final SimulatedPlayer player1, final SimulatedPlayer player2) {
         gameMatrix.set((player1.getStartingRank() - 1) * simulatedPlayerList.size() + player2.getStartingRank() - 1);
     }
 
-    public boolean haveMet(SimulatedPlayer player1, SimulatedPlayer player2) {
+    public boolean haveMet(final SimulatedPlayer player1, final SimulatedPlayer player2) {
         return gameMatrix.get((player1.getStartingRank() - 1) * simulatedPlayerList.size() + player2.getStartingRank() - 1);
     }
 
@@ -43,14 +43,14 @@ public class SimulatedTournament {
             if (roundList.size() <= finishedRounds) {
                 roundList.add(Round.createPairings(simulatedPlayerList));
             }
-            for (Pairing pairing : roundList.get(finishedRounds)) {
+            for (final Pairing pairing : roundList.get(finishedRounds)) {
                 pairing.simulateResult();
             }
         }
     }
 
     public void analyseThisSimulatedTournament() {
-        //simulatedPlayerList.forEach(SimulatedPlayer::updateTieBreaks);
+        //simulatedPlayerList.forEach(SimulatedPlayer::updateTiebreaks);
         simulatedPlayerList.sort(SimulatedPlayer::compareToByScoreThenTieBreak);
         IntStream.range(0, 3).forEach(i -> Main.topThreeCounter.computeIfAbsent(simulatedPlayerList.get(i).getParticipant(), k -> new LongAdder()).increment());
         for (int i = 0; i < simulatedPlayerList.size(); i++) {
