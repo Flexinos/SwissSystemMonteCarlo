@@ -31,22 +31,22 @@ public final class SimulatedPlayer {
     public int compareToByScoreThenTieBreak(final SimulatedPlayer p2) {
         for (int i = 0; i < Tournament.getRankingOrder().size(); i++) {
             final int result = switch (Tournament.getRankingOrder().get(i)) {
-                case SCORE -> -Float.compare(this.score, p2.score);
-                case BUCHHOLZ -> -Float.compare(this.buchholz, p2.buchholz);
-                case BUCHHOLZ_CUT_ONE -> -Float.compare(this.buchholzCutOne, p2.buchholzCutOne);
-                case AVERAGE_ELO_OPPONENTS -> -Float.compare(this.averageEloOpponents, p2.averageEloOpponents);
-                case SONNENBORN_BERGER -> -Float.compare(this.sonnenbornBerger, p2.score);
+                case SCORE -> Float.compare(p2.score, this.score);
+                case BUCHHOLZ -> Float.compare(p2.buchholz, this.buchholz);
+                case BUCHHOLZ_CUT_ONE -> Float.compare(p2.buchholzCutOne, this.buchholzCutOne);
+                case AVERAGE_ELO_OPPONENTS -> Float.compare(p2.averageEloOpponents, this.averageEloOpponents);
+                case SONNENBORN_BERGER -> Float.compare(p2.score, this.sonnenbornBerger);
             };
             if (result != 0) {
                 return result;
             }
         }
-        return -Integer.compare(getElo(), p2.getElo());
+        return Integer.compare(p2.getElo(), getElo());
     }
 
     public int compareToByScoreThenElo(final SimulatedPlayer p2) {
-        final int result = -Float.compare(this.score, p2.score);
-        return (result != 0) ? result : -Integer.compare(getElo(), p2.getElo());
+        final int result = Float.compare(p2.score, this.score);
+        return (result != 0) ? result : Integer.compare(p2.getElo(), getElo());
     }
 
     private void updateBuchholz() {
