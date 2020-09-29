@@ -4,8 +4,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public final class ChessDataParser {
+
+    private static final Pattern TOURNAMENT_NUMBER_PATTERN = Pattern.compile(".*tnr(\\d+).*");
+    private static final Pattern ROUND_PATTERN = Pattern.compile(".*rd=(\\d+).*");
+    private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^>]*>");
+    private static final Pattern CHARACTER_CODE_PATTERN = Pattern.compile("&#\\d*;");
 
     // Prevent instantiation
     private ChessDataParser() {
@@ -23,13 +29,13 @@ public final class ChessDataParser {
 
     // inputLink should contain a valid link to a tournament on chess-results.com,
     // from a page which shows the desired round.
-    public static List<int[]> getPairings(final String inputLink) {
+    public static List<int[]> getPairings(final CharSequence inputLink) {
         return PairingUtilities.getPairings(buildLinkFromString(inputLink, ChessDataType.PAIRING));
     }
 
     // This method allows using any link from the tournament, the round in the link is ignored.
     // The desired round is set via the method's argument.
-    public static List<int[]> getPairings(final String inputLink, final int round) {
+    public static List<int[]> getPairings(final CharSequence inputLink, final int round) {
         return PairingUtilities.getPairings(buildLinkFromValues(getTournamentNumber(inputLink), round, ChessDataType.PAIRING));
     }
 
@@ -37,11 +43,11 @@ public final class ChessDataParser {
         return PairingUtilities.getPairings(buildLinkFromValues(tournamentNumber, round, ChessDataType.PAIRING));
     }
 
-    public static List<Participant> getParticipantsFromRanking(final String inputLink) {
+    public static List<Participant> getParticipantsFromRanking(final CharSequence inputLink) {
         return RankingUtilities.getParticipantsFromRank(buildLinkFromString(inputLink, ChessDataType.RANKING));
     }
 
-    public static List<Participant> getParticipantsFromRanking(final String inputLink, final int round) {
+    public static List<Participant> getParticipantsFromRanking(final CharSequence inputLink, final int round) {
         return RankingUtilities.getParticipantsFromRank(buildLinkFromValues(getTournamentNumber(inputLink), round, ChessDataType.RANKING));
     }
 
@@ -49,14 +55,14 @@ public final class ChessDataParser {
         return RankingUtilities.getParticipantsFromRank(buildLinkFromValues(tournamentNumber, round, ChessDataType.RANKING));
     }
 
-    private static URL buildLinkFromString(final String inputLink, final ChessDataType type) {
+    private static URL buildLinkFromString(final CharSequence inputLink, final ChessDataType type) {
         final int tournamentNumber = getTournamentNumber(inputLink);
         final int round = getRound(inputLink);
         return buildLinkFromValues(tournamentNumber, round, type);
     }
 
     private static URL buildLinkFromValues(final int tournamentNumber, final int roundNumber, final ChessDataType type) {
-        final int art = type == ChessDataType.PAIRING ? 2 : 1;
+        final int art = (type == ChessDataType.PAIRING) ? 2 : 1;
         try {
             return new URL("https://chess-results.com/tnr" + tournamentNumber +
                     ".aspx?lan=0&art=" + art + "&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7&zeilen=99999");
@@ -68,9 +74,9 @@ public final class ChessDataParser {
         }
     }
 
-    private static int getTournamentNumber(final String inputLink) {
+    private static int getTournamentNumber(final CharSequence inputLink) {
         try {
-            return Integer.parseInt(inputLink.replaceFirst(".*tnr(\\d+).*", "$1"));
+            return Integer.parseInt(TOURNAMENT_NUMBER_PATTERN.matcher(inputLink).replaceFirst("$1"));
         } catch (final NumberFormatException e) {
             System.out.println("Could not get tournament number from link: " + inputLink + System.lineSeparator() +
                     "Make sure that the \"tnr\" key in the link is set to a valid integer.");
@@ -79,9 +85,9 @@ public final class ChessDataParser {
         }
     }
 
-    private static int getRound(final String inputLink) {
+    private static int getRound(final CharSequence inputLink) {
         try {
-            return Integer.parseInt(inputLink.replaceFirst(".*rd=(\\d+).*", "$1"));
+            return Integer.parseInt(ROUND_PATTERN.matcher(inputLink).replaceFirst("$1"));
         } catch (final NumberFormatException e) {
             System.out.println("Could not get the round from link: " + inputLink + System.lineSeparator() +
                     "Make sure that the \"rd\" key in the link is set to a valid integer.");
@@ -101,24 +107,27 @@ public final class ChessDataParser {
         }
     }
 
-    private static void advanceScannerToTableStart(final Scanner scanner, final String tableHeaderPattern) {
+    private static void advanceScannerToTableStart(final Scanner scanner, final Pattern tableHeaderPattern) {
         while (scanner.hasNextLine()) {
-            if (cleanUpLine(scanner.nextLine()).matches(tableHeaderPattern)) {
+            if (tableHeaderPattern.matcher(cleanUpLine(scanner.nextLine())).matches()) {
                 return;
             }
         }
     }
 
-    private static String cleanUpLine(final String line) {
+    private static String cleanUpLine(final CharSequence line) {
         // Remove HTML tags and numerical character code points.
-        return line
-                .replaceAll("<[^>]*>", "")
-                .replaceAll("&#\\d*;", "");
+        return CHARACTER_CODE_PATTERN.matcher(HTML_TAG_PATTERN.matcher(line).replaceAll("")).replaceAll("");
     }
 
     private enum ChessDataType {PAIRING, RANKING}
 
     private static class PairingUtilities {
+        private static final Pattern PAIRING_LINE_PATTERN = Pattern.compile("^\\d.*");
+        private static final Pattern NON_DIGIT_PATTERN = Pattern.compile("[^0-9]+");
+        private static final Pattern FOUR_DIGIT_ELO_START_PATTERN = Pattern.compile("^[12]\\d+");
+        private static final Pattern PAIRING_TABLE_HEADER_PATTERN = Pattern.compile("^Br.;Nr.;Name;.*");
+
         private static List<int[]> getPairings(final URL link) {
             final Scanner scanner = getScanner(link);
             advanceScannerToPairingTableStart(scanner);
@@ -138,19 +147,19 @@ public final class ChessDataParser {
         }
 
         private static void advanceScannerToPairingTableStart(final Scanner scanner) {
-            advanceScannerToTableStart(scanner, "^Br.;Nr.;Name;.*");
+            advanceScannerToTableStart(scanner, PAIRING_TABLE_HEADER_PATTERN);
         }
 
-        private static boolean isPairingLine(final String line) {
+        private static boolean isPairingLine(final CharSequence line) {
             // Pairing lines start with a digit.
-            return line.matches("^\\d.*");
+            return PAIRING_LINE_PATTERN.matcher(line).matches();
         }
 
         private static int[] parsePairingLine(final String line) {
-            final String[] lineEntries = line.split("[;]");
+            final String[] lineEntries = line.split(";");
             // White's starting rank and title are not separated.
             // Only using the digits in the string hopefully solves this issue.
-            final int whiteStartingRank = Integer.parseInt(lineEntries[1].replaceAll("[^0-9]+", ""));
+            final int whiteStartingRank = Integer.parseInt(NON_DIGIT_PATTERN.matcher(lineEntries[1]).replaceAll(""));
             final String lastEntry = lineEntries[lineEntries.length - 1];
             final int blackStartingRank;
             if (lastEntry.equals("spielfrei")) {
@@ -161,14 +170,14 @@ public final class ChessDataParser {
             } else {
                 // In some cases separators are missing.
                 // Only using the digits in the string hopefully solves this issue.
-                final String lastEntryNumbersOnly = lastEntry.replaceAll("[^0-9]+", "");
+                final String lastEntryNumbersOnly = NON_DIGIT_PATTERN.matcher(lastEntry).replaceAll("");
                 final String blackStartingRankString;
                 // The input data has no separator between black elo and black starting rank,
                 // so this is necessary.
                 if (lastEntryNumbersOnly.startsWith("0")) {
                     // Elo is zero.
                     blackStartingRankString = lastEntryNumbersOnly.substring(1);
-                } else if (lastEntryNumbersOnly.matches("^[12]\\d+")) {
+                } else if (FOUR_DIGIT_ELO_START_PATTERN.matcher(lastEntryNumbersOnly).matches()) {
                     // Elo has four digits.
                     blackStartingRankString = lastEntryNumbersOnly.substring(4);
                 } else {
@@ -182,6 +191,9 @@ public final class ChessDataParser {
     }
 
     private static class RankingUtilities {
+        private static final Pattern RANKING_TABLE_HEADER_PATTERN = Pattern.compile("(Rg\\.|rg\\.|Nr\\.);(snr|Snr|Name);.*");
+        private static final Pattern RANKING_LINE_PATTERN = Pattern.compile("^\\d.*");
+
         private static List<Participant> getParticipantsFromRank(final URL link) {
             final Scanner scanner = getScanner(link);
             advanceScannerToRankingTableStart(scanner);
@@ -198,12 +210,12 @@ public final class ChessDataParser {
         }
 
         private static void advanceScannerToRankingTableStart(final Scanner scanner) {
-            advanceScannerToTableStart(scanner, "(Rg\\.|rg\\.|Nr\\.);(snr|Snr|Name);.*");
+            advanceScannerToTableStart(scanner, RANKING_TABLE_HEADER_PATTERN);
         }
 
-        private static boolean isRankingLine(final String line) {
+        private static boolean isRankingLine(final CharSequence line) {
             // Ranking lines start with a digit.
-            return line.matches("^\\d.*");
+            return RANKING_LINE_PATTERN.matcher(line).matches();
         }
 
         private static Participant parseParticipantLine(final String line, final int currentRank) {
