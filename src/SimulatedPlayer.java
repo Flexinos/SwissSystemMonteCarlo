@@ -29,25 +29,25 @@ public class SimulatedPlayer {
         this.pastGames = new HashMap<>(participant.getPastGames());
     }
 
-    public static int compareToByScoreThenTieBreak(final SimulatedPlayer p1, final SimulatedPlayer p2) {
+    public int compareToByScoreThenTieBreak(final SimulatedPlayer p2) {
         for (int i = 0; i < Tournament.rankingOrder.size(); i++) {
             final int result = switch (Tournament.rankingOrder.get(i)) {
-                case SCORE -> -Float.compare(p1.score, p2.score);
-                case BUCHHOLZ -> -Float.compare(p1.buchholz, p2.buchholz);
-                case BUCHHOLZCUTONE -> -Float.compare(p1.buchholzCutOne, p2.buchholzCutOne);
-                case AVERAGEELOOPPONENTS -> -Float.compare(p1.averageEloOpponents, p2.averageEloOpponents);
-                case SONNENBORNBERGER -> -Float.compare(p1.sonnenbornBerger, p2.score);
+                case SCORE -> -Float.compare(score, p2.score);
+                case BUCHHOLZ -> -Float.compare(buchholz, p2.buchholz);
+                case BUCHHOLZCUTONE -> -Float.compare(buchholzCutOne, p2.buchholzCutOne);
+                case AVERAGEELOOPPONENTS -> -Float.compare(averageEloOpponents, p2.averageEloOpponents);
+                case SONNENBORNBERGER -> -Float.compare(sonnenbornBerger, p2.score);
             };
             if (result != 0) {
                 return result;
             }
         }
-        return -Integer.compare(p1.getElo(), p2.getElo());
+        return -Integer.compare(getElo(), p2.getElo());
     }
 
-    public static int compareToByScoreThenElo(final SimulatedPlayer p1, final SimulatedPlayer p2) {
-        final int result = -Float.compare(p1.score, p2.score);
-        return result != 0 ? result : -Integer.compare(p1.getElo(), p2.getElo());
+    public int compareToByScoreThenElo(final SimulatedPlayer p2) {
+        final int result = -Float.compare(score, p2.score);
+        return result != 0 ? result : -Integer.compare(getElo(), p2.getElo());
     }
 
     private float calculateBuchholz() {
