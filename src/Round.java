@@ -89,7 +89,7 @@ public final class Round {
     private static void giveByeToLastEligiblePlayer(final List<SimulatedPlayer> unpairedPlayers) {
         for (int i = unpairedPlayers.size() - 1; i > 0; i--) {
             if (!unpairedPlayers.get(i).hasReceivedBye()) {
-                unpairedPlayers.get(i).setReceivedBye(true);
+                unpairedPlayers.get(i).giveBye();
                 unpairedPlayers.remove(i);
             }
         }

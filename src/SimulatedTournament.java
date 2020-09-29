@@ -20,7 +20,7 @@ public final class SimulatedTournament {
             final List<Pairing> round = new ArrayList<>();
             for (final int[] givenPairing : givenPairings) {
                 if (givenPairing[1] == 0) {
-                    this.simulatedPlayerList.get(givenPairing[0] - 1).setReceivedBye(true);
+                    this.simulatedPlayerList.get(givenPairing[0] - 1).giveBye();
                 } else {
                     round.add(new Pairing(this.simulatedPlayerList.get(givenPairing[0] - 1), this.simulatedPlayerList.get(givenPairing[1] - 1)));
                 }

@@ -114,6 +114,11 @@ public final class SimulatedPlayer {
         }
     }
 
+    public void giveBye() {
+        this.receivedBye = true;
+        this.score += 1;
+    }
+
     public void addRankToTable(final int rank) {
         this.participant.addRankToTable(rank);
     }
@@ -152,10 +157,6 @@ public final class SimulatedPlayer {
 
     public boolean hasReceivedBye() {
         return this.receivedBye;
-    }
-
-    public void setReceivedBye(final boolean receivedBye) {
-        this.receivedBye = receivedBye;
     }
 
     public float getSonnenbornBerger() {
