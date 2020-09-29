@@ -52,6 +52,9 @@ public final class Tournament {
     }
 
     public List<int[]> getGivenPairings() {
+        if (this.givenPairings == null) {
+            return null;
+        }
         return Collections.unmodifiableList(this.givenPairings);
     }
 
