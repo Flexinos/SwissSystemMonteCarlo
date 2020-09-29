@@ -4,7 +4,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public final class Participant {
-    public final LongAdder[] rankingTable = new LongAdder[Main.numberOfParticipants];
+    private final LongAdder[] rankingTable = new LongAdder[Main.numberOfParticipants];
     private final String title;
     private final String name;
     private final String country;
