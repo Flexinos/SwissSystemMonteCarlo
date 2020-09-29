@@ -18,7 +18,7 @@ public final class Main {
     public static final int minElo = 1000;
     public static final int maxElo = 2600;
     // End of configuration
-    public static final Map<Participant, LongAdder> topThreeCounter =
+    private static final Map<Participant, LongAdder> topThreeCounter =
             new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
     private static int finished_simulations = 0;
 
@@ -68,6 +68,10 @@ public final class Main {
         synchronized (Main.class) {
             return ++finished_simulations;
         }
+    }
+
+    public static void addTopThreeRanking(final Participant p) {
+        topThreeCounter.computeIfAbsent(p, k -> new LongAdder()).increment();
     }
 
     private static final class Timer {
