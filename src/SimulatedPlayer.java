@@ -24,7 +24,7 @@ public final class SimulatedPlayer {
         this.pastGames = new HashMap<>(participant.getPastResults());
     }
 
-    public boolean playedAgainst(final SimulatedPlayer simulatedPlayer) {
+    public boolean hasPlayedAgainst(final SimulatedPlayer simulatedPlayer) {
         return this.pastGames.containsKey(simulatedPlayer);
     }
 

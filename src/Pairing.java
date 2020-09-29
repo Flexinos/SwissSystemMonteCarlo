@@ -15,7 +15,7 @@ public final class Pairing {
             System.out.println("playing against oneself");
             return false;
         } else {
-            return !player1.playedAgainst(player2);
+            return !player1.hasPlayedAgainst(player2);
         }
     }
 
