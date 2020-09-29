@@ -71,7 +71,7 @@ public final class Main {
     }
 
     public static void addTopThreeRanking(final Participant p) {
-        topThreeCounter.computeIfAbsent(p, k -> new LongAdder()).increment();
+        topThreeCounter.computeIfAbsent(p, (Participant key) -> new LongAdder()).increment();
     }
 
     private static final class Timer {
