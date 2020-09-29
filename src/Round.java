@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-public class Round {
+public final class Round {
+    private Round() {
+    }
 
     public static List<Pairing> createPairings(final List<SimulatedPlayer> players) {
         final List<Pairing> unorderedPairings = new ArrayList<>();
