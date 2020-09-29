@@ -32,11 +32,11 @@ public class SimulatedPlayer {
     public int compareToByScoreThenTieBreak(final SimulatedPlayer p2) {
         for (int i = 0; i < Tournament.rankingOrder.size(); i++) {
             final int result = switch (Tournament.rankingOrder.get(i)) {
-                case SCORE -> -Float.compare(score, p2.score);
-                case BUCHHOLZ -> -Float.compare(buchholz, p2.buchholz);
-                case BUCHHOLZCUTONE -> -Float.compare(buchholzCutOne, p2.buchholzCutOne);
-                case AVERAGEELOOPPONENTS -> -Float.compare(averageEloOpponents, p2.averageEloOpponents);
-                case SONNENBORNBERGER -> -Float.compare(sonnenbornBerger, p2.score);
+                case SCORE -> -Float.compare(this.score, p2.score);
+                case BUCHHOLZ -> -Float.compare(this.buchholz, p2.buchholz);
+                case BUCHHOLZCUTONE -> -Float.compare(this.buchholzCutOne, p2.buchholzCutOne);
+                case AVERAGEELOOPPONENTS -> -Float.compare(this.averageEloOpponents, p2.averageEloOpponents);
+                case SONNENBORNBERGER -> -Float.compare(this.sonnenbornBerger, p2.score);
             };
             if (result != 0) {
                 return result;
@@ -46,47 +46,47 @@ public class SimulatedPlayer {
     }
 
     public int compareToByScoreThenElo(final SimulatedPlayer p2) {
-        final int result = -Float.compare(score, p2.score);
+        final int result = -Float.compare(this.score, p2.score);
         return result != 0 ? result : -Integer.compare(getElo(), p2.getElo());
     }
 
     private void updateBuchholz() {
         float tmpSum = 0f;
-        for (final SimulatedPlayer opponent : pastGames.keySet()) {
+        for (final SimulatedPlayer opponent : this.pastGames.keySet()) {
             tmpSum += opponent.score;
         }
-        buchholz = tmpSum;
+        this.buchholz = tmpSum;
     }
 
     private void updateBuchholzCutOne() {
-        if (pastGames.isEmpty()) {
-            buchholzCutOne = 0f;
+        if (this.pastGames.isEmpty()) {
+            this.buchholzCutOne = 0f;
         }
         float tmpBuchholz = 0f;
         float lowestScore = Float.MAX_VALUE;
-        for (final SimulatedPlayer opponent : pastGames.keySet()) {
+        for (final SimulatedPlayer opponent : this.pastGames.keySet()) {
             if (opponent.score <= lowestScore) {
                 lowestScore = opponent.score;
             }
             tmpBuchholz += opponent.score;
         }
-        buchholzCutOne = tmpBuchholz - lowestScore;
+        this.buchholzCutOne = tmpBuchholz - lowestScore;
     }
 
     private void updateSonnenbornBerger() {
         float tmpSum = 0.0f;
-        for (final Map.Entry<SimulatedPlayer, Float> entry : pastGames.entrySet()) {
+        for (final Map.Entry<SimulatedPlayer, Float> entry : this.pastGames.entrySet()) {
             tmpSum += entry.getKey().score * entry.getValue();
         }
-        sonnenbornBerger = tmpSum;
+        this.sonnenbornBerger = tmpSum;
     }
 
     private void updateAverageEloOpponents() {
         float sum = 0.0f;
-        for (final SimulatedPlayer opponent : pastGames.keySet()) {
+        for (final SimulatedPlayer opponent : this.pastGames.keySet()) {
             sum += opponent.getElo();
         }
-        averageEloOpponents = sum / pastGames.size();
+        this.averageEloOpponents = sum / this.pastGames.size();
     }
 
     public void updateTiebreaks() {
@@ -97,60 +97,60 @@ public class SimulatedPlayer {
     }
 
     public void addGame(final SimulatedPlayer opponent, final double result) {
-        pastGames.put(opponent, (float) result);
-        simulatedTournament.addGame(this, opponent);
-        score += result;
+        this.pastGames.put(opponent, (float) result);
+        this.simulatedTournament.addGame(this, opponent);
+        this.score += result;
     }
 
     public void addGame(final SimulatedPlayer opponent, final double result, final boolean isWhite) {
-        pastGames.put(opponent, (float) result);
-        simulatedTournament.addGame(this, opponent);
-        score += result;
+        this.pastGames.put(opponent, (float) result);
+        this.simulatedTournament.addGame(this, opponent);
+        this.score += result;
         if (isWhite) {
-            colorDifference++;
+            this.colorDifference++;
         } else {
-            colorDifference--;
+            this.colorDifference--;
         }
     }
 
     public void addRankToTable(final int rank) {
-        participant.addRankToTable(rank);
+        this.participant.addRankToTable(rank);
     }
 
     public float getScore() {
-        return score;
+        return this.score;
     }
 
     public float getBuchholz() {
-        return buchholz;
+        return this.buchholz;
     }
 
     public float getBuchholzCutOne() {
-        return buchholzCutOne;
+        return this.buchholzCutOne;
     }
 
     public SimulatedTournament getSimulatedTournament() {
-        return simulatedTournament;
+        return this.simulatedTournament;
     }
 
     public int getElo() {
-        return participant.getElo();
+        return this.participant.getElo();
     }
 
     public int getStartingRank() {
-        return participant.getStartingRank();
+        return this.participant.getStartingRank();
     }
 
     public Map<SimulatedPlayer, Float> getPastGames() {
-        return pastGames;
+        return this.pastGames;
     }
 
     public Participant getParticipant() {
-        return participant;
+        return this.participant;
     }
 
     public boolean hasReceivedBye() {
-        return receivedBye;
+        return this.receivedBye;
     }
 
     public void setReceivedBye(final boolean receivedBye) {
@@ -158,20 +158,20 @@ public class SimulatedPlayer {
     }
 
     public float getSonnenbornBerger() {
-        return sonnenbornBerger;
+        return this.sonnenbornBerger;
     }
 
     public float getAverageEloOpponents() {
-        return averageEloOpponents;
+        return this.averageEloOpponents;
     }
 
     @Override
     public String toString() {
         return "SimulatedPlayer{" +
-                "score=" + score +
-                ", buchholzCutOne=" + buchholzCutOne +
-                ", buchholz=" + buchholz +
-                ", averageEloOpponents=" + averageEloOpponents +
+                "score=" + this.score +
+                ", buchholzCutOne=" + this.buchholzCutOne +
+                ", buchholz=" + this.buchholz +
+                ", averageEloOpponents=" + this.averageEloOpponents +
                 '}';
     }
 }
