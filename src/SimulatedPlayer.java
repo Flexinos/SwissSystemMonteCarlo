@@ -116,7 +116,7 @@ public final class SimulatedPlayer {
 
     public void giveBye() {
         this.receivedBye = true;
-        this.score += 1;
+        this.score += 1.0f;
     }
 
     public void addRankToTable(final int rank) {
