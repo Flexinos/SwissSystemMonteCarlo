@@ -85,7 +85,7 @@ class SimulatedPlayerTest {
         assertEquals(simulatedPlayer7.getScore(), 1);
         assertEquals(simulatedPlayer8.getScore(), 1.5);
 
-        for (SimulatedPlayer simulatedPlayer : simulatedPlayers) {
+        for (final SimulatedPlayer simulatedPlayer : simulatedPlayers) {
             simulatedPlayer.updateTiebreaks();
         }
 
@@ -116,7 +116,7 @@ class SimulatedPlayerTest {
         assertEquals(simulatedPlayer7.getSonnenbornBerger(), 0.75);
         assertEquals(simulatedPlayer8.getSonnenbornBerger(), 1);
 
-        List<SimulatedPlayer> rankingByScoreThenTiebreak = new ArrayList<>();
+        final List<SimulatedPlayer> rankingByScoreThenTiebreak = new ArrayList<>();
         rankingByScoreThenTiebreak.add(simulatedPlayer1);
         rankingByScoreThenTiebreak.add(simulatedPlayer8);
         rankingByScoreThenTiebreak.add(simulatedPlayer5);
@@ -131,5 +131,35 @@ class SimulatedPlayerTest {
 
     @Test
     void compareToByScoreThenElo() {
+        simulatedPlayer1.addGame(simulatedPlayer5, 1);
+        simulatedPlayer2.addGame(simulatedPlayer6, 1);
+        simulatedPlayer3.addGame(simulatedPlayer7, 0.5);
+        simulatedPlayer4.addGame(simulatedPlayer8, 0);
+
+        simulatedPlayer5.addGame(simulatedPlayer1, 0);
+        simulatedPlayer6.addGame(simulatedPlayer2, 0);
+        simulatedPlayer7.addGame(simulatedPlayer3, 0.5);
+        simulatedPlayer8.addGame(simulatedPlayer4, 1);
+
+
+        simulatedPlayer1.addGame(simulatedPlayer2, 1);
+        simulatedPlayer8.addGame(simulatedPlayer3, 0.5);
+        simulatedPlayer7.addGame(simulatedPlayer4, 0.5);
+        simulatedPlayer5.addGame(simulatedPlayer6, 1);
+
+        simulatedPlayer2.addGame(simulatedPlayer1, 0);
+        simulatedPlayer3.addGame(simulatedPlayer8, 0.5);
+        simulatedPlayer4.addGame(simulatedPlayer7, 0.5);
+        simulatedPlayer6.addGame(simulatedPlayer5, 0);
+
+        assertEquals(simulatedPlayer1.compareToByScoreThenElo(simulatedPlayer1), 0);
+        assertEquals(simulatedPlayer1.compareToByScoreThenElo(simulatedPlayer2), -1);
+        assertEquals(simulatedPlayer1.compareToByScoreThenElo(simulatedPlayer3), -1);
+        assertEquals(simulatedPlayer1.compareToByScoreThenElo(simulatedPlayer4), -1);
+
+        assertEquals(simulatedPlayer2.compareToByScoreThenElo(simulatedPlayer3), 1);
+        assertEquals(simulatedPlayer2.compareToByScoreThenElo(simulatedPlayer1), 1);
+        assertEquals(simulatedPlayer5.compareToByScoreThenElo(simulatedPlayer7), 1);
+        assertEquals(simulatedPlayer7.compareToByScoreThenElo(simulatedPlayer5), -1);
     }
 }
