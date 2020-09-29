@@ -98,7 +98,7 @@ public class Participant {
     }
 
     private static String paddingToString(final Padding padding) {
-        if (padding.equals(Padding.LEFT)) {
+        if (padding == Padding.LEFT) {
             return "-";
         } else {
             return "";

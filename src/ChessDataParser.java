@@ -56,7 +56,7 @@ public final class ChessDataParser {
     }
 
     private static URL buildLinkFromValues(final int tournamentNumber, final int roundNumber, final ChessDataType type) {
-        final int art = type.equals(ChessDataType.PAIRING) ? 2 : 1;
+        final int art = type == ChessDataType.PAIRING ? 2 : 1;
         try {
             return new URL("https://chess-results.com/tnr" + tournamentNumber +
                     ".aspx?lan=0&art=" + art + "&rd=" + roundNumber + "&turdet=NO&flag=NO&prt=7&zeilen=99999");
