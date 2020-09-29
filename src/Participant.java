@@ -198,11 +198,11 @@ public final class Participant {
     }
 
     public int compareToByEloDescending(final Participant p2) {
-        return -Integer.compare(this.elo, p2.elo);
+        return Integer.compare(p2.elo, this.elo);
     }
 
     public int compareToByTopThreeFinishesDescending(final Participant p2) {
-        final int result = -Integer.compare(this.numberOfTopThreeFinishes, p2.numberOfTopThreeFinishes);
+        final int result = Integer.compare(p2.numberOfTopThreeFinishes, this.numberOfTopThreeFinishes);
         return (result != 0) ? result : compareToByEloDescending(p2);
     }
 
