@@ -1,7 +1,9 @@
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
-public class SimulatedPlayer {
+public final class SimulatedPlayer {
     private final Participant participant;
     private final Map<SimulatedPlayer, Float> pastGames;
     private SimulatedTournament simulatedTournament = null;
@@ -47,11 +49,11 @@ public class SimulatedPlayer {
 
     public int compareToByScoreThenElo(final SimulatedPlayer p2) {
         final int result = -Float.compare(this.score, p2.score);
-        return result != 0 ? result : -Integer.compare(getElo(), p2.getElo());
+        return (result != 0) ? result : -Integer.compare(getElo(), p2.getElo());
     }
 
     private void updateBuchholz() {
-        float tmpSum = 0f;
+        float tmpSum = 0.0f;
         for (final SimulatedPlayer opponent : this.pastGames.keySet()) {
             tmpSum += opponent.score;
         }
@@ -60,9 +62,9 @@ public class SimulatedPlayer {
 
     private void updateBuchholzCutOne() {
         if (this.pastGames.isEmpty()) {
-            this.buchholzCutOne = 0f;
+            this.buchholzCutOne = 0.0f;
         }
-        float tmpBuchholz = 0f;
+        float tmpBuchholz = 0.0f;
         float lowestScore = Float.MAX_VALUE;
         for (final SimulatedPlayer opponent : this.pastGames.keySet()) {
             if (opponent.score <= lowestScore) {
@@ -75,18 +77,18 @@ public class SimulatedPlayer {
 
     private void updateSonnenbornBerger() {
         float tmpSum = 0.0f;
-        for (final Map.Entry<SimulatedPlayer, Float> entry : this.pastGames.entrySet()) {
+        for (final Entry<SimulatedPlayer, Float> entry : this.pastGames.entrySet()) {
             tmpSum += entry.getKey().score * entry.getValue();
         }
         this.sonnenbornBerger = tmpSum;
     }
 
     private void updateAverageEloOpponents() {
-        float sum = 0.0f;
+        int sum = 0;
         for (final SimulatedPlayer opponent : this.pastGames.keySet()) {
             sum += opponent.getElo();
         }
-        this.averageEloOpponents = sum / this.pastGames.size();
+        this.averageEloOpponents = (float) sum / (float) this.pastGames.size();
     }
 
     public void updateTiebreaks() {
@@ -96,14 +98,14 @@ public class SimulatedPlayer {
         updateSonnenbornBerger();
     }
 
-    public void addGame(final SimulatedPlayer opponent, final double result) {
-        this.pastGames.put(opponent, (float) result);
+    public void addGame(final SimulatedPlayer opponent, final float result) {
+        this.pastGames.put(opponent, result);
         this.simulatedTournament.addGame(this, opponent);
         this.score += result;
     }
 
-    public void addGame(final SimulatedPlayer opponent, final double result, final boolean isWhite) {
-        this.pastGames.put(opponent, (float) result);
+    public void addGame(final SimulatedPlayer opponent, final float result, final boolean isWhite) {
+        this.pastGames.put(opponent, result);
         this.simulatedTournament.addGame(this, opponent);
         this.score += result;
         if (isWhite) {
@@ -142,7 +144,7 @@ public class SimulatedPlayer {
     }
 
     public Map<SimulatedPlayer, Float> getPastGames() {
-        return this.pastGames;
+        return Collections.unmodifiableMap(this.pastGames);
     }
 
     public Participant getParticipant() {
