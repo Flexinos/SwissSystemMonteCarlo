@@ -60,6 +60,7 @@ public final class SimulatedPlayer {
     private void updateBuchholzCutOne() {
         if (this.pastGames.isEmpty()) {
             this.buchholzCutOne = 0.0f;
+            return;
         }
         float tmpBuchholz = 0.0f;
         float lowestScore = Float.MAX_VALUE;
