@@ -1,7 +1,7 @@
 rg.     snr     name    fideid  typ     land    elo     bdld    verein/ort  pkt         wtg1    wtg2    wtg3
 rg.     snr     [blank] name    fideid  land    elo     bdld    verein/ort  pkt         wtg1    wtg2    wtg3
 rg.     snr     [blank] name    typ     sex     land    eloi    elon        verein/ort  pkt     wtg1    wtg2    wtg3
-Rg.	    Snr     Name	Typ	    sex	    Gr	    Land	EloI    EloN	    Verein/Ort	Pkt. 	Wtg1	Wtg2	Wtg3
+Rg.	    Snr     Name	Typ	    sex	    Gr	    Land	EloI    EloN	    Verein/Ort	Pkt. 	Wtg1	Wtg2	Wtg3    // https://chess-results.com/tnr507448.aspx?lan=0&art=1&rd=4&turdet=NO&flag=NO&prt=7
 rg.     snr     name    land    eloi    pkt     wtg1    wtg2    wtg3
 Rg.	    Snr		Name	Land	Elo	    Wtg1	Wtg2	Wtg3
 Nr.		Name	Ident	FideID	Land	EloI	EloN	sex	    Bdld	    Typ	        Gr	    Verein/Ort
@@ -16,5 +16,25 @@ use "elo" or "Elo" if present, else use "EloI" or "eloi" ::int
 "bdld" possibly "Bdld"
 "pkt" possibly "Pkt." ::double
 "wtgx" possibly "Wtgx" ::double or ::int
-"typ" possibly "Typ" ::String
+"typ" possibly "Typ" (age class) ::String
 "sex" possibly "Sex" ::String
+
+Rg.;Snr;;Name;Land;EloBdld;Verein/Ort;Pkt.;Wtg1;Wtg2;Wtg3; https://chess-results.com/tnr491142.aspx?lan=0&art=1&rd=4&turdet=NO&flag=NO&prt=7
+11;FM;Morgunov Daniel;AUT;2253Wien;Tschaturanga;4,0;10,0;0,0;4,00;
+23;;Postlmayer Jakob;AUT;2104OÖ;Tsu Wartberg/Aist;3,5;5,3;0,0;3,00;
+36;;Wischounig Laurin;AUT;1968Tir;Sparkasse Jenbach;3,0;5,5;0,0;3,00;
+
+Rg.;Snr;;Name;Typ;sex;Gr;Land;EloIEloNVerein/Ort;Pkt.;Wtg1;Wtg2;Wtg3;Rp https://chess-results.com/tnr507448.aspx?lan=0&art=1&rd=4&turdet=NO&flag=NO&prt=7
+12;GM;Thybo Jesper Sondergaard;;;DEN25772527Jetsmark/Offerspill;3,5;9,0;10,5;2270;2500
+29;;Grigorian Spartak;;;GER24050SV Werder Bremen;3,5;8,5;10,5;2189;2502
+38;FM;Kramer Julian;;;GER24100Hamburger SK;3,5;8,5;10,0;2242;2477
+
+Rg.;Snr;;Name;Typ;sex;Gr;Land;EloIEloNBdld;Verein/Ort;Pkt.;Wtg1;Wtg2;Rp https://chess-results.com/tnr410003.aspx?lan=0&art=1&rd=4&turdet=NO&flag=NO&prt=7
+135;IM;Teja Ravi S;;;;IND;24200;INDIAN RAILWAYS;4,0;5,5;10,5;2500
+225;IM;Bakhmatsky Vladislav;;;;UKR;24420;;4,0;5,5;10,0;2455
+35;GM;Palac Mladen;;;;CRO;25512548Sbg;Sv Schwarzach;4,0;5,5;9,0;2598
+
+Rg.;Snr;;Name;Typ;sex;Land;EloIEloNVerein/Ort;Pkt.;Wtg1;Wtg2;Wtg3; https://chess-results.com/tnr513391.aspx?lan=0&art=1&rd=4&turdet=NO&flag=NO&prt=7
+12;GM;Rogic Davor DI.;;CRO;24922502Sv Asvoe St.Veit/Glan;4,0;35,0;5,0;10,00;
+29;IM;Mazi LeonS60;;SLO;23602338ŠS Tomo Zupan Kranj;3,5;38,0;4,0;5,25;
+37;FM;Fahrner Kurt;;AUT;23642321Esv Austria Graz;3,5;37,0;5,0;7,75;
