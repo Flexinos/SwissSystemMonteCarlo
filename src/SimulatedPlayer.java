@@ -31,13 +31,13 @@ public final class SimulatedPlayer {
     }
 
     public int compareToByScoreThenTieBreak(final SimulatedPlayer p2) {
-        for (int i = 0; i < Tournament.rankingOrder.size(); i++) {
-            final int result = switch (Tournament.rankingOrder.get(i)) {
+        for (int i = 0; i < Tournament.getRankingOrder().size(); i++) {
+            final int result = switch (Tournament.getRankingOrder().get(i)) {
                 case SCORE -> -Float.compare(this.score, p2.score);
                 case BUCHHOLZ -> -Float.compare(this.buchholz, p2.buchholz);
-                case BUCHHOLZCUTONE -> -Float.compare(this.buchholzCutOne, p2.buchholzCutOne);
-                case AVERAGEELOOPPONENTS -> -Float.compare(this.averageEloOpponents, p2.averageEloOpponents);
-                case SONNENBORNBERGER -> -Float.compare(this.sonnenbornBerger, p2.score);
+                case BUCHHOLZ_CUT_ONE -> -Float.compare(this.buchholzCutOne, p2.buchholzCutOne);
+                case AVERAGE_ELO_OPPONENTS -> -Float.compare(this.averageEloOpponents, p2.averageEloOpponents);
+                case SONNENBORN_BERGER -> -Float.compare(this.sonnenbornBerger, p2.score);
             };
             if (result != 0) {
                 return result;
