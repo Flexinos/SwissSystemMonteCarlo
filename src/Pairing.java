@@ -15,7 +15,7 @@ public final class Pairing {
         player1.setReceivedBye(true);
     }
 
-    public static boolean isAllowed(final SimulatedPlayer player1, final SimulatedPlayer player2) {
+    public static boolean canBePaired(final SimulatedPlayer player1, final SimulatedPlayer player2) {
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");
             return false;
