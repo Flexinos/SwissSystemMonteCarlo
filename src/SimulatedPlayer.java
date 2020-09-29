@@ -29,7 +29,7 @@ public final class SimulatedPlayer {
         this.sonnenbornBerger = participant.getSonnenbornBerger();
         this.averageEloOpponents = participant.getSonnenbornBerger();
         this.simulatedTournament = simulatedTournament;
-        this.pastGames = new HashMap<>(participant.getPastGames());
+        this.pastGames = new HashMap<>(participant.getPastResults());
     }
 
     public boolean playedAgainst(final SimulatedPlayer simulatedPlayer) {

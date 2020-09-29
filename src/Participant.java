@@ -1,11 +1,9 @@
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Participant {
+public final class Participant {
     public final LongAdder[] rankingTable = new LongAdder[Main.numberOfParticipants];
     private final String title;
     private final String name;
@@ -19,15 +17,15 @@ public class Participant {
     private final float sonnenbornBerger;
     private final String type;
     private final boolean isFemale;
-    private final Map<SimulatedPlayer, Float> pastGames;
+    private final Map<SimulatedPlayer, Float> pastResults;
     private int startingRank;
     private int numberOfTopThreeFinishes;
 
     public Participant(final String name, final int elo) {
-        this(0, "", name, "", "", elo, 0, 0, 0, 0, 0, "", false, new HashMap<>());
+        this(0, "", name, "", "", elo, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", false, new HashMap<>());
     }
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final float score, final float buchholz, final float buchholzCutOne, final float averageEloOpponents, final float sonnenbornBerger, final String type, final boolean isFemale, final Map<SimulatedPlayer, Float> pastGames) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final float score, final float buchholz, final float buchholzCutOne, final float averageEloOpponents, final float sonnenbornBerger, final String type, final boolean isFemale, final Map<SimulatedPlayer, Float> pastResults) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -41,20 +39,20 @@ public class Participant {
         this.averageEloOpponents = averageEloOpponents;
         this.type = type;
         this.isFemale = isFemale;
-        this.pastGames = pastGames;
-        for (int i = 0; i < rankingTable.length; i++) {
-            rankingTable[i] = new LongAdder();
+        this.pastResults = new HashMap<>(pastResults);
+        for (int i = 0; i < this.rankingTable.length; i++) {
+            this.rankingTable[i] = new LongAdder();
         }
     }
 
     // Customize the output of the simulation results here.
-    public static void printSimulationResults(final List<Participant> participants) {
+    public static void printSimulationResults(final Collection<Participant> participants) {
         // Set the name of each column here.
         final String[] columnNames = {"Name", "Starting Rank", "Elo", "Top three finishes", "Average rank"};
         final Padding[] columnNamePaddings = {Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT, Padding.LEFT};
         final Padding[] participantFieldsPaddings = {Padding.LEFT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT, Padding.RIGHT};
         // Add the functions to produce a participant's entry here.
-        final List<String[]> rows = participants.stream().map(participant -> Stream.of(
+        final List<String[]> rows = participants.stream().map((Participant participant) -> Stream.of(
                 participant.name,
                 participant.startingRank,
                 participant.elo,
@@ -66,7 +64,7 @@ public class Participant {
         printAllRows(rows, columnLengths, participantFieldsPaddings);
     }
 
-    private static int[] getColumnLengths(final String[] columnNames, final List<String[]> rows) {
+    private static int[] getColumnLengths(final String[] columnNames, final Iterable<String[]> rows) {
         final int[] maxColumnLengths = new int[columnNames.length];
         for (int columnNumber = 0; columnNumber < columnNames.length; ++columnNumber) {
             maxColumnLengths[columnNumber] = columnNames[columnNumber].length();
@@ -82,7 +80,7 @@ public class Participant {
         return maxColumnLengths;
     }
 
-    private static void printAllRows(final List<String[]> rows, final int[] fieldLengths, final Padding[] paddings) {
+    private static void printAllRows(final Iterable<String[]> rows, final int[] fieldLengths, final Padding[] paddings) {
         for (final String[] row : rows) {
             printRow(row, fieldLengths, paddings);
         }
@@ -106,7 +104,7 @@ public class Participant {
     }
 
     public int getStartingRank() {
-        return startingRank;
+        return this.startingRank;
     }
 
     public void setStartingRank(final int startingRank) {
@@ -114,51 +112,51 @@ public class Participant {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getTitle() {
-        return title;
+        return this.title;
     }
 
     public String getCountry() {
-        return country;
+        return this.country;
     }
 
     public int getElo() {
-        return elo;
+        return this.elo;
     }
 
     public float getScore() {
-        return score;
+        return this.score;
     }
 
     public float getBuchholzCutOne() {
-        return buchholzCutOne;
+        return this.buchholzCutOne;
     }
 
     public float getBuchholz() {
-        return buchholz;
+        return this.buchholz;
     }
 
     public float getAverageEloOpponents() {
-        return averageEloOpponents;
+        return this.averageEloOpponents;
     }
 
     public float getSonnenbornBerger() {
-        return sonnenbornBerger;
+        return this.sonnenbornBerger;
     }
 
     public String getType() {
-        return type;
+        return this.type;
     }
 
     public boolean isFemale() {
-        return isFemale;
+        return this.isFemale;
     }
 
     public int getNumberOfTopThreeFinishes() {
-        return numberOfTopThreeFinishes;
+        return this.numberOfTopThreeFinishes;
     }
 
     public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
@@ -166,37 +164,37 @@ public class Participant {
     }
 
     public void addRankToTable(final int rank) {
-        rankingTable[rank].increment();
+        this.rankingTable[rank].increment();
     }
 
     public String getBundesland() {
-        return bundesland;
+        return this.bundesland;
     }
 
-    public Map<SimulatedPlayer, Float> getPastGames() {
-        return pastGames;
+    public Map<SimulatedPlayer, Float> getPastResults() {
+        return Collections.unmodifiableMap(this.pastResults);
     }
 
     private float getAverageRank() {
-        float sum = 0;
-        float longAdderCount = 0;
-        for (int rank = 1; rank <= rankingTable.length; rank++) {
-            sum += rankingTable[rank - 1].longValue() * rank;
-            longAdderCount += rankingTable[rank - 1].longValue();
+        long sum = 0L;
+        long longAdderCount = 0L;
+        for (int rank = 1; rank <= this.rankingTable.length; rank++) {
+            sum += this.rankingTable[rank - 1].longValue() * (long) rank;
+            longAdderCount += this.rankingTable[rank - 1].longValue();
         }
-        return sum / longAdderCount;
+        return (float) sum / (float) longAdderCount;
     }
 
     @Override
     public String toString() {
         return
-                "Name: " + name + System.lineSeparator() +
-                        "Elo: " + elo + System.lineSeparator() +
-                        "Starting Rank: " + startingRank + System.lineSeparator() +
-                        "Score: " + score + System.lineSeparator() +
-                        "Tie Break 1: " + buchholz + System.lineSeparator() +
-                        "Tie Break 2: " + buchholzCutOne + System.lineSeparator() +
-                        "Tie Break 3: " + sonnenbornBerger + System.lineSeparator();
+                "Name: " + this.name + System.lineSeparator() +
+                        "Elo: " + this.elo + System.lineSeparator() +
+                        "Starting Rank: " + this.startingRank + System.lineSeparator() +
+                        "Score: " + this.score + System.lineSeparator() +
+                        "Tie Break 1: " + this.buchholz + System.lineSeparator() +
+                        "Tie Break 2: " + this.buchholzCutOne + System.lineSeparator() +
+                        "Tie Break 3: " + this.sonnenbornBerger + System.lineSeparator();
     }
 
     public int compareToByEloDescending(final Participant p2) {
@@ -205,7 +203,7 @@ public class Participant {
 
     public int compareToByTopThreeFinishesDescending(final Participant p2) {
         final int result = -Integer.compare(this.numberOfTopThreeFinishes, p2.numberOfTopThreeFinishes);
-        return result != 0 ? result : compareToByEloDescending(p2);
+        return (result != 0) ? result : compareToByEloDescending(p2);
     }
 
     private enum Padding {LEFT, RIGHT}
