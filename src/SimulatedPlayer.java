@@ -42,12 +42,12 @@ public class SimulatedPlayer {
                 return result;
             }
         }
-        return -Double.compare(p1.getElo(), p2.getElo());
+        return -Integer.compare(p1.getElo(), p2.getElo());
     }
 
     public static int compareToByScoreThenElo(final SimulatedPlayer p1, final SimulatedPlayer p2) {
-        final int result = -Double.compare(p1.score, p2.score);
-        return result != 0 ? result : -Double.compare(p1.getElo(), p2.getElo());
+        final int result = -Float.compare(p1.score, p2.score);
+        return result != 0 ? result : -Integer.compare(p1.getElo(), p2.getElo());
     }
 
     private float calculateBuchholz() {
