@@ -50,50 +50,50 @@ public class SimulatedPlayer {
         return result != 0 ? result : -Integer.compare(getElo(), p2.getElo());
     }
 
-    private float calculateBuchholz() {
-        float buchholz = 0.0f;
+    private void updateBuchholz() {
+        float tmpSum = 0f;
         for (final SimulatedPlayer opponent : pastGames.keySet()) {
-            buchholz += opponent.score;
+            tmpSum += opponent.score;
         }
-        return buchholz;
+        buchholz = tmpSum;
     }
 
-    private float calculateBuchholzCutOne() {
+    private void updateBuchholzCutOne() {
         if (pastGames.isEmpty()) {
-            return 0.0f;
+            buchholzCutOne = 0f;
         }
-        float buchholz = 0.0f;
+        float tmpBuchholz = 0f;
         float lowestScore = Float.MAX_VALUE;
         for (final SimulatedPlayer opponent : pastGames.keySet()) {
             if (opponent.score <= lowestScore) {
                 lowestScore = opponent.score;
             }
-            buchholz += opponent.score;
+            tmpBuchholz += opponent.score;
         }
-        return buchholz - lowestScore;
+        buchholzCutOne = tmpBuchholz - lowestScore;
     }
 
-    private float calculateSonnenbornBerger() {
-        float sonnenbornBerger = 0.0f;
+    private void updateSonnenbornBerger() {
+        float tmpSum = 0.0f;
         for (final Map.Entry<SimulatedPlayer, Float> entry : pastGames.entrySet()) {
-            sonnenbornBerger += entry.getKey().score * entry.getValue();
+            tmpSum += entry.getKey().score * entry.getValue();
         }
-        return sonnenbornBerger;
+        sonnenbornBerger = tmpSum;
     }
 
-    private float calculateAverageEloOpponents() {
+    private void updateAverageEloOpponents() {
         float sum = 0.0f;
         for (final SimulatedPlayer opponent : pastGames.keySet()) {
             sum += opponent.getElo();
         }
-        return sum / pastGames.size();
+        averageEloOpponents = sum / pastGames.size();
     }
 
     public void updateTiebreaks() {
-        buchholz = calculateBuchholz();
-        buchholzCutOne = calculateBuchholzCutOne();
-        averageEloOpponents = calculateAverageEloOpponents();
-        sonnenbornBerger = calculateSonnenbornBerger();
+        updateBuchholz();
+        updateBuchholzCutOne();
+        updateAverageEloOpponents();
+        updateSonnenbornBerger();
     }
 
     public void addGame(final SimulatedPlayer opponent, final double result) {
