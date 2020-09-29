@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.LongAdder;
 
-public class Main {
+public final class Main {
     // Variables for configuration
     public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 9;
@@ -21,6 +21,9 @@ public class Main {
     public static final Map<Participant, LongAdder> topThreeCounter =
             new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
     private static int finished_simulations = 0;
+
+    private Main() {
+    }
 
     public static void main(final String[] args) throws InterruptedException, IOException {
         if (args.length != 1) {
@@ -47,7 +50,7 @@ public class Main {
     private static void simulateTournament(final Tournament tournament) throws InterruptedException {
         final ExecutorService pool = Executors.newFixedThreadPool(numberOfConcurrentThreads);
         for (int i = 0; i < numberOfConcurrentThreads; ++i) {
-            final WorkerThread workerThread = new WorkerThread(tournament, numberOfSimulations);
+            final Runnable workerThread = new WorkerThread(tournament, numberOfSimulations);
             pool.execute(workerThread);
         }
         pool.shutdown();
@@ -55,25 +58,27 @@ public class Main {
     }
 
     private static void showResults() {
-        topThreeCounter.forEach((participant, longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
+        topThreeCounter.forEach((Participant participant, LongAdder longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
         final List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishesDescending);
         Participant.printSimulationResults(participantsWithTopThreeRanking);
     }
 
-    synchronized public static int getSimulationTicket() {
-        return ++finished_simulations;
+    public static int getSimulationTicket() {
+        synchronized (Main.class) {
+            return ++finished_simulations;
+        }
     }
 
-    private static class Timer {
+    private static final class Timer {
         private final long startTime;
 
-        public Timer() {
+        private Timer() {
             this.startTime = System.nanoTime();
         }
 
         private long elapsedMilliSeconds() {
-            return (System.nanoTime() - startTime) / 1000000L;
+            return (System.nanoTime() - this.startTime) / 1000000L;
         }
 
         private void printElapsedSecondsMessage(final String beforeTime, final String afterTime) {
@@ -81,7 +86,7 @@ public class Main {
         }
 
         private static String millisecondsToSecondsString(final long milliseconds) {
-            return milliseconds / 1000L + "." + milliseconds % 1000L + "s";
+            return (milliseconds / 1000L) + "." + (milliseconds % 1000L) + "s";
         }
     }
 }
