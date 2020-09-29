@@ -51,7 +51,7 @@ public class SimulatedPlayer {
     }
 
     private float calculateBuchholz() {
-        float buchholz = 0;
+        float buchholz = 0.0f;
         for (final SimulatedPlayer opponent : pastGames.keySet()) {
             buchholz += opponent.score;
         }
@@ -60,9 +60,9 @@ public class SimulatedPlayer {
 
     private float calculateBuchholzCutOne() {
         if (pastGames.isEmpty()) {
-            return 0;
+            return 0.0f;
         }
-        float buchholz = 0;
+        float buchholz = 0.0f;
         float lowestScore = Float.MAX_VALUE;
         for (final SimulatedPlayer opponent : pastGames.keySet()) {
             if (opponent.score <= lowestScore) {
@@ -74,7 +74,7 @@ public class SimulatedPlayer {
     }
 
     private float calculateSonnenbornBerger() {
-        float sonnenbornBerger = 0;
+        float sonnenbornBerger = 0.0f;
         for (final Map.Entry<SimulatedPlayer, Float> entry : pastGames.entrySet()) {
             sonnenbornBerger += entry.getKey().score * entry.getValue();
         }
@@ -82,7 +82,7 @@ public class SimulatedPlayer {
     }
 
     private float calculateAverageEloOpponents() {
-        float sum = 0;
+        float sum = 0.0f;
         for (final SimulatedPlayer opponent : pastGames.keySet()) {
             sum += opponent.getElo();
         }
