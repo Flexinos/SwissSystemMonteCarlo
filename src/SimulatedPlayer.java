@@ -15,6 +15,7 @@ public final class SimulatedPlayer {
     private boolean receivedBye = false;
     private int colorDifference = 0;
 
+    // todo replace with static factory to return reference to BYE constant in Tournament
     public SimulatedPlayer(final Participant participant) {
         this.participant = participant;
         this.pastGames = new HashMap<>();
