@@ -3,7 +3,7 @@ import java.util.BitSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class SimulatedTournament {
+public final class SimulatedTournament {
     private final Tournament tournament;
     private final List<SimulatedPlayer> simulatedPlayerList;
     private final List<List<Pairing>> roundList;
@@ -12,7 +12,7 @@ public class SimulatedTournament {
     public SimulatedTournament(final Tournament tournament) {
         this.tournament = tournament;
         this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
-        tournament.getPlayerArrayList().stream().map(participant -> new SimulatedPlayer(participant, this)).forEachOrdered(this.simulatedPlayerList::add);
+        tournament.getPlayerArrayList().stream().map((Participant participant) -> new SimulatedPlayer(participant, this)).forEachOrdered(this.simulatedPlayerList::add);
         this.roundList = new ArrayList<>(tournament.getRoundsToBeSimulated());
         this.gameMatrix = new BitSet(this.simulatedPlayerList.size() ^ 2);
         if (tournament.getGivenPairings() != null) {
@@ -30,11 +30,11 @@ public class SimulatedTournament {
     }
 
     public void addGame(final SimulatedPlayer player1, final SimulatedPlayer player2) {
-        this.gameMatrix.set((player1.getStartingRank() - 1) * this.simulatedPlayerList.size() + player2.getStartingRank() - 1);
+        this.gameMatrix.set((((player1.getStartingRank() - 1) * this.simulatedPlayerList.size()) + player2.getStartingRank()) - 1);
     }
 
     public boolean haveMet(final SimulatedPlayer player1, final SimulatedPlayer player2) {
-        return this.gameMatrix.get((player1.getStartingRank() - 1) * this.simulatedPlayerList.size() + player2.getStartingRank() - 1);
+        return this.gameMatrix.get((((player1.getStartingRank() - 1) * this.simulatedPlayerList.size()) + player2.getStartingRank()) - 1);
     }
 
     public void simulateTournament() {
@@ -51,7 +51,7 @@ public class SimulatedTournament {
     public void analyseThisSimulatedTournament() {
         //simulatedPlayerList.forEach(SimulatedPlayer::updateTiebreaks);
         this.simulatedPlayerList.sort(SimulatedPlayer::compareToByScoreThenTieBreak);
-        IntStream.range(0, 3).mapToObj(i -> this.simulatedPlayerList.get(i).getParticipant()).forEach(Main::addTopThreeRanking);
+        IntStream.range(0, 3).mapToObj((int i) -> this.simulatedPlayerList.get(i).getParticipant()).forEach(Main::addTopThreeRanking);
         for (int i = 0; i < this.simulatedPlayerList.size(); i++) {
             this.simulatedPlayerList.get(i).addRankToTable(i);
         }
