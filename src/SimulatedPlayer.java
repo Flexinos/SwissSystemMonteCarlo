@@ -113,6 +113,10 @@ public class SimulatedPlayer {
         }
     }
 
+    public void addRankToTable(final int rank) {
+        participant.addRankToTable(rank);
+    }
+
     public float getScore() {
         return score;
     }
