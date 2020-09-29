@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -7,14 +6,12 @@ public final class SimulatedTournament {
     private final Tournament tournament;
     private final List<SimulatedPlayer> simulatedPlayerList;
     private final List<List<Pairing>> roundList;
-    private final BitSet gameMatrix;
 
     public SimulatedTournament(final Tournament tournament) {
         this.tournament = tournament;
         this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
-        tournament.getPlayerArrayList().stream().map((Participant participant) -> new SimulatedPlayer(participant, this)).forEachOrdered(this.simulatedPlayerList::add);
+        tournament.getPlayerArrayList().stream().map(SimulatedPlayer::new).forEachOrdered(this.simulatedPlayerList::add);
         this.roundList = new ArrayList<>(tournament.getRoundsToBeSimulated());
-        this.gameMatrix = new BitSet(this.simulatedPlayerList.size() ^ 2);
         if (tournament.getGivenPairings() != null) {
             final List<int[]> givenPairings = tournament.getGivenPairings();
             final List<Pairing> round = new ArrayList<>();
@@ -27,10 +24,6 @@ public final class SimulatedTournament {
             }
             this.roundList.add(round);
         }
-    }
-
-    public void addGame(final SimulatedPlayer player1, final SimulatedPlayer player2) {
-        this.gameMatrix.set((((player1.getStartingRank() - 1) * this.simulatedPlayerList.size()) + player2.getStartingRank()) - 1);
     }
 
     public void simulateTournament() {

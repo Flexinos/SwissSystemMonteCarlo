@@ -31,14 +31,14 @@ final class SimulatedPlayerTest {
 
     @BeforeEach
     private void createSimulatedPlayers() {
-        this.simulatedPlayer1 = new SimulatedPlayer(this.participant1, this.simulatedTournament);
-        this.simulatedPlayer2 = new SimulatedPlayer(this.participant2, this.simulatedTournament);
-        this.simulatedPlayer3 = new SimulatedPlayer(this.participant3, this.simulatedTournament);
-        this.simulatedPlayer4 = new SimulatedPlayer(this.participant4, this.simulatedTournament);
-        this.simulatedPlayer5 = new SimulatedPlayer(this.participant5, this.simulatedTournament);
-        this.simulatedPlayer6 = new SimulatedPlayer(this.participant6, this.simulatedTournament);
-        this.simulatedPlayer7 = new SimulatedPlayer(this.participant7, this.simulatedTournament);
-        this.simulatedPlayer8 = new SimulatedPlayer(this.participant8, this.simulatedTournament);
+        this.simulatedPlayer1 = new SimulatedPlayer(this.participant1);
+        this.simulatedPlayer2 = new SimulatedPlayer(this.participant2);
+        this.simulatedPlayer3 = new SimulatedPlayer(this.participant3);
+        this.simulatedPlayer4 = new SimulatedPlayer(this.participant4);
+        this.simulatedPlayer5 = new SimulatedPlayer(this.participant5);
+        this.simulatedPlayer6 = new SimulatedPlayer(this.participant6);
+        this.simulatedPlayer7 = new SimulatedPlayer(this.participant7);
+        this.simulatedPlayer8 = new SimulatedPlayer(this.participant8);
         this.simulatedPlayers.addAll(List.of(this.simulatedPlayer1, this.simulatedPlayer2, this.simulatedPlayer3, this.simulatedPlayer4, this.simulatedPlayer5, this.simulatedPlayer6, this.simulatedPlayer7, this.simulatedPlayer8));
     }
 

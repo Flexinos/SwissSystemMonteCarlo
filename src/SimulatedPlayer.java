@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 public final class SimulatedPlayer {
     private final Participant participant;
     private final Map<SimulatedPlayer, Float> pastGames;
-    private final SimulatedTournament simulatedTournament;
     private float score;
     private float buchholz;
     private float buchholzCutOne;
@@ -15,14 +14,13 @@ public final class SimulatedPlayer {
     private boolean receivedBye = false;
     private int colorDifference = 0;
 
-    public SimulatedPlayer(final Participant participant, final SimulatedTournament simulatedTournament) {
+    public SimulatedPlayer(final Participant participant) {
         this.participant = participant;
         this.score = participant.getScore();
         this.buchholz = participant.getBuchholz();
         this.buchholzCutOne = participant.getBuchholzCutOne();
         this.sonnenbornBerger = participant.getSonnenbornBerger();
         this.averageEloOpponents = participant.getSonnenbornBerger();
-        this.simulatedTournament = simulatedTournament;
         this.pastGames = new HashMap<>(participant.getPastResults());
     }
 
@@ -99,13 +97,11 @@ public final class SimulatedPlayer {
 
     public void addGame(final SimulatedPlayer opponent, final float result) {
         this.pastGames.put(opponent, result);
-        this.simulatedTournament.addGame(this, opponent);
         this.score += result;
     }
 
     public void addGame(final SimulatedPlayer opponent, final float result, final boolean isWhite) {
         this.pastGames.put(opponent, result);
-        this.simulatedTournament.addGame(this, opponent);
         this.score += result;
         if (isWhite) {
             this.colorDifference++;
@@ -133,10 +129,6 @@ public final class SimulatedPlayer {
 
     public float getBuchholzCutOne() {
         return this.buchholzCutOne;
-    }
-
-    public SimulatedTournament getSimulatedTournament() {
-        return this.simulatedTournament;
     }
 
     public int getElo() {
