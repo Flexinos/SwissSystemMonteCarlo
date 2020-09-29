@@ -33,10 +33,6 @@ public final class SimulatedTournament {
         this.gameMatrix.set((((player1.getStartingRank() - 1) * this.simulatedPlayerList.size()) + player2.getStartingRank()) - 1);
     }
 
-    public boolean haveMet(final SimulatedPlayer player1, final SimulatedPlayer player2) {
-        return this.gameMatrix.get((((player1.getStartingRank() - 1) * this.simulatedPlayerList.size()) + player2.getStartingRank()) - 1);
-    }
-
     public void simulateTournament() {
         for (int finishedRounds = 0; finishedRounds < this.tournament.getRoundsToBeSimulated(); finishedRounds++) {
             if (this.roundList.size() <= finishedRounds) {

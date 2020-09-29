@@ -31,6 +31,10 @@ public final class SimulatedPlayer {
         this.pastGames = new HashMap<>(participant.getPastGames());
     }
 
+    public boolean playedAgainst(final SimulatedPlayer simulatedPlayer) {
+        return this.pastGames.containsKey(simulatedPlayer);
+    }
+
     public int compareToByScoreThenTieBreak(final SimulatedPlayer p2) {
         for (int i = 0; i < Tournament.rankingOrder.size(); i++) {
             final int result = switch (Tournament.rankingOrder.get(i)) {
