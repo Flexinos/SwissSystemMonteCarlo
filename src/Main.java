@@ -65,10 +65,6 @@ public class Main {
         return ++finished_simulations;
     }
 
-    private static String millisecondsToSecondsString(final long milliseconds) {
-        return milliseconds / 1000L + "." + milliseconds % 1000L + "s";
-    }
-
     private static class Timer {
         private final long startTime;
 
@@ -82,6 +78,10 @@ public class Main {
 
         private void printElapsedSecondsMessage(final String beforeTime, final String afterTime) {
             System.out.println(beforeTime + millisecondsToSecondsString(elapsedMilliSeconds()) + afterTime);
+        }
+
+        private static String millisecondsToSecondsString(final long milliseconds) {
+            return milliseconds / 1000L + "." + milliseconds % 1000L + "s";
         }
     }
 }
