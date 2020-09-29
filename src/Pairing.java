@@ -5,22 +5,34 @@ public class Pairing {
     private final SimulatedPlayer player2;
     private ResultOfGame result;
 
-    public Pairing(SimulatedPlayer player1, SimulatedPlayer player2) {
+    public Pairing(final SimulatedPlayer player1, final SimulatedPlayer player2) {
         this.player1 = player1;
         this.player2 = player2;
     }
 
-    public static void giveBye(SimulatedPlayer player1) {
+    public static void giveBye(final SimulatedPlayer player1) {
         player1.addGame(Tournament.BYE, 1);
         player1.setReceivedBye(true);
     }
 
-    public static boolean pairingAllowed(SimulatedPlayer player1, SimulatedPlayer player2) {
+    public static boolean pairingAllowed(final SimulatedPlayer player1, final SimulatedPlayer player2) {
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");
             return false;
         } else {
             return !player1.getSimulatedTournament().haveMet(player1, player2);
+        }
+    }
+
+    private static ResultOfGame randomResultLookUp(final SimulatedPlayer whitePlayer, final SimulatedPlayer blackPlayer) {
+        final float randomValue = ThreadLocalRandom.current().nextFloat();
+        final float[] probabilitiesArray = LookupTable.getProbabilities(whitePlayer.getElo(), blackPlayer.getElo());
+        if (randomValue < probabilitiesArray[0]) {
+            return ResultOfGame.BLACK_WIN;
+        } else if (randomValue < probabilitiesArray[0] + probabilitiesArray[1]) {
+            return ResultOfGame.DRAW;
+        } else {
+            return ResultOfGame.WHITE_WIN;
         }
     }
 
@@ -30,18 +42,6 @@ public class Pairing {
 
     public SimulatedPlayer getPlayer2() {
         return player2;
-    }
-
-    private static ResultOfGame randomResultLookUp(SimulatedPlayer whitePlayer, SimulatedPlayer blackPlayer) {
-        float randomValue = ThreadLocalRandom.current().nextFloat();
-        float[] probabilitiesArray = LookupTable.getProbabilities(whitePlayer.getElo(), blackPlayer.getElo());
-        if (randomValue < probabilitiesArray[0]) {
-            return ResultOfGame.BLACK_WIN;
-        } else if (randomValue < probabilitiesArray[0] + probabilitiesArray[1]) {
-            return ResultOfGame.DRAW;
-        } else {
-            return ResultOfGame.WHITE_WIN;
-        }
     }
 
     public void simulateResult() {
@@ -67,11 +67,11 @@ public class Pairing {
 
     @Override
     public String toString() {
-        if (result.equals(ResultOfGame.WHITE_WIN)) {
+        if (result == ResultOfGame.WHITE_WIN) {
             return player1 + "1-0 " + player2;
-        } else if (result.equals(ResultOfGame.DRAW)) {
+        } else if (result == ResultOfGame.DRAW) {
             return player1 + "0.5-0.5 " + player2;
-        } else if (result.equals(ResultOfGame.BLACK_WIN)) {
+        } else if (result == ResultOfGame.BLACK_WIN) {
             return player1 + "0-1 " + player2;
         } else {
             return player1 + " 1 " + "spielfrei";

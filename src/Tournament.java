@@ -2,13 +2,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tournament {
+    public static final SimulatedPlayer BYE = new SimulatedPlayer(new Participant("BYE", 0));
+    public static final List<rankingBy> rankingOrder = new ArrayList<>(List.of(rankingBy.SCORE, rankingBy.BUCHHOLZCUTONE, rankingBy.BUCHHOLZ, rankingBy.AVERAGEELOOPPONENTS));
     private final int roundsToBeSimulated;
     private final List<Participant> participantList = new ArrayList<>();
     private List<int[]> givenPairings;
-    public static final SimulatedPlayer BYE = new SimulatedPlayer(new Participant("BYE", 0));
-    public static final List<rankingBy> rankingOrder = new ArrayList<>(List.of(rankingBy.SCORE, rankingBy.BUCHHOLZCUTONE, rankingBy.BUCHHOLZ, rankingBy.AVERAGEELOOPPONENTS));
 
-    public Tournament(int roundsToBeSimulated, List<Participant> participants) {
+    public Tournament(final int roundsToBeSimulated, final List<Participant> participants) {
         if (roundsToBeSimulated < 0) {
             throw new IllegalArgumentException("roundsToBeSimulated must be non-negative");
         }
@@ -23,7 +23,7 @@ public class Tournament {
         }
     }
 
-    public Tournament(int roundsToBeSimulated, List<Participant> participants, List<int[]> givenPairings) {
+    public Tournament(final int roundsToBeSimulated, final List<Participant> participants, final List<int[]> givenPairings) {
         if (roundsToBeSimulated < 0) {
             throw new IllegalArgumentException("roundsToBeSimulated must be non-negative");
         }

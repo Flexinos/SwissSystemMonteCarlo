@@ -12,20 +12,20 @@ import java.util.Iterator;
 import java.util.List;
 
 public class XLSXParser {
-    public static void main(String[] args) throws IOException {
-        List<Participant> participants = getParticipantsFromRanking("https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010");
-        for (Participant participant : participants) {
+    public static void main(final String[] args) throws IOException {
+        final List<Participant> participants = getParticipantsFromRanking("https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010");
+        for (final Participant participant : participants) {
             System.out.println(participant);
         }
     }
 
-    public static List<Participant> getParticipantsFromRanking(String link) throws IOException {
-        List<Participant> participants = new ArrayList<>();
-        XSSFSheet worksheet = getWorksheet(improveLink(link));
+    public static List<Participant> getParticipantsFromRanking(final String link) throws IOException {
+        final List<Participant> participants = new ArrayList<>();
+        final XSSFSheet worksheet = getWorksheet(improveLink(link));
         boolean tableStarted = false;
         List<RankingColumnType> columnStructure = new ArrayList<>(); // The only purpose of the initialization is suppressing uninitialized warnings.
-        for (Iterator<Row> rowIterator = worksheet.rowIterator(); rowIterator.hasNext(); ) {
-            Row row = rowIterator.next();
+        for (final Iterator<Row> rowIterator = worksheet.rowIterator(); rowIterator.hasNext(); ) {
+            final Row row = rowIterator.next();
             // Before the participant entries start check for the table header.
             if (!tableStarted) {
                 if (isTableHeader(row)) {
@@ -45,41 +45,41 @@ public class XLSXParser {
         return participants;
     }
 
-    private static XSSFSheet getWorksheet(String link) throws IOException {
+    private static XSSFSheet getWorksheet(final String link) throws IOException {
         return new XSSFWorkbook(new URL(link).openStream()).getSheetAt(0);
     }
 
-    private static String improveLink(String link) {
+    private static String improveLink(final String link) {
         return link.replace("flag=30", "flag=NO").replaceFirst("turdet=[^&]*", "turdet=NO");
     }
 
-    private static boolean isTableHeader(Row row) {
-        Iterator<Cell> cellIterator = row.cellIterator();
-        Cell cell = cellIterator.next();
-        if (cell.getCellType().equals(CellType.STRING)) {
+    private static boolean isTableHeader(final Row row) {
+        final Iterator<Cell> cellIterator = row.cellIterator();
+        final Cell cell = cellIterator.next();
+        if (cell.getCellType() == CellType.STRING) {
             return cell.getStringCellValue().matches("rg\\.|Rg\\.|Nr\\.");
         }
         return false;
     }
 
-    private static boolean isParticipantEntry(Row row) {
-        Iterator<Cell> cellIterator = row.cellIterator();
-        Cell cell = cellIterator.next();
-        return cell.getCellType().equals(CellType.NUMERIC);
+    private static boolean isParticipantEntry(final Row row) {
+        final Iterator<Cell> cellIterator = row.cellIterator();
+        final Cell cell = cellIterator.next();
+        return cell.getCellType() == CellType.NUMERIC;
     }
 
-    private static List<RankingColumnType> getRankingColumnStructure(Row tableHeader) {
-        List<RankingColumnType> columnStructure = new ArrayList<>();
-        for (Iterator<Cell> cellIterator = tableHeader.cellIterator(); cellIterator.hasNext(); ) {
-            Cell cell = cellIterator.next();
-            String cellContent = cell.getStringCellValue();
-            RankingColumnType columnType = getColumnType(cellContent);
+    private static List<RankingColumnType> getRankingColumnStructure(final Row tableHeader) {
+        final List<RankingColumnType> columnStructure = new ArrayList<>();
+        for (final Iterator<Cell> cellIterator = tableHeader.cellIterator(); cellIterator.hasNext(); ) {
+            final Cell cell = cellIterator.next();
+            final String cellContent = cell.getStringCellValue();
+            final RankingColumnType columnType = getColumnType(cellContent);
             columnStructure.add(columnType);
         }
         return columnStructure;
     }
 
-    private static Participant createParticipantFromRow(Row row, List<RankingColumnType> columnStructure) {
+    private static Participant createParticipantFromRow(final Row row, final List<RankingColumnType> columnStructure) {
         int startingRank = 0;
         String title = "";
         String name = "";
@@ -92,10 +92,10 @@ public class XLSXParser {
         double tieBreak3 = 0;
         String type = "";
         String sex = "";
-        Iterator<RankingColumnType> columnTypeIterator = columnStructure.iterator();
-        Iterator<Cell> cellIterator = row.cellIterator();
+        final Iterator<RankingColumnType> columnTypeIterator = columnStructure.iterator();
+        final Iterator<Cell> cellIterator = row.cellIterator();
         while (cellIterator.hasNext()) {
-            Cell cell = cellIterator.next();
+            final Cell cell = cellIterator.next();
             switch (columnTypeIterator.next()) {
                 case STARTING_RANK -> startingRank = (int) cell.getNumericCellValue();
                 case TITLE -> title = cell.getStringCellValue();
@@ -111,11 +111,11 @@ public class XLSXParser {
                 case SEX -> sex = cell.getStringCellValue();
             }
         }
-        boolean isFemale = sex.matches("w");
+        final boolean isFemale = sex.matches("w");
         return new Participant(startingRank, title, name, country, bundesland, elo, (float) score, (float) tieBreak1, (float) tieBreak2, (float) tieBreak3, 0, type, isFemale, new HashMap<>());
     }
 
-    private static RankingColumnType getColumnType(String columnName) {
+    private static RankingColumnType getColumnType(final String columnName) {
         if (isStartingRank(columnName)) {
             return RankingColumnType.STARTING_RANK;
         }
@@ -155,51 +155,51 @@ public class XLSXParser {
         return RankingColumnType.IGNORE;
     }
 
-    private static boolean isStartingRank(String string) {
+    private static boolean isStartingRank(final String string) {
         return string.matches("snr|Snr|Nr\\.");
     }
 
-    private static boolean isTitle(String string) {
+    private static boolean isTitle(final String string) {
         return string.matches("");
     }
 
-    private static boolean isName(String string) {
+    private static boolean isName(final String string) {
         return string.matches("name|Name");
     }
 
-    private static boolean isCountry(String string) {
+    private static boolean isCountry(final String string) {
         return string.matches("land|Land");
     }
 
-    private static boolean isBundesland(String string) {
+    private static boolean isBundesland(final String string) {
         return string.matches("bdld|Bdld");
     }
 
-    private static boolean isElo(String string) {
+    private static boolean isElo(final String string) {
         return string.matches("Elo|elo|EloI|eloi");
     }
 
-    private static boolean isScore(String string) {
+    private static boolean isScore(final String string) {
         return string.matches("pkt|Pkt\\. ");
     }
 
-    private static boolean isTieBreak1(String string) {
+    private static boolean isTieBreak1(final String string) {
         return string.matches("wtg1|Wtg1");
     }
 
-    private static boolean isTieBreak2(String string) {
+    private static boolean isTieBreak2(final String string) {
         return string.matches("wtg2|Wtg2");
     }
 
-    private static boolean isTieBreak3(String string) {
+    private static boolean isTieBreak3(final String string) {
         return string.matches("wtg3|Wtg3");
     }
 
-    private static boolean isType(String string) {
+    private static boolean isType(final String string) {
         return string.matches("typ|Typ");
     }
 
-    private static boolean isSex(String string) {
+    private static boolean isSex(final String string) {
         return string.matches("sex|Sex");
     }
 
