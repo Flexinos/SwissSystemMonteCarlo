@@ -10,11 +10,6 @@ public final class Pairing {
         this.player2 = player2;
     }
 
-    public static void giveBye(final SimulatedPlayer player1) {
-        player1.addGame(Tournament.BYE, 1.0f);
-        player1.setReceivedBye(true);
-    }
-
     public static boolean canBePaired(final SimulatedPlayer player1, final SimulatedPlayer player2) {
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");

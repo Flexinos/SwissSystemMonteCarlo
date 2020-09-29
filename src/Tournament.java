@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Tournament {
-    public static final SimulatedPlayer BYE = new SimulatedPlayer(new Participant("BYE", 0));
     public static final List<rankingBy> rankingOrder = new ArrayList<>(List.of(rankingBy.SCORE, rankingBy.BUCHHOLZCUTONE, rankingBy.BUCHHOLZ, rankingBy.AVERAGEELOOPPONENTS));
     private final int roundsToBeSimulated;
     private final List<Participant> participantList = new ArrayList<>();
@@ -18,8 +17,8 @@ public class Tournament {
         this.roundsToBeSimulated = roundsToBeSimulated;
         this.participantList.addAll(participants);
         this.participantList.sort(Participant::compareToByEloDescending);
-        for (int i = 0; i < participantList.size(); ++i) {
-            participantList.get(i).setStartingRank(i + 1);
+        for (int i = 0; i < this.participantList.size(); ++i) {
+            this.participantList.get(i).setStartingRank(i + 1);
         }
     }
 
@@ -36,22 +35,22 @@ public class Tournament {
         this.roundsToBeSimulated = roundsToBeSimulated;
         this.participantList.addAll(participants);
         this.participantList.sort(Participant::compareToByEloDescending);
-        for (int i = 0; i < participantList.size(); ++i) {
-            participantList.get(i).setStartingRank(i + 1);
+        for (int i = 0; i < this.participantList.size(); ++i) {
+            this.participantList.get(i).setStartingRank(i + 1);
         }
         this.givenPairings = givenPairings;
     }
 
     public int getRoundsToBeSimulated() {
-        return roundsToBeSimulated;
+        return this.roundsToBeSimulated;
     }
 
     public List<int[]> getGivenPairings() {
-        return givenPairings;
+        return this.givenPairings;
     }
 
     public List<Participant> getPlayerArrayList() {
-        return participantList;
+        return this.participantList;
     }
 
     public enum rankingBy {SCORE, BUCHHOLZ, BUCHHOLZCUTONE, SONNENBORNBERGER, AVERAGEELOOPPONENTS}
