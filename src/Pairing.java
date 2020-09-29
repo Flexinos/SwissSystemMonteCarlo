@@ -40,9 +40,6 @@ public final class Pairing {
     }
 
     public void simulateResult() {
-        if (this.result != null) {
-            return;
-        }
         this.result = randomResultLookUp(this.player1, this.player2);
         switch (this.result) {
             case WHITE_WIN -> {
@@ -74,6 +71,6 @@ public final class Pairing {
     }
 
     private enum ResultOfGame {
-        WHITE_WIN, DRAW, BLACK_WIN, BYE
+        WHITE_WIN, DRAW, BLACK_WIN
     }
 }
