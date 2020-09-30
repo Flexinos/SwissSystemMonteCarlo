@@ -10,36 +10,28 @@ public final class Participant {
     private final String country;
     private final int elo;
     private final String bundesland;
-    private final float score;
-    private final float buchholzCutOne;
-    private final float buchholz;
-    private final float averageEloOpponents;
-    private final float sonnenbornBerger;
     private final String type;
     private final boolean isFemale;
     private final Map<SimulatedPlayer, Float> pastResults;
     private int startingRank;
     private int numberOfTopThreeFinishes;
+    private final boolean hasReceivedBye;
 
     public Participant(final String name, final int elo) {
-        this(0, "", name, "", "", elo, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, "", false, new HashMap<>());
+        this(0, "", name, "", "", elo, "", false, new HashMap<>(), false);
     }
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final float score, final float buchholz, final float buchholzCutOne, final float averageEloOpponents, final float sonnenbornBerger, final String type, final boolean isFemale, final Map<SimulatedPlayer, Float> pastResults) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final String type, final boolean isFemale, final Map<SimulatedPlayer, Float> pastResults, final boolean hasReceivedBye) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
         this.country = country;
         this.bundesland = bundesland;
         this.elo = elo;
-        this.score = score;
-        this.buchholz = buchholz;
-        this.buchholzCutOne = buchholzCutOne;
-        this.sonnenbornBerger = sonnenbornBerger;
-        this.averageEloOpponents = averageEloOpponents;
         this.type = type;
         this.isFemale = isFemale;
         this.pastResults = new HashMap<>(pastResults);
+        this.hasReceivedBye = hasReceivedBye;
         for (int i = 0; i < this.rankingTable.length; i++) {
             this.rankingTable[i] = new LongAdder();
         }
@@ -127,26 +119,6 @@ public final class Participant {
         return this.elo;
     }
 
-    public float getScore() {
-        return this.score;
-    }
-
-    public float getBuchholzCutOne() {
-        return this.buchholzCutOne;
-    }
-
-    public float getBuchholz() {
-        return this.buchholz;
-    }
-
-    public float getAverageEloOpponents() {
-        return this.averageEloOpponents;
-    }
-
-    public float getSonnenbornBerger() {
-        return this.sonnenbornBerger;
-    }
-
     public String getType() {
         return this.type;
     }
@@ -175,6 +147,10 @@ public final class Participant {
         return Collections.unmodifiableMap(this.pastResults);
     }
 
+    public boolean hasReceivedBye() {
+        return this.hasReceivedBye;
+    }
+
     private float getAverageRank() {
         long sum = 0L;
         long longAdderCount = 0L;
@@ -190,11 +166,7 @@ public final class Participant {
         return
                 "Name: " + this.name + System.lineSeparator() +
                         "Elo: " + this.elo + System.lineSeparator() +
-                        "Starting Rank: " + this.startingRank + System.lineSeparator() +
-                        "Score: " + this.score + System.lineSeparator() +
-                        "Tie Break 1: " + this.buchholz + System.lineSeparator() +
-                        "Tie Break 2: " + this.buchholzCutOne + System.lineSeparator() +
-                        "Tie Break 3: " + this.sonnenbornBerger + System.lineSeparator();
+                        "Starting Rank: " + this.startingRank + System.lineSeparator();
     }
 
     public int compareToByEloDescending(final Participant p2) {

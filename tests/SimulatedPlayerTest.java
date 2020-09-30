@@ -87,7 +87,7 @@ final class SimulatedPlayerTest {
         assertEquals(this.simulatedPlayer8.getScore(), 1.5f);
 
         for (final SimulatedPlayer simulatedPlayer : this.simulatedPlayers) {
-            simulatedPlayer.updateTiebreaks();
+            simulatedPlayer.updateScores();
         }
 
         assertEquals(this.simulatedPlayer1.getBuchholz(), 2.0f);

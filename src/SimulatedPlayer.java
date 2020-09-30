@@ -11,17 +11,14 @@ public final class SimulatedPlayer {
     private float buchholzCutOne;
     private float sonnenbornBerger;
     private float averageEloOpponents;
-    private boolean receivedBye = false;
+    private boolean hasReceivedBye;
     private int colorDifference = 0;
 
     public SimulatedPlayer(final Participant participant) {
         this.participant = participant;
-        this.score = participant.getScore();
-        this.buchholz = participant.getBuchholz();
-        this.buchholzCutOne = participant.getBuchholzCutOne();
-        this.sonnenbornBerger = participant.getSonnenbornBerger();
-        this.averageEloOpponents = participant.getSonnenbornBerger();
         this.pastGames = new HashMap<>(participant.getPastResults());
+        this.hasReceivedBye = participant.hasReceivedBye();
+        updateScores();
     }
 
     public boolean hasPlayedAgainst(final SimulatedPlayer simulatedPlayer) {
@@ -47,6 +44,14 @@ public final class SimulatedPlayer {
     public int compareToByScoreThenElo(final SimulatedPlayer p2) {
         final int result = Float.compare(p2.score, this.score);
         return (result != 0) ? result : Integer.compare(p2.getElo(), getElo());
+    }
+
+    private void updateScore() {
+        float tmpSum = 0.0f;
+        for (final Float result : this.pastGames.values()) {
+            tmpSum += result;
+        }
+        this.score = tmpSum;
     }
 
     private void updateBuchholz() {
@@ -89,7 +94,8 @@ public final class SimulatedPlayer {
         this.averageEloOpponents = (float) sum / (float) this.pastGames.size();
     }
 
-    public void updateTiebreaks() {
+    public void updateScores() {
+        updateScore();
         updateBuchholz();
         updateBuchholzCutOne();
         updateAverageEloOpponents();
@@ -112,7 +118,7 @@ public final class SimulatedPlayer {
     }
 
     public void giveBye() {
-        this.receivedBye = true;
+        this.hasReceivedBye = true;
         this.score += 1.0f;
     }
 
@@ -149,7 +155,7 @@ public final class SimulatedPlayer {
     }
 
     public boolean hasReceivedBye() {
-        return this.receivedBye;
+        return this.hasReceivedBye;
     }
 
     public float getSonnenbornBerger() {
