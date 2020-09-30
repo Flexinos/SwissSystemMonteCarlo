@@ -24,7 +24,6 @@ public final class ChessDataParser {
         final List<int[]> test3 = getPairings(507448, 9);
         //assert test1.equals(test2);
         //assert test1.equals(test3);
-        final List<Participant> participants = getParticipantsFromRanking(507448, 1);
     }
 
     // inputLink should contain a valid link to a tournament on chess-results.com,
@@ -41,18 +40,6 @@ public final class ChessDataParser {
 
     public static List<int[]> getPairings(final int tournamentNumber, final int round) {
         return PairingUtilities.getPairings(buildLinkFromValues(tournamentNumber, round, ChessDataType.PAIRING));
-    }
-
-    public static List<Participant> getParticipantsFromRanking(final CharSequence inputLink) {
-        return RankingUtilities.getParticipantsFromRank(buildLinkFromString(inputLink, ChessDataType.RANKING));
-    }
-
-    public static List<Participant> getParticipantsFromRanking(final CharSequence inputLink, final int round) {
-        return RankingUtilities.getParticipantsFromRank(buildLinkFromValues(getTournamentNumber(inputLink), round, ChessDataType.RANKING));
-    }
-
-    public static List<Participant> getParticipantsFromRanking(final int tournamentNumber, final int round) {
-        return RankingUtilities.getParticipantsFromRank(buildLinkFromValues(tournamentNumber, round, ChessDataType.RANKING));
     }
 
     private static URL buildLinkFromString(final CharSequence inputLink, final ChessDataType type) {
@@ -120,7 +107,7 @@ public final class ChessDataParser {
         return CHARACTER_CODE_PATTERN.matcher(HTML_TAG_PATTERN.matcher(line).replaceAll("")).replaceAll("");
     }
 
-    private enum ChessDataType {PAIRING, RANKING}
+    private enum ChessDataType {PAIRING}
 
     private static class PairingUtilities {
         private static final Pattern PAIRING_LINE_PATTERN = Pattern.compile("^\\d.*");
@@ -187,40 +174,6 @@ public final class ChessDataParser {
                 blackStartingRank = Integer.parseInt(blackStartingRankString);
             }
             return new int[]{whiteStartingRank, blackStartingRank};
-        }
-    }
-
-    private static class RankingUtilities {
-        private static final Pattern RANKING_TABLE_HEADER_PATTERN = Pattern.compile("(Rg\\.|rg\\.|Nr\\.);(snr|Snr|Name);.*");
-        private static final Pattern RANKING_LINE_PATTERN = Pattern.compile("^\\d.*");
-
-        private static List<Participant> getParticipantsFromRank(final URL link) {
-            final Scanner scanner = getScanner(link);
-            advanceScannerToRankingTableStart(scanner);
-            final List<Participant> participants = new ArrayList<>();
-            int currentRank = 0;
-            while (scanner.hasNextLine()) {
-                final String line = cleanUpLine(scanner.nextLine());
-                if (!isRankingLine(line)) {
-                    break;
-                }
-                participants.add(parseParticipantLine(line, ++currentRank));
-            }
-            return participants;
-        }
-
-        private static void advanceScannerToRankingTableStart(final Scanner scanner) {
-            advanceScannerToTableStart(scanner, RANKING_TABLE_HEADER_PATTERN);
-        }
-
-        private static boolean isRankingLine(final CharSequence line) {
-            // Ranking lines start with a digit.
-            return RANKING_LINE_PATTERN.matcher(line).matches();
-        }
-
-        private static Participant parseParticipantLine(final String line, final int currentRank) {
-            System.out.println(line);
-            return null;
         }
     }
 }
