@@ -112,7 +112,7 @@ public class XLSXParser {
             }
         }
         final boolean isFemale = sex.matches("w");
-        return new Participant(startingRank, title, name, country, bundesland, elo, type, isFemale, new HashMap<>(), false);
+        return new Participant(startingRank, title, name, country, bundesland, elo, type, isFemale, new HashMap<>());
     }
 
     private static RankingColumnType getColumnType(final String columnName) {

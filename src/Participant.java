@@ -15,13 +15,13 @@ public final class Participant {
     private final Map<SimulatedPlayer, Float> pastResults;
     private int startingRank;
     private int numberOfTopThreeFinishes;
-    private final boolean hasReceivedBye;
+    private boolean hasReceivedBye;
 
     public Participant(final String name, final int elo) {
-        this(0, "", name, "", "", elo, "", false, new HashMap<>(), false);
+        this(0, "", name, "", "", elo, "", false, new HashMap<>());
     }
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final String type, final boolean isFemale, final Map<SimulatedPlayer, Float> pastResults, final boolean hasReceivedBye) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final String type, final boolean isFemale, final Map<SimulatedPlayer, Float> pastResults) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -31,7 +31,6 @@ public final class Participant {
         this.type = type;
         this.isFemale = isFemale;
         this.pastResults = new HashMap<>(pastResults);
-        this.hasReceivedBye = hasReceivedBye;
         for (int i = 0; i < this.rankingTable.length; i++) {
             this.rankingTable[i] = new LongAdder();
         }
@@ -149,6 +148,10 @@ public final class Participant {
 
     public boolean hasReceivedBye() {
         return this.hasReceivedBye;
+    }
+
+    public void setHasReceivedBye(final boolean hasReceivedBye) {
+        this.hasReceivedBye = hasReceivedBye;
     }
 
     private float getAverageRank() {

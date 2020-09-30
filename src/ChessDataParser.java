@@ -153,7 +153,19 @@ public final class ChessDataParser {
         private static final Pattern STARTING_RANK_TABLE_HEADER_PATTERN = Pattern.compile("^Nr\\.;Name;.*");
         private static final Pattern NAME_NOT_SEPARATE_FROM_FIDE_ID_PATTERN = Pattern.compile("(\\d+[A-Z]*;[^\\d;]+)(\\d)");
 
-        private enum ParticipantEntryType {STARTING_RANK_BEFORE_LETTERS, TITLE_AFTER_DIGITS, NAME, FIDE_ID_BEFORE_LETTERS, COUNTRY_AFTER_DIGITS, ELO_AT_START, SEX_AFTER_DIGITS, TYPE};
+        private static Participant parseParticipantLine(final CharSequence line, final Map<ParticipantEntryType, Integer> fieldIndices) {
+            final String fixedLine = addMissingSeparatorAfterName(line);
+            final String[] lineEntries = fixedLine.split(";");
+            final int rank = parseRank(lineEntries, fieldIndices);
+            final String title = parseTitle(lineEntries, fieldIndices);
+            final String name = parseName(lineEntries, fieldIndices);
+            final long fideId = parseFideId(lineEntries, fieldIndices);
+            final String country = parseCountry(lineEntries, fieldIndices);
+            final int elo = parseElo(lineEntries, fieldIndices);
+            final boolean sex = parseSex(lineEntries, fieldIndices);
+            final String type = parseType(lineEntries, fieldIndices);
+            return new Participant(rank, title, name, country, "", elo, type, sex, new HashMap<>());
+        }
 
         private static final Pattern STARTING_RANK_BEFORE_LETTERS_PATTERN = Pattern.compile("Nr\\.");
         private static final Pattern TITLE_AFTER_DIGITS_PATTERN = Pattern.compile("Nr\\.");
@@ -266,19 +278,7 @@ public final class ChessDataParser {
             return fieldTypes;
         }
 
-        private static Participant parseParticipantLine(final CharSequence line, final Map<ParticipantEntryType, Integer> fieldIndices) {
-            final String fixedLine = addMissingSeparatorAfterName(line);
-            final String[] lineEntries = fixedLine.split(";");
-            final int rank = parseRank(lineEntries, fieldIndices);
-            final String title = parseTitle(lineEntries, fieldIndices);
-            final String name = parseName(lineEntries, fieldIndices);
-            final long fideId = parseFideId(lineEntries, fieldIndices);
-            final String country = parseCountry(lineEntries, fieldIndices);
-            final int elo = parseElo(lineEntries, fieldIndices);
-            final boolean sex = parseSex(lineEntries, fieldIndices);
-            final String type = parseType(lineEntries, fieldIndices);
-            return new Participant(rank, title, name, country, "", elo, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, type, sex, new HashMap<>());
-        }
+        private enum ParticipantEntryType {STARTING_RANK_BEFORE_LETTERS, TITLE_AFTER_DIGITS, NAME, FIDE_ID_BEFORE_LETTERS, COUNTRY_AFTER_DIGITS, ELO_AT_START, SEX_AFTER_DIGITS, TYPE}
 
         private static String addMissingSeparatorAfterName(final CharSequence line) {
             return NAME_NOT_SEPARATE_FROM_FIDE_ID_PATTERN.matcher(line).replaceFirst("$1;$2");
