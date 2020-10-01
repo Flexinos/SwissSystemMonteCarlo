@@ -17,13 +17,13 @@ public final class Participant {
     private final boolean isWhiteNextGame;
     private int startingRank;
     private int numberOfTopThreeFinishes;
-    private boolean hasReceivedBye;
+    private final boolean hasReceivedBye;
 
     public Participant(final String name, final int elo) {
-        this(0, "", name, "", elo, "", false, new HashMap<>(), 0, -1, true);
+        this(0, "", name, "", elo, "", false, new HashMap<>(), 0, -1, true, false);
     }
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -38,6 +38,7 @@ public final class Participant {
         this.pointsByForfeit = pointsByForfeit;
         this.startingRankNextOpponent = startingRankNextOpponent;
         this.isWhiteNextGame = isWhiteNextGame;
+        this.hasReceivedBye = hasReceivedBye;
     }
 
     // Customize the output of the simulation results here.
@@ -144,10 +145,6 @@ public final class Participant {
 
     public boolean hasReceivedBye() {
         return this.hasReceivedBye;
-    }
-
-    public void setHasReceivedBye(final boolean hasReceivedBye) {
-        this.hasReceivedBye = hasReceivedBye;
     }
 
     public int getPointsByForfeit() {
