@@ -13,12 +13,14 @@ public final class SimulatedPlayer {
     private float averageEloOpponents;
     private float performanceRating;
     private boolean hasReceivedBye;
+    private final int pointsByForfeit;
     private int colorDifference = 0;
 
     public SimulatedPlayer(final Participant participant) {
         this.participant = participant;
         this.pastResults = new HashMap<>(participant.getPastResults());
         this.hasReceivedBye = participant.hasReceivedBye();
+        this.pointsByForfeit = participant.getPointsByForfeit();
         updateScores();
     }
 
@@ -120,7 +122,7 @@ public final class SimulatedPlayer {
         for (final Float result : this.pastResults.values()) {
             tmpSum += result;
         }
-        this.score = tmpSum;
+        this.score = tmpSum + this.pointsByForfeit;
     }
 
     private void updateBuchholz() {

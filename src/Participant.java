@@ -16,6 +16,7 @@ public final class Participant {
     private int startingRank;
     private int numberOfTopThreeFinishes;
     private boolean hasReceivedBye;
+    private int pointsByForfeit;
 
     public Participant(final String name, final int elo) {
         this(0, "", name, "", "", elo, "", false, new HashMap<>());
@@ -152,6 +153,14 @@ public final class Participant {
 
     public void setHasReceivedBye(final boolean hasReceivedBye) {
         this.hasReceivedBye = hasReceivedBye;
+    }
+
+    public int getPointsByForfeit() {
+        return this.pointsByForfeit;
+    }
+
+    public void setPointsByForfeit(final int pointsByForfeit) {
+        this.pointsByForfeit = pointsByForfeit;
     }
 
     private float getAverageRank() {
