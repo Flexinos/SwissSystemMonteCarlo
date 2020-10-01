@@ -9,7 +9,6 @@ public final class Participant {
     private final String name;
     private final String country;
     private final int elo;
-    private final String bundesland;
     private final String type;
     private final boolean isFemale;
     private final Map<Integer, Float> pastResults;
@@ -21,15 +20,14 @@ public final class Participant {
     private final boolean isWhiteNextGame;
 
     public Participant(final String name, final int elo) {
-        this(0, "", name, "", "", elo, "", false, new HashMap<>(), -1, true);
+        this(0, "", name, "", elo, "", false, new HashMap<>(), -1, true);
     }
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int startingRankNextOpponent, final boolean isWhiteNextGame) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int startingRankNextOpponent, final boolean isWhiteNextGame) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
         this.country = country;
-        this.bundesland = bundesland;
         this.elo = elo;
         this.type = type;
         this.isFemale = isFemale;
@@ -137,14 +135,6 @@ public final class Participant {
 
     public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
         this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
-    }
-
-    public void addRankToTable(final int rank) {
-        this.rankingTable[rank].increment();
-    }
-
-    public String getBundesland() {
-        return this.bundesland;
     }
 
     public Map<Integer, Float> getPastResults() {
