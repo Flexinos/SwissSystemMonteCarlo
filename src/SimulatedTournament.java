@@ -1,19 +1,22 @@
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.IntStream;
 
 public final class SimulatedTournament {
-    private final Tournament tournament;
     private final List<SimulatedPlayer> simulatedPlayerList;
     private final List<List<Pairing>> roundList;
+    private final int roundsToBeSimulated;
 
-    public SimulatedTournament(final Tournament tournament) {
-        this.tournament = tournament;
-        this.simulatedPlayerList = new ArrayList<>(tournament.getPlayerArrayList().size());
-        tournament.getPlayerArrayList().stream().map(SimulatedPlayer::new).forEachOrdered(this.simulatedPlayerList::add);
-        this.roundList = new ArrayList<>(tournament.getRoundsToBeSimulated());
-        if (tournament.getGivenPairings() != null) {
-            final List<int[]> givenPairings = tournament.getGivenPairings();
+    public SimulatedTournament(final int roundsToBeSimulated, final Collection<Participant> participants, final Iterable<int[]> givenPairings) {
+        this.roundsToBeSimulated = roundsToBeSimulated;
+        this.simulatedPlayerList = new ArrayList<>(participants.size());
+        for (final Participant participant : participants) {
+            final SimulatedPlayer player = new SimulatedPlayer(participant, this.simulatedPlayerList);
+            this.simulatedPlayerList.add(player);
+        }
+        this.roundList = new ArrayList<>(this.roundsToBeSimulated);
+        if (givenPairings != null) {
             final List<Pairing> round = new ArrayList<>();
             for (final int[] givenPairing : givenPairings) {
                 if (givenPairing[1] == 0) {
@@ -26,8 +29,31 @@ public final class SimulatedTournament {
         }
     }
 
+    public SimulatedTournament(final int roundsToBeSimulated, final Collection<Participant> participants) {
+        this.roundsToBeSimulated = roundsToBeSimulated;
+        this.simulatedPlayerList = new ArrayList<>(participants.size());
+        for (final Participant participant1 : participants) {
+            final SimulatedPlayer player = new SimulatedPlayer(participant1, this.simulatedPlayerList);
+            this.simulatedPlayerList.add(player);
+        }
+        this.roundList = new ArrayList<>(this.roundsToBeSimulated);
+        final List<Pairing> round = new ArrayList<>();
+        for (final Participant participant : participants) {
+            if (participant.getStartingRankNextOpponent() < 0) {
+                break;
+            }
+            if (participant.getStartingRankNextOpponent() == 0) {
+                this.simulatedPlayerList.get(participant.getStartingRank() - 1).giveBye();
+            }
+            if (participant.isWhiteNextGame()) {
+                round.add(new Pairing(this.simulatedPlayerList.get(participant.getStartingRank() - 1), this.simulatedPlayerList.get(participant.getStartingRankNextOpponent() - 1)));
+            }
+            this.roundList.add(round);
+        }
+    }
+
     public void simulateTournament() {
-        for (int finishedRounds = 0; finishedRounds < this.tournament.getRoundsToBeSimulated(); finishedRounds++) {
+        for (int finishedRounds = 0; finishedRounds < this.roundsToBeSimulated; finishedRounds++) {
             if (this.roundList.size() <= finishedRounds) {
                 this.roundList.add(Round.createPairings(this.simulatedPlayerList));
             }

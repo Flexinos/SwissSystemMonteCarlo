@@ -1,11 +1,13 @@
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
 public final class SimulatedPlayer {
     private final Participant participant;
-    private final Map<SimulatedPlayer, Float> pastResults;
+    private final List<SimulatedPlayer> simulatedPlayerList;
+    private final Map<Integer, Float> pastResults;
+    private final int pointsByForfeit;
     private float score;
     private float buchholz;
     private float buchholzCutOne;
@@ -13,11 +15,11 @@ public final class SimulatedPlayer {
     private float averageEloOpponents;
     private float performanceRating;
     private boolean hasReceivedBye;
-    private final int pointsByForfeit;
     private int colorDifference = 0;
 
-    public SimulatedPlayer(final Participant participant) {
+    public SimulatedPlayer(final Participant participant, final List<SimulatedPlayer> simulatedPlayerList) {
         this.participant = participant;
+        this.simulatedPlayerList = simulatedPlayerList;
         this.pastResults = new HashMap<>(participant.getPastResults());
         this.hasReceivedBye = participant.hasReceivedBye();
         this.pointsByForfeit = participant.getPointsByForfeit();
@@ -25,7 +27,7 @@ public final class SimulatedPlayer {
     }
 
     public boolean hasPlayedAgainst(final SimulatedPlayer simulatedPlayer) {
-        return this.pastResults.containsKey(simulatedPlayer);
+        return this.pastResults.containsKey(simulatedPlayer.getStartingRank());
     }
 
     public int compareToByScoreThenTieBreak(final SimulatedPlayer p2) {
@@ -127,8 +129,8 @@ public final class SimulatedPlayer {
 
     private void updateBuchholz() {
         float tmpSum = 0.0f;
-        for (final SimulatedPlayer opponent : this.pastResults.keySet()) {
-            tmpSum += opponent.score;
+        for (final Integer startingRankOpponent : this.pastResults.keySet()) {
+            tmpSum += this.simulatedPlayerList.get(startingRankOpponent - 1).score;
         }
         this.buchholz = tmpSum;
     }
@@ -140,27 +142,27 @@ public final class SimulatedPlayer {
         }
         float tmpBuchholz = 0.0f;
         float lowestScore = Float.MAX_VALUE;
-        for (final SimulatedPlayer opponent : this.pastResults.keySet()) {
-            if (opponent.score <= lowestScore) {
-                lowestScore = opponent.score;
+        for (final Integer startingRankOpponent : this.pastResults.keySet()) {
+            if (this.simulatedPlayerList.get(startingRankOpponent - 1).score <= lowestScore) {
+                lowestScore = this.simulatedPlayerList.get(startingRankOpponent - 1).score;
             }
-            tmpBuchholz += opponent.score;
+            tmpBuchholz += this.simulatedPlayerList.get(startingRankOpponent - 1).score;
         }
         this.buchholzCutOne = tmpBuchholz - lowestScore;
     }
 
     private void updateSonnenbornBerger() {
         float tmpSum = 0.0f;
-        for (final Entry<SimulatedPlayer, Float> entry : this.pastResults.entrySet()) {
-            tmpSum += entry.getKey().score * entry.getValue();
+        for (final Entry<Integer, Float> entry : this.pastResults.entrySet()) {
+            tmpSum += this.simulatedPlayerList.get(entry.getKey() - 1).score * entry.getValue();
         }
         this.sonnenbornBerger = tmpSum;
     }
 
     private void updateAverageEloOpponents() {
         int sum = 0;
-        for (final SimulatedPlayer opponent : this.pastResults.keySet()) {
-            sum += opponent.getElo();
+        for (final Integer startingRankOpponent : this.pastResults.keySet()) {
+            sum += this.simulatedPlayerList.get(startingRankOpponent - 1).getElo();
         }
         this.averageEloOpponents = (float) sum / (float) this.pastResults.size();
     }
@@ -174,12 +176,12 @@ public final class SimulatedPlayer {
     }
 
     public void addGame(final SimulatedPlayer opponent, final float result) {
-        this.pastResults.put(opponent, result);
+        this.pastResults.put(opponent.getStartingRank(), result);
         this.score += result;
     }
 
     public void addGame(final SimulatedPlayer opponent, final float result, final boolean isWhite) {
-        this.pastResults.put(opponent, result);
+        this.pastResults.put(opponent.getStartingRank(), result);
         this.score += result;
         if (isWhite) {
             this.colorDifference++;
@@ -215,10 +217,6 @@ public final class SimulatedPlayer {
 
     public int getStartingRank() {
         return this.participant.getStartingRank();
-    }
-
-    public Map<SimulatedPlayer, Float> getPastResults() {
-        return Collections.unmodifiableMap(this.pastResults);
     }
 
     public Participant getParticipant() {

@@ -12,17 +12,19 @@ public final class Participant {
     private final String bundesland;
     private final String type;
     private final boolean isFemale;
-    private final Map<SimulatedPlayer, Float> pastResults;
+    private final Map<Integer, Float> pastResults;
     private int startingRank;
     private int numberOfTopThreeFinishes;
     private boolean hasReceivedBye;
     private int pointsByForfeit;
+    private final int startingRankNextOpponent;
+    private final boolean isWhiteNextGame;
 
     public Participant(final String name, final int elo) {
-        this(0, "", name, "", "", elo, "", false, new HashMap<>());
+        this(0, "", name, "", "", elo, "", false, new HashMap<>(), -1, true);
     }
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final String type, final boolean isFemale, final Map<SimulatedPlayer, Float> pastResults) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final String bundesland, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int startingRankNextOpponent, final boolean isWhiteNextGame) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -35,6 +37,8 @@ public final class Participant {
         for (int i = 0; i < this.rankingTable.length; i++) {
             this.rankingTable[i] = new LongAdder();
         }
+        this.startingRankNextOpponent = startingRankNextOpponent;
+        this.isWhiteNextGame = isWhiteNextGame;
     }
 
     // Customize the output of the simulation results here.
@@ -143,7 +147,7 @@ public final class Participant {
         return this.bundesland;
     }
 
-    public Map<SimulatedPlayer, Float> getPastResults() {
+    public Map<Integer, Float> getPastResults() {
         return Collections.unmodifiableMap(this.pastResults);
     }
 
@@ -161,6 +165,14 @@ public final class Participant {
 
     public void setPointsByForfeit(final int pointsByForfeit) {
         this.pointsByForfeit = pointsByForfeit;
+    }
+
+    public int getStartingRankNextOpponent() {
+        return this.startingRankNextOpponent;
+    }
+
+    public boolean isWhiteNextGame() {
+        return this.isWhiteNextGame;
     }
 
     private float getAverageRank() {

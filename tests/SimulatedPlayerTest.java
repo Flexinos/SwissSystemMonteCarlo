@@ -19,7 +19,7 @@ final class SimulatedPlayerTest {
     private final List<Participant> participants = new ArrayList<>(List.of(this.participant1, this.participant2, this.participant3, this.participant4, this.participant5, this.participant6, this.participant7, this.participant8));
     private final List<SimulatedPlayer> simulatedPlayers = new ArrayList<>();
     Tournament tournament = new Tournament(0, this.participants);
-    SimulatedTournament simulatedTournament = new SimulatedTournament(this.tournament);
+    SimulatedTournament simulatedTournament = new SimulatedTournament(this.tournament.getRoundsToBeSimulated(), new ArrayList<>(this.tournament.getPlayerArrayList()), this.tournament.getGivenPairings());
     SimulatedPlayer simulatedPlayer1;
     SimulatedPlayer simulatedPlayer2;
     SimulatedPlayer simulatedPlayer3;
@@ -31,14 +31,14 @@ final class SimulatedPlayerTest {
 
     @BeforeEach
     private void createSimulatedPlayers() {
-        this.simulatedPlayer1 = new SimulatedPlayer(this.participant1);
-        this.simulatedPlayer2 = new SimulatedPlayer(this.participant2);
-        this.simulatedPlayer3 = new SimulatedPlayer(this.participant3);
-        this.simulatedPlayer4 = new SimulatedPlayer(this.participant4);
-        this.simulatedPlayer5 = new SimulatedPlayer(this.participant5);
-        this.simulatedPlayer6 = new SimulatedPlayer(this.participant6);
-        this.simulatedPlayer7 = new SimulatedPlayer(this.participant7);
-        this.simulatedPlayer8 = new SimulatedPlayer(this.participant8);
+        this.simulatedPlayer1 = new SimulatedPlayer(this.participant1, this.simulatedPlayers);
+        this.simulatedPlayer2 = new SimulatedPlayer(this.participant2, this.simulatedPlayers);
+        this.simulatedPlayer3 = new SimulatedPlayer(this.participant3, this.simulatedPlayers);
+        this.simulatedPlayer4 = new SimulatedPlayer(this.participant4, this.simulatedPlayers);
+        this.simulatedPlayer5 = new SimulatedPlayer(this.participant5, this.simulatedPlayers);
+        this.simulatedPlayer6 = new SimulatedPlayer(this.participant6, this.simulatedPlayers);
+        this.simulatedPlayer7 = new SimulatedPlayer(this.participant7, this.simulatedPlayers);
+        this.simulatedPlayer8 = new SimulatedPlayer(this.participant8, this.simulatedPlayers);
         this.simulatedPlayers.addAll(List.of(this.simulatedPlayer1, this.simulatedPlayer2, this.simulatedPlayer3, this.simulatedPlayer4, this.simulatedPlayer5, this.simulatedPlayer6, this.simulatedPlayer7, this.simulatedPlayer8));
     }
 
