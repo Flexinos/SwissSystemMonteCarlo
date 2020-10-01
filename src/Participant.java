@@ -12,18 +12,18 @@ public final class Participant {
     private final String type;
     private final boolean isFemale;
     private final Map<Integer, Float> pastResults;
+    private final int pointsByForfeit;
+    private final int startingRankNextOpponent;
+    private final boolean isWhiteNextGame;
     private int startingRank;
     private int numberOfTopThreeFinishes;
     private boolean hasReceivedBye;
-    private int pointsByForfeit;
-    private final int startingRankNextOpponent;
-    private final boolean isWhiteNextGame;
 
     public Participant(final String name, final int elo) {
-        this(0, "", name, "", elo, "", false, new HashMap<>(), -1, true);
+        this(0, "", name, "", elo, "", false, new HashMap<>(), 0, -1, true);
     }
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int startingRankNextOpponent, final boolean isWhiteNextGame) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -35,6 +35,7 @@ public final class Participant {
         for (int i = 0; i < this.rankingTable.length; i++) {
             this.rankingTable[i] = new LongAdder();
         }
+        this.pointsByForfeit = pointsByForfeit;
         this.startingRankNextOpponent = startingRankNextOpponent;
         this.isWhiteNextGame = isWhiteNextGame;
     }
@@ -151,10 +152,6 @@ public final class Participant {
 
     public int getPointsByForfeit() {
         return this.pointsByForfeit;
-    }
-
-    public void setPointsByForfeit(final int pointsByForfeit) {
-        this.pointsByForfeit = pointsByForfeit;
     }
 
     public int getStartingRankNextOpponent() {
