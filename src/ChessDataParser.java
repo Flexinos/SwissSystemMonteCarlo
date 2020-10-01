@@ -356,8 +356,8 @@ public final class ChessDataParser {
 
     private static class PairingUtilities {
         private static final Pattern PAIRING_LINE_PATTERN = Pattern.compile("^\\d.*");
-        private static final Pattern NON_DIGIT_PATTERN = Pattern.compile("[^0-9]+.*");
-        private static final Pattern FOUR_DIGIT_ELO_START_PATTERN = Pattern.compile("^[12]");
+        private static final Pattern NON_DIGIT_PATTERN = Pattern.compile("\\D");
+        private static final Pattern FOUR_DIGIT_ELO_START_PATTERN = Pattern.compile("^[12]\\d*");
         private static final Pattern PAIRING_TABLE_HEADER_PATTERN = Pattern.compile("^Br.;Nr.;Name;.*");
 
         private static List<int[]> getPairings(final URL link) {
