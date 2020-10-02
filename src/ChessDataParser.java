@@ -90,25 +90,13 @@ public final class ChessDataParser {
     }
 
     private static URL buildLinkFromValues(final int tournamentNumber, final int roundNumber, final ChessDataType type) {
-        final int art;
-        final boolean shouldContainRound;
-        switch (type) {
-            case STARTING_RANK -> {
-                art = 0;
-                shouldContainRound = false;
-            }
-            case GAMES -> {
-                art = 5;
-                shouldContainRound = false;
-            }
-            default -> throw new IllegalArgumentException("Provided ChessDataType is not supported");
-        }
+        final int art = switch (type) {
+            case STARTING_RANK -> 0;
+            case GAMES -> 5;
+        };
         final StringBuilder stringBuilder = new StringBuilder("https://chess-results.com/tnr")
-                .append(tournamentNumber).append(".aspx?lan=0&art=").append(art);
-        if (shouldContainRound) {
-            stringBuilder.append("&rd=").append(roundNumber);
-        }
-        stringBuilder.append("&turdet=NO&flag=NO&prt=7&zeilen=99999");
+                .append(tournamentNumber).append(".aspx?lan=0&art=").append(art)
+                .append("&turdet=NO&flag=NO&prt=7&zeilen=99999");
         try {
             return new URL(stringBuilder.toString());
         } catch (final MalformedURLException e) {
