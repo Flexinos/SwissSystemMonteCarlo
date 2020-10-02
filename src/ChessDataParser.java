@@ -81,18 +81,6 @@ public final class ChessDataParser {
         };
     }
 
-    // inputLink should contain a valid link to a tournament on chess-results.com,
-    // from a page which shows the desired round.
-    public static List<int[]> getPairings(final CharSequence inputLink) {
-        return PairingUtilities.getPairings(buildLinkFromString(inputLink, ChessDataType.PAIRING));
-    }
-
-    private static URL buildLinkFromString(final CharSequence inputLink, final ChessDataType type) {
-        final int tournamentNumber = getTournamentNumber(inputLink);
-        final int round = getRound(inputLink);
-        return buildLinkFromValues(tournamentNumber, round, type);
-    }
-
     private static URL buildStartingRankLink(final int tournamentNumber) {
         return buildLinkFromValues(tournamentNumber, 0, ChessDataType.STARTING_RANK);
     }
@@ -108,10 +96,6 @@ public final class ChessDataParser {
             case STARTING_RANK -> {
                 art = 0;
                 shouldContainRound = false;
-            }
-            case PAIRING -> {
-                art = 2;
-                shouldContainRound = true;
             }
             case GAMES -> {
                 art = 5;
@@ -193,7 +177,7 @@ public final class ChessDataParser {
         return pattern.matcher(line).matches();
     }
 
-    private enum ChessDataType {STARTING_RANK, PAIRING, GAMES}
+    private enum ChessDataType {STARTING_RANK, GAMES}
 
     private static class ParticipantUtilities {
         private static final Pattern STARTING_RANK_TABLE_HEADER_PATTERN = Pattern.compile("^Nr\\.;Name;.*");
