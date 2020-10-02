@@ -118,12 +118,6 @@ public final class ChessDataParser {
         }
     }
 
-    private static Scanner prepareScanner(final URL link, final Pattern tableHeaderPattern) {
-        final Scanner scanner = getScanner(link);
-        advanceScannerToTableStart(scanner, tableHeaderPattern);
-        return scanner;
-    }
-
     private static Scanner getScanner(final URL link) {
         try {
             return new Scanner(link.openStream());
