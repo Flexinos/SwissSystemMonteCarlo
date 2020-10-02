@@ -384,6 +384,11 @@ public final class Participant {
     }
 
     @Override
+    public int hashCode() {
+        return this.startingRank;
+    }
+
+    @Override
     public String toString() {
         return "Participant{" +
                 "name='" + this.name + '\'' +
