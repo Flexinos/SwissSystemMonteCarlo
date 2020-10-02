@@ -16,7 +16,7 @@ public final class WorkerThread implements Runnable {
     public void run() {
         int simulationTicket = Main.getSimulationTicket();
         while (simulationTicket <= this.numberOfSimulations) {
-            final SimulatedTournament simulatedTournament = new SimulatedTournament(this.tournament.getRoundsToBeSimulated(), new ArrayList<>(this.tournament.getPlayerArrayList()), this.tournament.getGivenPairings());
+            final SimulatedTournament simulatedTournament = new SimulatedTournament(this.tournament.getRoundsToBeSimulated(), new ArrayList<>(this.tournament.getPlayerArrayList()));
             simulatedTournament.simulateTournament();
             simulatedTournament.analyseThisSimulatedTournament();
             if ((simulationTicket % simulationsPerProgressMessage) == 0) {
