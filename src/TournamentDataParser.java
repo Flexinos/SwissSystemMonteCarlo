@@ -427,7 +427,7 @@ public final class TournamentDataParser {
             final List<Game> games = new ArrayList<>();
             boolean hasReceivedBye = false;
             int pointsByForfeit = 0;
-            int nextOpponentStartingRank = 0;
+            int nextOpponentStartingRank = -1;
             boolean isWhiteNextGame = false;
             for (final Integer gameEntryIndex : gameEntryIndices) {
                 final String entry = lineEntries[gameEntryIndex];
