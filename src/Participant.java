@@ -150,32 +150,8 @@ public final class Participant {
         this.startingRank = startingRank;
     }
 
-    public String getName() {
-        return this.name;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public String getCountry() {
-        return this.country;
-    }
-
     public int getElo() {
         return this.elo;
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
-    public boolean isFemale() {
-        return this.isFemale;
-    }
-
-    public int getNumberOfTopThreeFinishes() {
-        return this.numberOfTopThreeFinishes;
     }
 
     public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
@@ -190,10 +166,6 @@ public final class Participant {
         return this.hasReceivedBye;
     }
 
-    public int getPointsByForfeit() {
-        return this.pointsByForfeit;
-    }
-
     public int getStartingRankNextOpponent() {
         return this.startingRankNextOpponent;
     }
@@ -206,36 +178,8 @@ public final class Participant {
         this.simulatedPlayerList = simulatedPlayerList;
     }
 
-    public boolean isHasReceivedBye() {
-        return this.hasReceivedBye;
-    }
-
     public float getScore() {
         return this.score;
-    }
-
-    public float getBuchholz() {
-        return this.buchholz;
-    }
-
-    public float getBuchholzCutOne() {
-        return this.buchholzCutOne;
-    }
-
-    public float getSonnenbornBerger() {
-        return this.sonnenbornBerger;
-    }
-
-    public float getAverageEloOpponents() {
-        return this.averageEloOpponents;
-    }
-
-    public float getPerformanceRating() {
-        return this.performanceRating;
-    }
-
-    public int getColorDifference() {
-        return this.colorDifference;
     }
 
     public boolean isWhiteNextGame() {
@@ -393,11 +337,6 @@ public final class Participant {
         updateBuchholzCutOne();
         updateAverageEloOpponents();
         updateSonnenbornBerger();
-    }
-
-    public void addGame(final Participant opponent, final float result) {
-        this.pastResults.put(opponent.startingRank, result);
-        this.score += result;
     }
 
     public void addGame(final Participant opponent, final float result, final boolean isWhite) {
