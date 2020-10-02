@@ -140,7 +140,9 @@ public final class ChessDataParser {
 
     private static String cleanUpLine(final CharSequence line) {
         // Remove HTML tags and numerical character code points.
-        return CHARACTER_CODE_PATTERN.matcher(HTML_TAG_PATTERN.matcher(line).replaceAll("")).replaceAll("");
+        return CHARACTER_CODE_PATTERN.matcher(
+                HTML_TAG_PATTERN.matcher(line).replaceAll(""))
+                .replaceAll("");
     }
 
     private static boolean matches(final CharSequence line, final Pattern pattern) {
