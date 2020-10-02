@@ -1,13 +1,13 @@
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class Pairing {
-    private final SimulatedPlayer player1;
-    private final SimulatedPlayer player2;
+    private final SimulatedPlayer whitePlayer;
+    private final SimulatedPlayer blackPlayer;
     private ResultOfGame result;
 
-    public Pairing(final SimulatedPlayer player1, final SimulatedPlayer player2) {
-        this.player1 = player1;
-        this.player2 = player2;
+    public Pairing(final SimulatedPlayer whitePlayer, final SimulatedPlayer blackPlayer) {
+        this.whitePlayer = whitePlayer;
+        this.blackPlayer = blackPlayer;
     }
 
     public static boolean canBePaired(final SimulatedPlayer player1, final SimulatedPlayer player2) {
@@ -31,28 +31,28 @@ public final class Pairing {
         }
     }
 
-    public SimulatedPlayer getPlayer1() {
-        return this.player1;
+    public SimulatedPlayer getWhitePlayer() {
+        return this.whitePlayer;
     }
 
-    public SimulatedPlayer getPlayer2() {
-        return this.player2;
+    public SimulatedPlayer getBlackPlayer() {
+        return this.blackPlayer;
     }
 
     public void simulateResult() {
-        this.result = randomResultLookUp(this.player1, this.player2);
+        this.result = randomResultLookUp(this.whitePlayer, this.blackPlayer);
         switch (this.result) {
             case WHITE_WIN -> {
-                this.player1.addGame(this.player2, 1.0f, true);
-                this.player2.addGame(this.player1, 0.0f, false);
+                this.whitePlayer.addGame(this.blackPlayer, 1.0f, true);
+                this.blackPlayer.addGame(this.whitePlayer, 0.0f, false);
             }
             case BLACK_WIN -> {
-                this.player1.addGame(this.player2, 0.0f, true);
-                this.player2.addGame(this.player1, 1.0f, false);
+                this.whitePlayer.addGame(this.blackPlayer, 0.0f, true);
+                this.blackPlayer.addGame(this.whitePlayer, 1.0f, false);
             }
             default -> {
-                this.player1.addGame(this.player2, 0.5f, true);
-                this.player2.addGame(this.player1, 0.5f, false);
+                this.whitePlayer.addGame(this.blackPlayer, 0.5f, true);
+                this.blackPlayer.addGame(this.whitePlayer, 0.5f, false);
             }
         }
     }
@@ -60,13 +60,13 @@ public final class Pairing {
     @Override
     public String toString() {
         if (this.result == ResultOfGame.WHITE_WIN) {
-            return this.player1 + "1-0 " + this.player2;
+            return this.whitePlayer + "1-0 " + this.blackPlayer;
         } else if (this.result == ResultOfGame.DRAW) {
-            return this.player1 + "0.5-0.5 " + this.player2;
+            return this.whitePlayer + "0.5-0.5 " + this.blackPlayer;
         } else if (this.result == ResultOfGame.BLACK_WIN) {
-            return this.player1 + "0-1 " + this.player2;
+            return this.whitePlayer + "0-1 " + this.blackPlayer;
         } else {
-            return this.player1 + " 1 " + "spielfrei";
+            return this.whitePlayer + " 1 " + "spielfrei";
         }
     }
 
