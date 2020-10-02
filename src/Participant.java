@@ -191,4 +191,43 @@ public final class Participant {
     }
 
     private enum Padding {LEFT, RIGHT}
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof Participant)) {
+            return false;
+        }
+        final Participant other = (Participant) obj;
+        return this.startingRank == other.startingRank;
+    }
+
+    public static boolean equalsCheckAllParsed(final Object obj1, final Object obj2) {
+        if (obj1 == obj2) {
+            return true;
+        }
+        if ((obj1 == null) || (obj2 == null)) {
+            return false;
+        }
+        if (!(obj1 instanceof Participant) || !(obj2 instanceof Participant)) {
+            return false;
+        }
+        final Participant participant1 = (Participant) obj1;
+        final Participant participant2 = (Participant) obj2;
+        //noinspection UnclearExpression
+        return participant1.title.equals(participant2.title) &&
+                participant1.name.equals(participant2.name) &&
+                participant1.country.equals(participant2.country) &&
+                participant1.elo == participant2.elo &&
+                participant1.type.equals(participant2.type) &&
+                participant1.isFemale == participant2.isFemale &&
+                participant1.pastResults.equals(participant2.pastResults) &&
+                participant1.pointsByForfeit == participant2.pointsByForfeit &&
+                participant1.startingRankNextOpponent == participant2.startingRankNextOpponent &&
+                participant1.isWhiteNextGame == participant2.isWhiteNextGame &&
+                participant1.startingRank == participant2.startingRank &&
+                participant1.hasReceivedBye == participant2.hasReceivedBye;
+    }
 }
