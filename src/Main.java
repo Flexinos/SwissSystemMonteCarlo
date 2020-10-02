@@ -67,7 +67,7 @@ public final class Main {
             }
         }
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishesDescending);
-        Participant.printSimulationResults(participantsWithTopThreeRanking);
+        SimulatedTournament.printSimulationResults(participantsWithTopThreeRanking);
     }
 
     public static int getSimulationTicket() {
