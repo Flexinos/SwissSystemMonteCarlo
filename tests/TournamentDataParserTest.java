@@ -41,8 +41,8 @@ class TournamentDataParserTest {
             final List<Participant> participantsFromTournamentNumber = TournamentDataParser.getTournamentDataFromTournamentNumber(parsingData.tournamentNumber);
             Assertions.assertEquals(participantsFromLink, participantsFromTournamentNumber);
             for (final Entry<Integer, Participant> entry : parsingData.participantsToTest.entrySet()) {
-                Assertions.assertEquals(entry.getValue(), participantsFromLink.get(entry.getKey() - 1));
-                Assertions.assertEquals(entry.getValue(), participantsFromTournamentNumber.get(entry.getKey() - 1));
+                Assertions.assertTrue(Participant.equalsCheckAllParsed(entry.getValue(), participantsFromLink.get(entry.getKey() - 1)));
+                Assertions.assertTrue(Participant.equalsCheckAllParsed(entry.getValue(), participantsFromTournamentNumber.get(entry.getKey() - 1)));
             }
         }
     }
