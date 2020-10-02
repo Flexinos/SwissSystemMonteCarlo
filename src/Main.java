@@ -13,10 +13,8 @@ public final class Main {
     public static final int numberOfRounds = 5;
     public static final int numberOfSimulations = 10000;
     public static final int numberOfConcurrentThreads = 6;
-    // Used for randomly created participants
-    public static final int minElo = 1000;
-    public static final int maxElo = 2600;
     // End of configuration
+
     private static final Map<Integer, LongAdder> topThreeCounter =
             new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
     private static int finished_simulations = 0;
