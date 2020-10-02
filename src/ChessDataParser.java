@@ -14,17 +14,6 @@ public final class ChessDataParser {
     private ChessDataParser() {
     }
 
-    // For testing
-    public static void main(final String[] args) {
-        //final List<int[]> test1 = getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=9&turdet=YES&flag=30&prt=7");
-        //final List<int[]> test2 = getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=3&turdet=YES&flag=30&prt=7", 9);
-        //final List<int[]> test3 = getPairings(507448, 9);
-        //assert test1.equals(test2);
-        //assert test1.equals(test3);
-        //final List<Participant> participantTest1 = getParticipants("https://chess-results.com/tnr507448.aspx?lan=0&art=0&turdet=NO&flag=NO&prt=7");
-        //getTournamentDataFromTournamentNumber(507448);
-    }
-
     public static List<Participant> getTournamentDataFromLink(final CharSequence inputLink) {
         return getTournamentDataFromTournamentNumber(getTournamentNumber(inputLink));
     }
