@@ -154,6 +154,10 @@ public final class Participant {
         return this.elo;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
         this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
     }
@@ -381,6 +385,11 @@ public final class Participant {
         }
         final Participant other = (Participant) obj;
         return this.startingRank == other.startingRank;
+    }
+
+    @Override
+    public int hashCode() {
+        return this.startingRank;
     }
 
     @Override
