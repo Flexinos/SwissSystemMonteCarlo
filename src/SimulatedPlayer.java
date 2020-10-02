@@ -160,6 +160,9 @@ public final class SimulatedPlayer {
     }
 
     private void updateAverageEloOpponents() {
+        if (this.pastResults.isEmpty()) {
+            this.averageEloOpponents = 0.0f;
+        }
         int sum = 0;
         for (final Integer startingRankOpponent : this.pastResults.keySet()) {
             sum += this.simulatedPlayerList.get(startingRankOpponent - 1).getElo();
