@@ -384,64 +384,6 @@ public final class ChessDataParser {
         }
     }
 
-    private static class PairingUtilities {
-        private static final Pattern PAIRING_LINE_PATTERN = Pattern.compile("^\\d.*");
-        private static final Pattern NON_DIGIT_PATTERN = Pattern.compile("\\D");
-        private static final Pattern FOUR_DIGIT_ELO_START_PATTERN = Pattern.compile("^[12]\\d*");
-        private static final Pattern PAIRING_TABLE_HEADER_PATTERN = Pattern.compile("^Br\\.;Nr\\.;Name;.*");
-
-        private static List<int[]> getPairings(final URL link) {
-            final Scanner scanner = prepareScanner(link, PAIRING_TABLE_HEADER_PATTERN);
-            final List<int[]> pairings = new ArrayList<>();
-            while (scanner.hasNextLine()) {
-                final String line = cleanUpLine(scanner.nextLine());
-                if (!matches(line, PAIRING_LINE_PATTERN)) {
-                    break;
-                }
-                final int[] pairing = parsePairingLine(line);
-                // "nicht ausgelost" pairings return null and should not be added to the list.
-                if (pairing != null) {
-                    pairings.add(pairing);
-                }
-            }
-            return pairings;
-        }
-
-        private static int[] parsePairingLine(final String line) {
-            final String[] lineEntries = line.split(";");
-            // White's starting rank and title are not separated.
-            // Only using the digits in the string hopefully solves this issue.
-            final int whiteStartingRank = Integer.parseInt(NON_DIGIT_PATTERN.matcher(lineEntries[1]).replaceAll(""));
-            final String lastEntry = lineEntries[lineEntries.length - 1];
-            final int blackStartingRank;
-            if (lastEntry.equals("spielfrei")) {
-                blackStartingRank = 0;
-            } else if (lastEntry.equals("nicht ausgelost")) {
-                // Pairing will not be returned.
-                return null;
-            } else {
-                // In some cases separators are missing.
-                // Only using the digits in the string hopefully solves this issue.
-                final String lastEntryNumbersOnly = NON_DIGIT_PATTERN.matcher(lastEntry).replaceAll("");
-                final String blackStartingRankString;
-                // The input data has no separator between black elo and black starting rank,
-                // so this is necessary.
-                if (lastEntryNumbersOnly.startsWith("0")) {
-                    // Elo is zero.
-                    blackStartingRankString = lastEntryNumbersOnly.substring(1);
-                } else if (FOUR_DIGIT_ELO_START_PATTERN.matcher(lastEntryNumbersOnly).matches()) {
-                    // Elo has four digits.
-                    blackStartingRankString = lastEntryNumbersOnly.substring(4);
-                } else {
-                    // Elo has three digits.
-                    blackStartingRankString = lastEntryNumbersOnly.substring(3);
-                }
-                blackStartingRank = Integer.parseInt(blackStartingRankString);
-            }
-            return new int[]{whiteStartingRank, blackStartingRank};
-        }
-    }
-
     private static class GamesUtilities {
         private static final Pattern GAMES_TABLE_HEADER_PATTERN = Pattern.compile("^Nr\\.;?Name;.*");
         private static final Pattern GAMES_ENTRY_HEADER_PATTERN = Pattern.compile("\\d+\\.Rd");
