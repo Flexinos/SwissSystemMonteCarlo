@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +10,8 @@ import java.util.concurrent.atomic.LongAdder;
 public final class Main {
     // Variables for configuration
     public static final int numberOfParticipants = 100;
-    public static final int numberOfRounds = 9;
-    public static final int numberOfSimulations = 100000;
+    public static final int numberOfRounds = 5;
+    public static final int numberOfSimulations = 10000;
     public static final int numberOfConcurrentThreads = 6;
     // Used for randomly created participants
     public static final int minElo = 1000;
@@ -25,7 +24,7 @@ public final class Main {
     private Main() {
     }
 
-    public static void main(final String[] args) throws InterruptedException, IOException {
+    public static void main(final String[] args) throws InterruptedException {
         if (args.length != 1) {
             System.out.println("Specify the location of the lookup table as the only argument.");
             System.exit(1);
@@ -83,16 +82,16 @@ public final class Main {
             this.startTime = System.nanoTime();
         }
 
+        private static String millisecondsToSecondsString(final long milliseconds) {
+            return (milliseconds / 1000L) + "." + (milliseconds % 1000L) + "s";
+        }
+
         private long elapsedMilliSeconds() {
             return (System.nanoTime() - this.startTime) / 1000000L;
         }
 
         private void printElapsedSecondsMessage(final String beforeTime, final String afterTime) {
             System.out.println(beforeTime + millisecondsToSecondsString(elapsedMilliSeconds()) + afterTime);
-        }
-
-        private static String millisecondsToSecondsString(final long milliseconds) {
-            return (milliseconds / 1000L) + "." + (milliseconds % 1000L) + "s";
         }
     }
 }

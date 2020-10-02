@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.Collections;
 
 public final class WorkerThread implements Runnable {
     private static final int simulationsPerProgressMessage = 1000;
@@ -16,7 +16,7 @@ public final class WorkerThread implements Runnable {
     public void run() {
         int simulationTicket = Main.getSimulationTicket();
         while (simulationTicket <= this.numberOfSimulations) {
-            final SimulatedTournament simulatedTournament = new SimulatedTournament(this.tournament.getRoundsToBeSimulated(), new ArrayList<>(this.tournament.getPlayerArrayList()));
+            final SimulatedTournament simulatedTournament = new SimulatedTournament(this.tournament.getRoundsToBeSimulated(), Collections.unmodifiableCollection(this.tournament.getPlayerArrayList()));
             simulatedTournament.simulateTournament();
             simulatedTournament.analyseThisSimulatedTournament();
             if ((simulationTicket % simulationsPerProgressMessage) == 0) {

@@ -1,19 +1,21 @@
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.IntStream;
 
 public final class SimulatedTournament {
-    private final List<SimulatedPlayer> simulatedPlayerList;
+    private final List<Participant> participantList;
+    private final List<Participant> simulatedPlayerList;
     private final List<List<Pairing>> roundList;
     private final int roundsToBeSimulated;
 
     public SimulatedTournament(final int roundsToBeSimulated, final Collection<Participant> participants) {
         this.roundsToBeSimulated = roundsToBeSimulated;
+        this.participantList = new ArrayList<>(participants);
         this.simulatedPlayerList = new ArrayList<>(participants.size());
-        for (final Participant participant1 : participants) {
-            final SimulatedPlayer player = new SimulatedPlayer(participant1, this.simulatedPlayerList);
-            this.simulatedPlayerList.add(player);
+        for (final Participant participant : participants) {
+            final Participant simulatedPlayer = Participant.copyOf(participant);
+            this.simulatedPlayerList.add(simulatedPlayer);
+            simulatedPlayer.setSimulatedPlayerList(this.simulatedPlayerList);
         }
         this.roundList = new ArrayList<>(this.roundsToBeSimulated);
         final List<Pairing> round = new ArrayList<>();
@@ -29,7 +31,7 @@ public final class SimulatedTournament {
             }
         }
         this.roundList.add(round);
-        for (final SimulatedPlayer simulatedPlayer : this.simulatedPlayerList) {
+        for (final Participant simulatedPlayer : this.simulatedPlayerList) {
             simulatedPlayer.updateScores();
         }
     }
@@ -46,11 +48,10 @@ public final class SimulatedTournament {
     }
 
     public void analyseThisSimulatedTournament() {
-        this.simulatedPlayerList.forEach(SimulatedPlayer::updateScores);
-        this.simulatedPlayerList.sort(SimulatedPlayer::compareToByScoreThenTieBreak);
-        IntStream.range(0, 3).mapToObj((int i) -> this.simulatedPlayerList.get(i).getParticipant()).forEach(Main::addTopThreeRanking);
-        for (int i = 0; i < this.simulatedPlayerList.size(); i++) {
-            this.simulatedPlayerList.get(i).addRankToTable(i);
+        this.simulatedPlayerList.forEach(Participant::updateScores);
+        this.simulatedPlayerList.sort(Participant::compareToByScoreThenTieBreak);
+        for (int i1 = 0; i1 < 3; i1++) {
+            Main.addTopThreeRanking(this.participantList.get(this.simulatedPlayerList.get(i1).getStartingRank() - 1));
         }
     }
 }

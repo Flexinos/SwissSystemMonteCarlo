@@ -1,16 +1,16 @@
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class Pairing {
-    private final SimulatedPlayer whitePlayer;
-    private final SimulatedPlayer blackPlayer;
+    private final Participant whitePlayer;
+    private final Participant blackPlayer;
     private ResultOfGame result;
 
-    public Pairing(final SimulatedPlayer whitePlayer, final SimulatedPlayer blackPlayer) {
+    public Pairing(final Participant whitePlayer, final Participant blackPlayer) {
         this.whitePlayer = whitePlayer;
         this.blackPlayer = blackPlayer;
     }
 
-    public static boolean canBePaired(final SimulatedPlayer player1, final SimulatedPlayer player2) {
+    public static boolean canBePaired(final Participant player1, final Participant player2) {
         if (player1.equals(player2)) {
             System.out.println("playing against oneself");
             return false;
@@ -19,7 +19,7 @@ public final class Pairing {
         }
     }
 
-    private static ResultOfGame randomResultLookUp(final SimulatedPlayer whitePlayer, final SimulatedPlayer blackPlayer) {
+    private static ResultOfGame randomResultLookUp(final Participant whitePlayer, final Participant blackPlayer) {
         final float randomValue = ThreadLocalRandom.current().nextFloat();
         final float[] probabilitiesArray = LookupTable.getProbabilities(whitePlayer.getElo(), blackPlayer.getElo());
         if (randomValue < probabilitiesArray[0]) {
@@ -31,11 +31,11 @@ public final class Pairing {
         }
     }
 
-    public SimulatedPlayer getWhitePlayer() {
+    public Participant getWhitePlayer() {
         return this.whitePlayer;
     }
 
-    public SimulatedPlayer getBlackPlayer() {
+    public Participant getBlackPlayer() {
         return this.blackPlayer;
     }
 
