@@ -108,7 +108,7 @@ public final class Participant {
     }
 
     public List<Participant> getSimulatedPlayerList() {
-        return this.simulatedPlayerList;
+        return Collections.unmodifiableList(this.simulatedPlayerList);
     }
 
     public void setSimulatedPlayerList(final List<Participant> simulatedPlayerList) {
