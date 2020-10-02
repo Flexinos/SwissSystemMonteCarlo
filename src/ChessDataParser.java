@@ -131,7 +131,7 @@ public final class ChessDataParser {
     private static String advanceScannerToTableStart(final Scanner scanner, final Pattern tableHeaderPattern) {
         while (scanner.hasNextLine()) {
             final String line = cleanUpLine(scanner.nextLine());
-            if (tableHeaderPattern.matcher(line).matches()) {
+            if (matches(line, tableHeaderPattern)) {
                 return line;
             }
         }
@@ -381,7 +381,7 @@ public final class ChessDataParser {
             final List<PlayerHistory> playerHistories = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 final String line = cleanUpLine(scanner.nextLine());
-                if (!GAMES_ENTRY_LINE_PATTERN.matcher(line).matches()) {
+                if (!matches(line, GAMES_ENTRY_LINE_PATTERN)) {
                     break;
                 }
                 playerHistories.add(parseGamesOfPlayer(line, gameEntryIndices));
@@ -393,7 +393,7 @@ public final class ChessDataParser {
             final String[] headerEntries = tableHeader.split(";");
             final List<Integer> gameEntryIndices = new ArrayList<>();
             for (int i = 0, headerEntriesLength = headerEntries.length; i < headerEntriesLength; i++) {
-                if (GAMES_ENTRY_HEADER_PATTERN.matcher(headerEntries[i]).matches()) {
+                if (matches(headerEntries[i], GAMES_ENTRY_HEADER_PATTERN)) {
                     gameEntryIndices.add(i);
                 }
             }
@@ -409,16 +409,16 @@ public final class ChessDataParser {
             boolean isWhiteNextGame = false;
             for (final Integer gameEntryIndex : gameEntryIndices) {
                 final String entry = lineEntries[gameEntryIndex];
-                if (NORMAL_GAME_PATTERN.matcher(entry).matches()) {
+                if (matches(entry, NORMAL_GAME_PATTERN)) {
                     final int opponentStartingRank = parseOpponentStartingRank(entry);
                     final boolean isWhite = isWhite(entry);
                     final GameResult result = parseResult(entry);
                     games.add(new Game(opponentStartingRank, isWhite, result));
-                } else if (FORFEIT_GAME_PATTERN.matcher(entry).matches()) {
+                } else if (matches(entry, FORFEIT_GAME_PATTERN)) {
                     ++pointsByForfeit;
-                } else if (BYE_GAME_PATTERN.matcher(entry).matches()) {
+                } else if (matches(entry, BYE_GAME_PATTERN)) {
                     hasReceivedBye = true;
-                } else if (FUTURE_GAME_PATTERN.matcher(entry).matches()) {
+                } else if (matches(entry, FUTURE_GAME_PATTERN)) {
                     nextOpponentStartingRank = parseOpponentStartingRank(entry);
                     isWhiteNextGame = isWhite(entry);
                 }
