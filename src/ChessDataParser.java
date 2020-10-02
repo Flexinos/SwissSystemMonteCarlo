@@ -118,17 +118,6 @@ public final class ChessDataParser {
         }
     }
 
-    private static int getRound(final CharSequence inputLink) {
-        try {
-            return Integer.parseInt(ROUND_PATTERN.matcher(inputLink).replaceFirst("$1"));
-        } catch (final NumberFormatException e) {
-            System.out.println("Could not get the round from link: " + inputLink + System.lineSeparator() +
-                    "Make sure that the \"rd\" key in the link is set to a valid integer.");
-            System.exit(1);
-            return -1; // Unreachable, but required for compiling.
-        }
-    }
-
     private static Scanner prepareScanner(final URL link, final Pattern tableHeaderPattern) {
         final Scanner scanner = getScanner(link);
         advanceScannerToTableStart(scanner, tableHeaderPattern);
