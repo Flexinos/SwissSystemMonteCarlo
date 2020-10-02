@@ -23,7 +23,6 @@ public final class SimulatedPlayer {
         this.pastResults = new HashMap<>(participant.getPastResults());
         this.hasReceivedBye = participant.hasReceivedBye();
         this.pointsByForfeit = participant.getPointsByForfeit();
-        updateScores();
     }
 
     public boolean hasPlayedAgainst(final SimulatedPlayer simulatedPlayer) {

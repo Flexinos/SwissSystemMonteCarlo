@@ -50,6 +50,9 @@ public final class SimulatedTournament {
             }
             this.roundList.add(round);
         }
+        for (final SimulatedPlayer simulatedPlayer : this.simulatedPlayerList) {
+            simulatedPlayer.updateScores();
+        }
     }
 
     public void simulateTournament() {
