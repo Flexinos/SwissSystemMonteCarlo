@@ -52,12 +52,13 @@ public final class SimulatedPlayer {
 
     private void calculatePerformance() {
         boolean inverted = false;
-        float percentage = this.score / this.pastResults.size();
-        if (percentage < 0.5) {
-            percentage = 1 - percentage;
+        // TODO: make sure to prevent division by 0.
+        float percentage = this.score / (float) this.pastResults.size();
+        if (percentage < 0.5f) {
+            percentage = 1.0f - percentage;
             inverted = true;
         }
-        final int offset = switch ((int) (percentage * 100)) {
+        final int offset = switch ((int) (percentage * 100.0f)) {
             case 100 -> 800;
             case 99 -> 677;
             case 98 -> 589;
@@ -109,12 +110,12 @@ public final class SimulatedPlayer {
             case 52 -> 14;
             case 51 -> 7;
             case 50 -> 0;
-            default -> throw new IllegalStateException("Unexpected value: " + (int) (percentage * 100));
+            default -> throw new IllegalStateException("Unexpected value: " + (int) (percentage * 100.0f));
         };
         if (inverted) {
-            this.performanceRating = this.averageEloOpponents - offset;
+            this.performanceRating = this.averageEloOpponents - (float) offset;
         } else {
-            this.performanceRating = this.averageEloOpponents + offset;
+            this.performanceRating = this.averageEloOpponents + (float) offset;
         }
     }
 
@@ -123,7 +124,7 @@ public final class SimulatedPlayer {
         for (final Float result : this.pastResults.values()) {
             tmpSum += result;
         }
-        this.score = tmpSum + this.pointsByForfeit;
+        this.score = tmpSum + (float) this.pointsByForfeit;
     }
 
     private void updateBuchholz() {
