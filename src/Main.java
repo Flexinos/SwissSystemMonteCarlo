@@ -43,10 +43,10 @@ public final class Main {
         entireProcessTimer.printElapsedSecondsMessage(System.lineSeparator() + "Total runtime: ", "");
     }
 
-    private static Tournament createTournament() throws IOException {
+    private static Tournament createTournament() {
         return new Tournament(1,
-                ChessDataParser.getTournamentData("https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010"),
-                ChessDataParser.getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=9&turdet=YES&flag=NO"));
+                ChessDataParser.getTournamentData(
+                        "https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010"));
     }
 
     private static void simulateTournament(final Tournament tournament) throws InterruptedException {
