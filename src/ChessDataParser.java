@@ -82,14 +82,14 @@ public final class ChessDataParser {
     }
 
     private static URL buildStartingRankLink(final int tournamentNumber) {
-        return buildLinkFromValues(tournamentNumber, 0, ChessDataType.STARTING_RANK);
+        return buildLinkFromValues(tournamentNumber, ChessDataType.STARTING_RANK);
     }
 
     private static URL buildGamesLink(final int tournamentNumber) {
-        return buildLinkFromValues(tournamentNumber, 0, ChessDataType.GAMES);
+        return buildLinkFromValues(tournamentNumber, ChessDataType.GAMES);
     }
 
-    private static URL buildLinkFromValues(final int tournamentNumber, final int roundNumber, final ChessDataType type) {
+    private static URL buildLinkFromValues(final int tournamentNumber, final ChessDataType type) {
         final int art = switch (type) {
             case STARTING_RANK -> 0;
             case GAMES -> 5;
