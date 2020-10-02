@@ -48,6 +48,16 @@ public final class ChessDataParser {
         return participants;
     }
 
+    /**
+     * Combines the data from instances of the data classes PlayerData and PlayerHistory
+     * to create a new Participant. The two objects must describe the same player,
+     * otherwise the resulting Participant object will be useless.
+     * @param playerData A PlayerData object as returned by ParticipantUtilities.parseParticipantLine
+     *                   (called via ParticipantUtilities.getParticipantsData)
+     * @param playerHistory A playerHistory object as returned by GamesUtilities.parseGamesOfPlayer
+     *                      (called via GamesUtilities.parsePlayedGames)
+     * @return A Participant object containing the data of the two arguments.
+     */
     private static Participant createParticipant(final PlayerData playerData, final PlayerHistory playerHistory) {
         final Map<Integer, Float> pastResults = createPastResults(playerHistory.normalGames);
         return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
