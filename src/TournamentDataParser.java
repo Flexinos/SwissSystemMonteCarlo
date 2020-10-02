@@ -4,14 +4,14 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public final class ChessDataParser {
+public final class TournamentDataParser {
 
     private static final Pattern TOURNAMENT_NUMBER_PATTERN = Pattern.compile(".*tnr(\\d+).*");
     private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^>]*>");
     private static final Pattern CHARACTER_CODE_PATTERN = Pattern.compile("&[^;]*;");
 
     // Prevent instantiation
-    private ChessDataParser() {
+    private TournamentDataParser() {
     }
 
     public static List<Participant> getTournamentDataFromLink(final CharSequence inputLink) {
