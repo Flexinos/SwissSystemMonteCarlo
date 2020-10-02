@@ -20,15 +20,15 @@ public final class SimulatedTournament {
         for (final Participant participant : participants) {
             if (participant.getStartingRankNextOpponent() < 0) {
                 break;
-            }
-            if (participant.getStartingRankNextOpponent() == 0) {
+            } else if (participant.getStartingRankNextOpponent() == 0) {
                 this.simulatedPlayerList.get(participant.getStartingRank() - 1).giveBye();
-            }
-            if (participant.isWhiteNextGame()) {
+            } else if (participant.isWhiteNextGame()) {
                 round.add(new Pairing(this.simulatedPlayerList.get(participant.getStartingRank() - 1), this.simulatedPlayerList.get(participant.getStartingRankNextOpponent() - 1)));
             }
         }
-        this.roundList.add(round);
+        if (round.size() > 0) {
+            this.roundList.add(round);
+        }
         for (final Participant simulatedPlayer : this.simulatedPlayerList) {
             simulatedPlayer.updateScores();
         }
