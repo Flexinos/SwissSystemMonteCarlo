@@ -63,6 +63,12 @@ public final class TournamentDataParser {
                 playerHistory.nextOpponentStartingRank, playerHistory.isWhiteNextGame, playerHistory.hasReceivedBye);
     }
 
+    /**
+     * Given a player's games, this method creates a Map mapping the opponent's starting rank
+     * to the game's result.
+     * @param games An Iterable containing the games a player played in the tournament.
+     * @return A Map mapping the opponent's starting rank to the game's result.
+     */
     private static Map<Integer, Float> createPastResults(final Iterable<Game> games) {
         final Map<Integer, Float> pastResults = new HashMap<>();
         for (final Game game : games) {
@@ -105,6 +111,11 @@ public final class TournamentDataParser {
         }
     }
 
+    /**
+     * Extracts the tournament number from a link.
+     * @param inputLink A link to a tournament on chess-results.com
+     * @return The tournament number of the tournament
+     */
     private static int getTournamentNumber(final CharSequence inputLink) {
         try {
             return Integer.parseInt(TOURNAMENT_NUMBER_PATTERN.matcher(inputLink).replaceFirst("$1"));
@@ -137,6 +148,12 @@ public final class TournamentDataParser {
         return null;
     }
 
+    /**
+     * Removes HTML tags and character codes from a CharSequence.
+     * @param line The CharSequence to be cleaned
+     * @return The CharSequence without HTML tags and character codes.
+     * (Removes some non-ASCII letters from names.)
+     */
     private static String cleanUpLine(final CharSequence line) {
         // Remove HTML tags and numerical character code points.
         return CHARACTER_CODE_PATTERN.matcher(
@@ -144,6 +161,12 @@ public final class TournamentDataParser {
                 .replaceAll("");
     }
 
+    /**
+     * Check if the given line matches the given pattern.
+     * @param line The line to be checked
+     * @param pattern The pattern against which the line should be matched
+     * @return true if a match is found, false otherwise
+     */
     private static boolean matches(final CharSequence line, final Pattern pattern) {
         return pattern.matcher(line).matches();
     }
