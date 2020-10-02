@@ -513,9 +513,6 @@ public final class ChessDataParser {
                 } else if (FUTURE_GAME_PATTERN.matcher(entry).matches()) {
                     nextOpponentStartingRank = parseOpponentStartingRank(entry);
                     isWhiteNextGame = isWhite(entry);
-                } else {
-                    System.out.println("Unknown type of game entry: " + entry);
-                    System.exit(1);
                 }
             }
             return new PlayerHistory(games, hasReceivedBye, pointsByForfeit, nextOpponentStartingRank, isWhiteNextGame);
