@@ -14,10 +14,20 @@ public final class TournamentDataParser {
     private TournamentDataParser() {
     }
 
+    /**
+     * Generates a list of Participants from a link to a tournament on chess-results.com.
+     * @param inputLink A link to a tournament on chess-results.com.
+     * @return A List of Participants who play in the given tournament.
+     */
     public static List<Participant> getTournamentDataFromLink(final CharSequence inputLink) {
         return getTournamentDataFromTournamentNumber(getTournamentNumber(inputLink));
     }
 
+    /**
+     * Generates a list of Participants from a tournament number on chess-results.com.
+     * @param tournamentNumber The number of the tournament on chess-results.com as seen in the link.
+     * @return A List of Participants who play in the given tournament.
+     */
     public static List<Participant> getTournamentDataFromTournamentNumber(final int tournamentNumber) {
         final List<PlayerData> participantsData = ParticipantUtilities.getParticipantsData(buildStartingRankLink(tournamentNumber));
         final List<PlayerHistory> playerHistories = GamesUtilities.parsePlayedGames(buildGamesLink(tournamentNumber));
