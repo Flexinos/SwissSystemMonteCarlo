@@ -67,7 +67,7 @@ public final class SimulatedTournament {
     }
 
     public void analyseThisSimulatedTournament() {
-        //simulatedPlayerList.forEach(SimulatedPlayer::updateTiebreaks);
+        this.simulatedPlayerList.forEach(SimulatedPlayer::updateScores);
         this.simulatedPlayerList.sort(SimulatedPlayer::compareToByScoreThenTieBreak);
         IntStream.range(0, 3).mapToObj((int i) -> this.simulatedPlayerList.get(i).getParticipant()).forEach(Main::addTopThreeRanking);
         for (int i = 0; i < this.simulatedPlayerList.size(); i++) {
