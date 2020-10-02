@@ -45,7 +45,7 @@ public final class Main {
 
     private static Tournament createTournament() {
         return new Tournament(numberOfRounds,
-                ChessDataParser.getTournamentData(
+                ChessDataParser.getTournamentDataFromLink(
                         "https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010"));
     }
 

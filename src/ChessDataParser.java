@@ -22,14 +22,14 @@ public final class ChessDataParser {
         //assert test1.equals(test2);
         //assert test1.equals(test3);
         //final List<Participant> participantTest1 = getParticipants("https://chess-results.com/tnr507448.aspx?lan=0&art=0&turdet=NO&flag=NO&prt=7");
-        getTournamentData(507448);
+        //getTournamentDataFromTournamentNumber(507448);
     }
 
-    public static List<Participant> getTournamentData(final CharSequence inputLink) {
-        return getTournamentData(getTournamentNumber(inputLink));
+    public static List<Participant> getTournamentDataFromLink(final CharSequence inputLink) {
+        return getTournamentDataFromTournamentNumber(getTournamentNumber(inputLink));
     }
 
-    public static List<Participant> getTournamentData(final int tournamentNumber) {
+    public static List<Participant> getTournamentDataFromTournamentNumber(final int tournamentNumber) {
         final List<PlayerData> participantsData = ParticipantUtilities.getParticipantsData(buildStartingRankLink(tournamentNumber));
         final List<PlayerHistory> playerHistories = GamesUtilities.parsePlayedGames(buildGamesLink(tournamentNumber));
         return createParticipants(participantsData, playerHistories);
