@@ -99,6 +99,10 @@ public final class Participant {
         }
     }
 
+    public void addRankToTable(final int rank) {
+        this.rankingTable[rank].increment();
+    }
+
     public int getStartingRank() {
         return this.startingRank;
     }
