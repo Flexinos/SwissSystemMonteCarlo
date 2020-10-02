@@ -56,8 +56,11 @@ public final class Participant {
                 participant.getAverageRank()
         ).map(String::valueOf).toArray(String[]::new)).collect(Collectors.toList());
         final int[] columnLengths = getColumnLengths(columnNames, rows);
+        printRowSeparator(columnLengths);
         printRow(columnNames, columnLengths, columnNamePaddings);
+        printRowSeparatorWithColumns(columnLengths);
         printAllRows(rows, columnLengths, participantFieldsPaddings);
+        printRowSeparator(columnLengths);
     }
 
     private static int[] getColumnLengths(final String[] columnNames, final Iterable<String[]> rows) {
@@ -85,8 +88,9 @@ public final class Participant {
     private static void printRow(final String[] row, final int[] fieldLengths, final Padding[] paddings) {
         assert row.length == fieldLengths.length;
         assert row.length == paddings.length;
+        System.out.print("|");
         for (int columnNumber = 0; columnNumber < row.length; ++columnNumber) {
-            System.out.printf("%" + paddingToString(paddings[columnNumber]) + fieldLengths[columnNumber] + "s  ", row[columnNumber]);
+            System.out.printf(" %" + paddingToString(paddings[columnNumber]) + fieldLengths[columnNumber] + "s |", row[columnNumber]);
         }
         System.out.println();
     }
@@ -97,6 +101,19 @@ public final class Participant {
         } else {
             return "";
         }
+    }
+
+    private static void printRowSeparator(final int[] columnLengths) {
+        final int rowLength = Arrays.stream(columnLengths).sum() + (3 * columnLengths.length);
+        System.out.println("-".repeat(rowLength + 1));
+    }
+
+    private static void printRowSeparatorWithColumns(final int[] columnLengths) {
+        System.out.print("|");
+        for (final int columnLength : columnLengths) {
+            System.out.print("-".repeat(columnLength + 2) + "|");
+        }
+        System.out.println();
     }
 
     public void addRankToTable(final int rank) {
