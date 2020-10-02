@@ -8,27 +8,6 @@ public final class SimulatedTournament {
     private final List<List<Pairing>> roundList;
     private final int roundsToBeSimulated;
 
-    public SimulatedTournament(final int roundsToBeSimulated, final Collection<Participant> participants, final Iterable<int[]> givenPairings) {
-        this.roundsToBeSimulated = roundsToBeSimulated;
-        this.simulatedPlayerList = new ArrayList<>(participants.size());
-        for (final Participant participant : participants) {
-            final SimulatedPlayer player = new SimulatedPlayer(participant, this.simulatedPlayerList);
-            this.simulatedPlayerList.add(player);
-        }
-        this.roundList = new ArrayList<>(this.roundsToBeSimulated);
-        if (givenPairings != null) {
-            final List<Pairing> round = new ArrayList<>();
-            for (final int[] givenPairing : givenPairings) {
-                if (givenPairing[1] == 0) {
-                    this.simulatedPlayerList.get(givenPairing[0] - 1).giveBye();
-                } else {
-                    round.add(new Pairing(this.simulatedPlayerList.get(givenPairing[0] - 1), this.simulatedPlayerList.get(givenPairing[1] - 1)));
-                }
-            }
-            this.roundList.add(round);
-        }
-    }
-
     public SimulatedTournament(final int roundsToBeSimulated, final Collection<Participant> participants) {
         this.roundsToBeSimulated = roundsToBeSimulated;
         this.simulatedPlayerList = new ArrayList<>(participants.size());
@@ -48,8 +27,8 @@ public final class SimulatedTournament {
             if (participant.isWhiteNextGame()) {
                 round.add(new Pairing(this.simulatedPlayerList.get(participant.getStartingRank() - 1), this.simulatedPlayerList.get(participant.getStartingRankNextOpponent() - 1)));
             }
-            this.roundList.add(round);
         }
+        this.roundList.add(round);
         for (final SimulatedPlayer simulatedPlayer : this.simulatedPlayerList) {
             simulatedPlayer.updateScores();
         }
