@@ -67,8 +67,8 @@ public final class Round {
             }
         }
         for (final Pairing pairings : provisionalPairings) {
-            pairedPlayers.add(pairings.getPlayer1());
-            pairedPlayers.add(pairings.getPlayer2());
+            pairedPlayers.add(pairings.getWhitePlayer());
+            pairedPlayers.add(pairings.getBlackPlayer());
         }
         unorderedPairings.addAll(provisionalPairings);
         return true;

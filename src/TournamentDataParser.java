@@ -4,33 +4,31 @@ import java.net.URL;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public final class ChessDataParser {
+public final class TournamentDataParser {
 
     private static final Pattern TOURNAMENT_NUMBER_PATTERN = Pattern.compile(".*tnr(\\d+).*");
-    private static final Pattern ROUND_PATTERN = Pattern.compile(".*rd=(\\d+).*");
     private static final Pattern HTML_TAG_PATTERN = Pattern.compile("<[^>]*>");
     private static final Pattern CHARACTER_CODE_PATTERN = Pattern.compile("&[^;]*;");
 
     // Prevent instantiation
-    private ChessDataParser() {
+    private TournamentDataParser() {
     }
 
-    // For testing
-    public static void main(final String[] args) {
-        //final List<int[]> test1 = getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=9&turdet=YES&flag=30&prt=7");
-        //final List<int[]> test2 = getPairings("https://chess-results.com/tnr507448.aspx?lan=0&art=2&rd=3&turdet=YES&flag=30&prt=7", 9);
-        //final List<int[]> test3 = getPairings(507448, 9);
-        //assert test1.equals(test2);
-        //assert test1.equals(test3);
-        //final List<Participant> participantTest1 = getParticipants("https://chess-results.com/tnr507448.aspx?lan=0&art=0&turdet=NO&flag=NO&prt=7");
-        getTournamentData(507448);
+    /**
+     * Generates a list of Participants from a link to a tournament on chess-results.com.
+     * @param inputLink A link to a tournament on chess-results.com.
+     * @return A List of Participants who play in the given tournament.
+     */
+    public static List<Participant> getTournamentDataFromLink(final CharSequence inputLink) {
+        return getTournamentDataFromTournamentNumber(getTournamentNumber(inputLink));
     }
 
-    public static List<Participant> getTournamentData(final CharSequence inputLink) {
-        return getTournamentData(getTournamentNumber(inputLink));
-    }
-
-    public static List<Participant> getTournamentData(final int tournamentNumber) {
+    /**
+     * Generates a list of Participants from a tournament number on chess-results.com.
+     * @param tournamentNumber The number of the tournament on chess-results.com as seen in the link.
+     * @return A List of Participants who play in the given tournament.
+     */
+    public static List<Participant> getTournamentDataFromTournamentNumber(final int tournamentNumber) {
         final List<PlayerData> participantsData = ParticipantUtilities.getParticipantsData(buildStartingRankLink(tournamentNumber));
         final List<PlayerHistory> playerHistories = GamesUtilities.parsePlayedGames(buildGamesLink(tournamentNumber));
         return createParticipants(participantsData, playerHistories);
@@ -48,6 +46,16 @@ public final class ChessDataParser {
         return participants;
     }
 
+    /**
+     * Combines the data from instances of the data classes PlayerData and PlayerHistory
+     * to create a new Participant. The two objects must describe the same player,
+     * otherwise the resulting Participant object will be useless.
+     * @param playerData A PlayerData object as returned by ParticipantUtilities.parseParticipantLine
+     *                   (called via ParticipantUtilities.getParticipantsData)
+     * @param playerHistory A playerHistory object as returned by GamesUtilities.parseGamesOfPlayer
+     *                      (called via GamesUtilities.parsePlayedGames)
+     * @return A Participant object containing the data of the two arguments.
+     */
     private static Participant createParticipant(final PlayerData playerData, final PlayerHistory playerHistory) {
         final Map<Integer, Float> pastResults = createPastResults(playerHistory.normalGames);
         return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
@@ -55,6 +63,12 @@ public final class ChessDataParser {
                 playerHistory.nextOpponentStartingRank, playerHistory.isWhiteNextGame, playerHistory.hasReceivedBye);
     }
 
+    /**
+     * Given a player's games, this method creates a Map mapping the opponent's starting rank
+     * to the game's result.
+     * @param games An Iterable containing the games a player played in the tournament.
+     * @return A Map mapping the opponent's starting rank to the game's result.
+     */
     private static Map<Integer, Float> createPastResults(final Iterable<Game> games) {
         final Map<Integer, Float> pastResults = new HashMap<>();
         for (final Game game : games) {
@@ -71,50 +85,22 @@ public final class ChessDataParser {
         };
     }
 
-    // inputLink should contain a valid link to a tournament on chess-results.com,
-    // from a page which shows the desired round.
-    public static List<int[]> getPairings(final CharSequence inputLink) {
-        return PairingUtilities.getPairings(buildLinkFromString(inputLink, ChessDataType.PAIRING));
-    }
-
-    private static URL buildLinkFromString(final CharSequence inputLink, final ChessDataType type) {
-        final int tournamentNumber = getTournamentNumber(inputLink);
-        final int round = getRound(inputLink);
-        return buildLinkFromValues(tournamentNumber, round, type);
-    }
-
     private static URL buildStartingRankLink(final int tournamentNumber) {
-        return buildLinkFromValues(tournamentNumber, 0, ChessDataType.STARTING_RANK);
+        return buildLinkFromValues(tournamentNumber, ChessDataType.STARTING_RANK);
     }
 
     private static URL buildGamesLink(final int tournamentNumber) {
-        return buildLinkFromValues(tournamentNumber, 0, ChessDataType.GAMES);
+        return buildLinkFromValues(tournamentNumber, ChessDataType.GAMES);
     }
 
-    private static URL buildLinkFromValues(final int tournamentNumber, final int roundNumber, final ChessDataType type) {
-        final int art;
-        final boolean shouldContainRound;
-        switch (type) {
-            case STARTING_RANK -> {
-                art = 0;
-                shouldContainRound = false;
-            }
-            case PAIRING -> {
-                art = 2;
-                shouldContainRound = true;
-            }
-            case GAMES -> {
-                art = 5;
-                shouldContainRound = false;
-            }
-            default -> throw new IllegalArgumentException("Provided ChessDataType is not supported");
-        }
+    private static URL buildLinkFromValues(final int tournamentNumber, final ChessDataType type) {
+        final int art = switch (type) {
+            case STARTING_RANK -> 0;
+            case GAMES -> 5;
+        };
         final StringBuilder stringBuilder = new StringBuilder("https://chess-results.com/tnr")
-                .append(tournamentNumber).append(".aspx?lan=0&art=").append(art);
-        if (shouldContainRound) {
-            stringBuilder.append("&rd=").append(roundNumber);
-        }
-        stringBuilder.append("&turdet=NO&flag=NO&prt=7&zeilen=99999");
+                .append(tournamentNumber).append(".aspx?lan=0&art=").append(art)
+                .append("&turdet=NO&flag=NO&prt=7&zeilen=99999");
         try {
             return new URL(stringBuilder.toString());
         } catch (final MalformedURLException e) {
@@ -125,6 +111,11 @@ public final class ChessDataParser {
         }
     }
 
+    /**
+     * Extracts the tournament number from a link.
+     * @param inputLink A link to a tournament on chess-results.com
+     * @return The tournament number of the tournament
+     */
     private static int getTournamentNumber(final CharSequence inputLink) {
         try {
             return Integer.parseInt(TOURNAMENT_NUMBER_PATTERN.matcher(inputLink).replaceFirst("$1"));
@@ -134,23 +125,6 @@ public final class ChessDataParser {
             System.exit(1);
             return -1; // Unreachable, but required for compiling.
         }
-    }
-
-    private static int getRound(final CharSequence inputLink) {
-        try {
-            return Integer.parseInt(ROUND_PATTERN.matcher(inputLink).replaceFirst("$1"));
-        } catch (final NumberFormatException e) {
-            System.out.println("Could not get the round from link: " + inputLink + System.lineSeparator() +
-                    "Make sure that the \"rd\" key in the link is set to a valid integer.");
-            System.exit(1);
-            return -1; // Unreachable, but required for compiling.
-        }
-    }
-
-    private static Scanner prepareScanner(final URL link, final Pattern tableHeaderPattern) {
-        final Scanner scanner = getScanner(link);
-        advanceScannerToTableStart(scanner, tableHeaderPattern);
-        return scanner;
     }
 
     private static Scanner getScanner(final URL link) {
@@ -167,23 +141,37 @@ public final class ChessDataParser {
     private static String advanceScannerToTableStart(final Scanner scanner, final Pattern tableHeaderPattern) {
         while (scanner.hasNextLine()) {
             final String line = cleanUpLine(scanner.nextLine());
-            if (tableHeaderPattern.matcher(line).matches()) {
+            if (matches(line, tableHeaderPattern)) {
                 return line;
             }
         }
         return null;
     }
 
+    /**
+     * Removes HTML tags and character codes from a CharSequence.
+     * @param line The CharSequence to be cleaned
+     * @return The CharSequence without HTML tags and character codes.
+     * (Removes some non-ASCII letters from names.)
+     */
     private static String cleanUpLine(final CharSequence line) {
         // Remove HTML tags and numerical character code points.
-        return CHARACTER_CODE_PATTERN.matcher(HTML_TAG_PATTERN.matcher(line).replaceAll("")).replaceAll("");
+        return CHARACTER_CODE_PATTERN.matcher(
+                HTML_TAG_PATTERN.matcher(line).replaceAll(""))
+                .replaceAll("");
     }
 
+    /**
+     * Check if the given line matches the given pattern.
+     * @param line The line to be checked
+     * @param pattern The pattern against which the line should be matched
+     * @return true if a match is found, false otherwise
+     */
     private static boolean matches(final CharSequence line, final Pattern pattern) {
         return pattern.matcher(line).matches();
     }
 
-    private enum ChessDataType {STARTING_RANK, PAIRING, GAMES}
+    private enum ChessDataType {STARTING_RANK, GAMES}
 
     private static class ParticipantUtilities {
         private static final Pattern STARTING_RANK_TABLE_HEADER_PATTERN = Pattern.compile("^Nr\\.;Name;.*");
@@ -254,7 +242,7 @@ public final class ChessDataParser {
         }
 
         private static List<PlayerData> getParticipantsData(final URL link) {
-            final Scanner scanner = getScanner(link);//prepareScanner(link, STARTING_RANK_TABLE_HEADER_PATTERN);
+            final Scanner scanner = getScanner(link);
             final String tableHeader = advanceScannerToTableStart(scanner, STARTING_RANK_TABLE_HEADER_PATTERN);
             if (tableHeader == null) {
                 System.out.println("Could not find table header.");
@@ -390,64 +378,6 @@ public final class ChessDataParser {
         }
     }
 
-    private static class PairingUtilities {
-        private static final Pattern PAIRING_LINE_PATTERN = Pattern.compile("^\\d.*");
-        private static final Pattern NON_DIGIT_PATTERN = Pattern.compile("\\D");
-        private static final Pattern FOUR_DIGIT_ELO_START_PATTERN = Pattern.compile("^[12]\\d*");
-        private static final Pattern PAIRING_TABLE_HEADER_PATTERN = Pattern.compile("^Br\\.;Nr\\.;Name;.*");
-
-        private static List<int[]> getPairings(final URL link) {
-            final Scanner scanner = prepareScanner(link, PAIRING_TABLE_HEADER_PATTERN);
-            final List<int[]> pairings = new ArrayList<>();
-            while (scanner.hasNextLine()) {
-                final String line = cleanUpLine(scanner.nextLine());
-                if (!matches(line, PAIRING_LINE_PATTERN)) {
-                    break;
-                }
-                final int[] pairing = parsePairingLine(line);
-                // "nicht ausgelost" pairings return null and should not be added to the list.
-                if (pairing != null) {
-                    pairings.add(pairing);
-                }
-            }
-            return pairings;
-        }
-
-        private static int[] parsePairingLine(final String line) {
-            final String[] lineEntries = line.split(";");
-            // White's starting rank and title are not separated.
-            // Only using the digits in the string hopefully solves this issue.
-            final int whiteStartingRank = Integer.parseInt(NON_DIGIT_PATTERN.matcher(lineEntries[1]).replaceAll(""));
-            final String lastEntry = lineEntries[lineEntries.length - 1];
-            final int blackStartingRank;
-            if (lastEntry.equals("spielfrei")) {
-                blackStartingRank = 0;
-            } else if (lastEntry.equals("nicht ausgelost")) {
-                // Pairing will not be returned.
-                return null;
-            } else {
-                // In some cases separators are missing.
-                // Only using the digits in the string hopefully solves this issue.
-                final String lastEntryNumbersOnly = NON_DIGIT_PATTERN.matcher(lastEntry).replaceAll("");
-                final String blackStartingRankString;
-                // The input data has no separator between black elo and black starting rank,
-                // so this is necessary.
-                if (lastEntryNumbersOnly.startsWith("0")) {
-                    // Elo is zero.
-                    blackStartingRankString = lastEntryNumbersOnly.substring(1);
-                } else if (FOUR_DIGIT_ELO_START_PATTERN.matcher(lastEntryNumbersOnly).matches()) {
-                    // Elo has four digits.
-                    blackStartingRankString = lastEntryNumbersOnly.substring(4);
-                } else {
-                    // Elo has three digits.
-                    blackStartingRankString = lastEntryNumbersOnly.substring(3);
-                }
-                blackStartingRank = Integer.parseInt(blackStartingRankString);
-            }
-            return new int[]{whiteStartingRank, blackStartingRank};
-        }
-    }
-
     private static class GamesUtilities {
         private static final Pattern GAMES_TABLE_HEADER_PATTERN = Pattern.compile("^Nr\\.;?Name;.*");
         private static final Pattern GAMES_ENTRY_HEADER_PATTERN = Pattern.compile("\\d+\\.Rd");
@@ -473,7 +403,7 @@ public final class ChessDataParser {
             final List<PlayerHistory> playerHistories = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 final String line = cleanUpLine(scanner.nextLine());
-                if (!GAMES_ENTRY_LINE_PATTERN.matcher(line).matches()) {
+                if (!matches(line, GAMES_ENTRY_LINE_PATTERN)) {
                     break;
                 }
                 playerHistories.add(parseGamesOfPlayer(line, gameEntryIndices));
@@ -485,7 +415,7 @@ public final class ChessDataParser {
             final String[] headerEntries = tableHeader.split(";");
             final List<Integer> gameEntryIndices = new ArrayList<>();
             for (int i = 0, headerEntriesLength = headerEntries.length; i < headerEntriesLength; i++) {
-                if (GAMES_ENTRY_HEADER_PATTERN.matcher(headerEntries[i]).matches()) {
+                if (matches(headerEntries[i], GAMES_ENTRY_HEADER_PATTERN)) {
                     gameEntryIndices.add(i);
                 }
             }
@@ -501,16 +431,16 @@ public final class ChessDataParser {
             boolean isWhiteNextGame = false;
             for (final Integer gameEntryIndex : gameEntryIndices) {
                 final String entry = lineEntries[gameEntryIndex];
-                if (NORMAL_GAME_PATTERN.matcher(entry).matches()) {
+                if (matches(entry, NORMAL_GAME_PATTERN)) {
                     final int opponentStartingRank = parseOpponentStartingRank(entry);
                     final boolean isWhite = isWhite(entry);
                     final GameResult result = parseResult(entry);
                     games.add(new Game(opponentStartingRank, isWhite, result));
-                } else if (FORFEIT_GAME_PATTERN.matcher(entry).matches()) {
+                } else if (matches(entry, FORFEIT_GAME_PATTERN)) {
                     ++pointsByForfeit;
-                } else if (BYE_GAME_PATTERN.matcher(entry).matches()) {
+                } else if (matches(entry, BYE_GAME_PATTERN)) {
                     hasReceivedBye = true;
-                } else if (FUTURE_GAME_PATTERN.matcher(entry).matches()) {
+                } else if (matches(entry, FUTURE_GAME_PATTERN)) {
                     nextOpponentStartingRank = parseOpponentStartingRank(entry);
                     isWhiteNextGame = isWhite(entry);
                 }
