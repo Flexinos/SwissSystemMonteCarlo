@@ -22,31 +22,59 @@ public final class ChessDataParser {
         //final List<int[]> test3 = getPairings(507448, 9);
         //assert test1.equals(test2);
         //assert test1.equals(test3);
-        final List<Participant> participantTest1 = getParticipants("https://chess-results.com/tnr507448.aspx?lan=0&art=0&turdet=NO&flag=NO&prt=7");
+        //final List<Participant> participantTest1 = getParticipants("https://chess-results.com/tnr507448.aspx?lan=0&art=0&turdet=NO&flag=NO&prt=7");
+        getTournamentData(507448);
     }
 
-    public static List<Participant> getParticipants(final CharSequence inputLink) {
-        return ParticipantUtilities.getParticipants(buildStartingRankLink(getTournamentNumber(inputLink)));
+    public static List<Participant> getTournamentData(final CharSequence inputLink) {
+        return getTournamentData(getTournamentNumber(inputLink));
     }
 
-    public static List<Participant> getParticipants(final int tournamentNumber) {
-        return ParticipantUtilities.getParticipants(buildStartingRankLink(tournamentNumber));
+    public static List<Participant> getTournamentData(final int tournamentNumber) {
+        final List<PlayerData> participantsData = ParticipantUtilities.getParticipantsData(buildStartingRankLink(tournamentNumber));
+        final List<PlayerHistory> playerHistories = GamesUtilities.parsePlayedGames(buildGamesLink(tournamentNumber));
+        return createParticipants(participantsData, playerHistories);
+    }
+
+    private static List<Participant> createParticipants(final List<PlayerData> playersData, final List<PlayerHistory> playerHistories) {
+        if (playersData.size() != playerHistories.size()) {
+            System.out.println("Number of entries from art 0 and art 5 does not match");
+            System.exit(1);
+        }
+        final List<Participant> participants = new ArrayList<>();
+        for (int playerIndex = 0; playerIndex < playersData.size(); ++playerIndex) {
+            participants.add(createParticipant(playersData.get(playerIndex), playerHistories.get(playerIndex)));
+        }
+        return participants;
+    }
+
+    private static Participant createParticipant(final PlayerData playerData, final PlayerHistory playerHistory) {
+        final Map<Integer, Float> pastResults = createPastResults(playerHistory.normalGames);
+        return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
+                playerData.elo, playerData.type, playerData.isFemale, pastResults, playerHistory.pointsByForfeit,
+                playerHistory.nextOpponentStartingRank, playerHistory.isWhiteNextGame, playerHistory.hasReceivedBye);
+    }
+
+    private static Map<Integer, Float> createPastResults(final Iterable<Game> games) {
+        final Map<Integer, Float> pastResults = new HashMap<>();
+        for (final Game game : games) {
+            pastResults.put(game.opponentStartingRank, gameResultToFloat(game.result));
+        }
+        return pastResults;
+    }
+
+    private static Float gameResultToFloat(final GameResult gameResult) {
+        return switch (gameResult) {
+            case WON -> 1.0f;
+            case DRAW -> 0.5f;
+            default -> 0.0f;
+        };
     }
 
     // inputLink should contain a valid link to a tournament on chess-results.com,
     // from a page which shows the desired round.
     public static List<int[]> getPairings(final CharSequence inputLink) {
         return PairingUtilities.getPairings(buildLinkFromString(inputLink, ChessDataType.PAIRING));
-    }
-
-    // This method allows using any link from the tournament, the round in the link is ignored.
-    // The desired round is set via the method's argument.
-    public static List<int[]> getPairings(final CharSequence inputLink, final int round) {
-        return PairingUtilities.getPairings(buildLinkFromValues(getTournamentNumber(inputLink), round, ChessDataType.PAIRING));
-    }
-
-    public static List<int[]> getPairings(final int tournamentNumber, final int round) {
-        return PairingUtilities.getPairings(buildLinkFromValues(tournamentNumber, round, ChessDataType.PAIRING));
     }
 
     private static URL buildLinkFromString(final CharSequence inputLink, final ChessDataType type) {
@@ -57,6 +85,10 @@ public final class ChessDataParser {
 
     private static URL buildStartingRankLink(final int tournamentNumber) {
         return buildLinkFromValues(tournamentNumber, 0, ChessDataType.STARTING_RANK);
+    }
+
+    private static URL buildGamesLink(final int tournamentNumber) {
+        return buildLinkFromValues(tournamentNumber, 0, ChessDataType.GAMES);
     }
 
     private static URL buildLinkFromValues(final int tournamentNumber, final int roundNumber, final ChessDataType type) {
@@ -70,6 +102,10 @@ public final class ChessDataParser {
             case PAIRING -> {
                 art = 2;
                 shouldContainRound = true;
+            }
+            case GAMES -> {
+                art = 5;
+                shouldContainRound = false;
             }
             default -> throw new IllegalArgumentException("Provided ChessDataType is not supported");
         }
@@ -147,24 +183,24 @@ public final class ChessDataParser {
         return pattern.matcher(line).matches();
     }
 
-    private enum ChessDataType {STARTING_RANK, PAIRING}
+    private enum ChessDataType {STARTING_RANK, PAIRING, GAMES}
 
     private static class ParticipantUtilities {
         private static final Pattern STARTING_RANK_TABLE_HEADER_PATTERN = Pattern.compile("^Nr\\.;Name;.*");
         private static final Pattern NAME_NOT_SEPARATE_FROM_FIDE_ID_PATTERN = Pattern.compile("(\\d+[A-Z]*;[^\\d;]+)(\\d)");
 
-        private static Participant parseParticipantLine(final CharSequence line, final Map<ParticipantEntryType, Integer> fieldIndices) {
+        private static PlayerData parseParticipantLine(final CharSequence line, final Map<ParticipantEntryType, Integer> fieldIndices) {
             final String fixedLine = addMissingSeparatorAfterName(line);
             final String[] lineEntries = fixedLine.split(";");
-            final int rank = parseRank(lineEntries, fieldIndices);
+            final int startingRank = parseStartingRank(lineEntries, fieldIndices);
             final String title = parseTitle(lineEntries, fieldIndices);
             final String name = parseName(lineEntries, fieldIndices);
             final long fideId = parseFideId(lineEntries, fieldIndices);
             final String country = parseCountry(lineEntries, fieldIndices);
             final int elo = parseElo(lineEntries, fieldIndices);
-            final boolean sex = parseSex(lineEntries, fieldIndices);
+            final boolean isFemale = parseIsFemale(lineEntries, fieldIndices);
             final String type = parseType(lineEntries, fieldIndices);
-            return new Participant(rank, title, name, country, "", elo, type, sex, new HashMap<>());
+            return new PlayerData(startingRank, title, name, fideId, country, elo, isFemale, type);
         }
 
         private static final Pattern STARTING_RANK_BEFORE_LETTERS_PATTERN = Pattern.compile("Nr\\.");
@@ -217,7 +253,7 @@ public final class ChessDataParser {
             }
         }
 
-        private static List<Participant> getParticipants(final URL link) {
+        private static List<PlayerData> getParticipantsData(final URL link) {
             final Scanner scanner = getScanner(link);//prepareScanner(link, STARTING_RANK_TABLE_HEADER_PATTERN);
             final String tableHeader = advanceScannerToTableStart(scanner, STARTING_RANK_TABLE_HEADER_PATTERN);
             if (tableHeader == null) {
@@ -225,15 +261,15 @@ public final class ChessDataParser {
                 System.exit(1);
             }
             final Map<ParticipantEntryType, Integer> fieldIndices = parseTableStructure(tableHeader);
-            final List<Participant> participants = new ArrayList<>();
+            final List<PlayerData> participantsData = new ArrayList<>();
             while (scanner.hasNextLine()) {
                 final String line = cleanUpLine(scanner.nextLine());
                 if (line.isEmpty()) {
                     break;
                 }
-                participants.add(parseParticipantLine(line, fieldIndices));
+                participantsData.add(parseParticipantLine(line, fieldIndices));
             }
-            return participants;
+            return participantsData;
         }
 
         private static Map<ParticipantEntryType, Integer> parseTableStructure(final String tableHeader) {
@@ -284,7 +320,7 @@ public final class ChessDataParser {
             return NAME_NOT_SEPARATE_FROM_FIDE_ID_PATTERN.matcher(line).replaceFirst("$1;$2");
         }
 
-        private static int parseRank(final String[] lineEntries, final Map<ParticipantEntryType, Integer> fieldIndices) {
+        private static int parseStartingRank(final String[] lineEntries, final Map<ParticipantEntryType, Integer> fieldIndices) {
             try {
                 if (fieldIndices.containsKey(ParticipantEntryType.STARTING_RANK_BEFORE_LETTERS)) {
                     return EntryTypeUtilities.parseStartingRankBeforeLetters(
@@ -339,7 +375,7 @@ public final class ChessDataParser {
             return 0;
         }
 
-        private static boolean parseSex(final String[] lineEntries, final Map<ParticipantEntryType, Integer> fieldIndices) {
+        private static boolean parseIsFemale(final String[] lineEntries, final Map<ParticipantEntryType, Integer> fieldIndices) {
             if (fieldIndices.containsKey(ParticipantEntryType.SEX_AFTER_DIGITS)) {
                 return EntryTypeUtilities.parseSexAfterDigits(lineEntries[fieldIndices.get(ParticipantEntryType.SEX_AFTER_DIGITS)]);
             }
@@ -358,7 +394,7 @@ public final class ChessDataParser {
         private static final Pattern PAIRING_LINE_PATTERN = Pattern.compile("^\\d.*");
         private static final Pattern NON_DIGIT_PATTERN = Pattern.compile("\\D");
         private static final Pattern FOUR_DIGIT_ELO_START_PATTERN = Pattern.compile("^[12]\\d*");
-        private static final Pattern PAIRING_TABLE_HEADER_PATTERN = Pattern.compile("^Br.;Nr.;Name;.*");
+        private static final Pattern PAIRING_TABLE_HEADER_PATTERN = Pattern.compile("^Br\\.;Nr\\.;Name;.*");
 
         private static List<int[]> getPairings(final URL link) {
             final Scanner scanner = prepareScanner(link, PAIRING_TABLE_HEADER_PATTERN);
@@ -409,6 +445,150 @@ public final class ChessDataParser {
                 blackStartingRank = Integer.parseInt(blackStartingRankString);
             }
             return new int[]{whiteStartingRank, blackStartingRank};
+        }
+    }
+
+    private static class GamesUtilities {
+        private static final Pattern GAMES_TABLE_HEADER_PATTERN = Pattern.compile("^Nr\\.;?Name;.*");
+        private static final Pattern GAMES_ENTRY_HEADER_PATTERN = Pattern.compile("\\d+\\.Rd");
+        private static final Pattern GAMES_ENTRY_LINE_PATTERN = Pattern.compile("\\d+[A-Z]*;.*");
+
+        private static final Pattern NORMAL_GAME_PATTERN = Pattern.compile("\\d+[ws][01\u00BD]");
+        private static final Pattern FORFEIT_GAME_PATTERN = Pattern.compile("\\d+[ws]\\+");
+        private static final Pattern BYE_GAME_PATTERN = Pattern.compile("-1");
+        private static final Pattern FUTURE_GAME_PATTERN = Pattern.compile("\\d+[ws]");
+
+        private static final Pattern REMOVE_FOR_OPPONENT_PARSING_PATTERN = Pattern.compile("[ws][01\u00BD]?");
+        private static final Pattern REMOVE_FOR_RESULT_PARSING_PATTERN = Pattern.compile("\\d+[ws]");
+
+        // participants need to be sorted by ascending starting rank
+        private static List<PlayerHistory> parsePlayedGames(final URL link) {
+            final Scanner scanner = getScanner(link);
+            final String tableHeader = advanceScannerToTableStart(scanner, GAMES_TABLE_HEADER_PATTERN);
+            if (tableHeader == null) {
+                System.out.println("Could not find game table header. Check link " + link + " and GAMES_TABLE_HEADER_PATTERN.");
+                System.exit(1);
+            }
+            final List<Integer> gameEntryIndices = findGameEntryIndices(tableHeader);
+            final List<PlayerHistory> playerHistories = new ArrayList<>();
+            while (scanner.hasNextLine()) {
+                final String line = cleanUpLine(scanner.nextLine());
+                if (!GAMES_ENTRY_LINE_PATTERN.matcher(line).matches()) {
+                    break;
+                }
+                playerHistories.add(parseGamesOfPlayer(line, gameEntryIndices));
+            }
+            return playerHistories;
+        }
+
+        private static List<Integer> findGameEntryIndices(final String tableHeader) {
+            final String[] headerEntries = tableHeader.split(";");
+            final List<Integer> gameEntryIndices = new ArrayList<>();
+            for (int i = 0, headerEntriesLength = headerEntries.length; i < headerEntriesLength; i++) {
+                if (GAMES_ENTRY_HEADER_PATTERN.matcher(headerEntries[i]).matches()) {
+                    gameEntryIndices.add(i);
+                }
+            }
+            return gameEntryIndices;
+        }
+
+        private static PlayerHistory parseGamesOfPlayer(final String line, final Iterable<Integer> gameEntryIndices) {
+            final String[] lineEntries = line.split(";");
+            final List<Game> games = new ArrayList<>();
+            boolean hasReceivedBye = false;
+            int pointsByForfeit = 0;
+            int nextOpponentStartingRank = 0;
+            boolean isWhiteNextGame = false;
+            for (final Integer gameEntryIndex : gameEntryIndices) {
+                final String entry = lineEntries[gameEntryIndex];
+                if (NORMAL_GAME_PATTERN.matcher(entry).matches()) {
+                    final int opponentStartingRank = parseOpponentStartingRank(entry);
+                    final boolean isWhite = isWhite(entry);
+                    final GameResult result = parseResult(entry);
+                    games.add(new Game(opponentStartingRank, isWhite, result));
+                } else if (FORFEIT_GAME_PATTERN.matcher(entry).matches()) {
+                    ++pointsByForfeit;
+                } else if (BYE_GAME_PATTERN.matcher(entry).matches()) {
+                    hasReceivedBye = true;
+                } else if (FUTURE_GAME_PATTERN.matcher(entry).matches()) {
+                    nextOpponentStartingRank = parseOpponentStartingRank(entry);
+                    isWhiteNextGame = isWhite(entry);
+                } else {
+                    System.out.println("Unknown type of game entry: " + entry);
+                    System.exit(1);
+                }
+            }
+            return new PlayerHistory(games, hasReceivedBye, pointsByForfeit, nextOpponentStartingRank, isWhiteNextGame);
+        }
+        
+        private static int parseOpponentStartingRank(final CharSequence entry) {
+            return Integer.parseInt(REMOVE_FOR_OPPONENT_PARSING_PATTERN.matcher(entry).replaceFirst(""));
+        }
+
+        private static boolean isWhite(final String entry) {
+            return entry.contains("w");
+        }
+
+        private static GameResult parseResult(final CharSequence entry) {
+            return switch (REMOVE_FOR_RESULT_PARSING_PATTERN.matcher(entry).replaceFirst("")) {
+                case "1" -> GameResult.WON;
+                case "0" -> GameResult.LOST;
+                default -> GameResult.DRAW;
+            };
+        }
+    }
+
+    private static final class PlayerData {
+        private final int startingRank;
+        private final String title;
+        private final String name;
+        private final long fideId;
+        private final String country;
+        private final int elo;
+        private final boolean isFemale;
+        private final String type;
+
+        private PlayerData(final int startingRank, final String title, final String name, final long fideId,
+                           final String country, final int elo, final boolean isFemale, final String type) {
+            this.startingRank = startingRank;
+            this.title = title;
+            this.name = name;
+            this.fideId = fideId;
+            this.country = country;
+            this.elo = elo;
+            this.isFemale = isFemale;
+            this.type = type;
+        }
+    }
+
+    private static final class PlayerHistory {
+        private final List<Game> normalGames;
+        private final boolean hasReceivedBye;
+        private final int pointsByForfeit;
+        private final int nextOpponentStartingRank;
+        private final boolean isWhiteNextGame;
+
+        private PlayerHistory(final List<Game> normalGames, final boolean hasReceivedBye, final int pointsByForfeit,
+                              final int nextOpponentStartingRank, final boolean isWhiteNextGame) {
+            this.normalGames = normalGames;
+            this.hasReceivedBye = hasReceivedBye;
+            this.pointsByForfeit = pointsByForfeit;
+            this.nextOpponentStartingRank = nextOpponentStartingRank;
+            this.isWhiteNextGame = isWhiteNextGame;
+        }
+    }
+
+    private enum GameResult {WON, DRAW, LOST}
+
+    private static final class Game {
+        private final int opponentStartingRank;
+        private final boolean playerIsWhite;
+        private final GameResult result;
+
+        private Game(final int opponentStartingRank, final boolean playerIsWhite, final GameResult result) {
+            this.opponentStartingRank = opponentStartingRank;
+            this.playerIsWhite = playerIsWhite;
+            this.result = result;
         }
     }
 }
