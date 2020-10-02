@@ -154,6 +154,10 @@ public final class Participant {
         return this.elo;
     }
 
+    public String getName() {
+        return this.name;
+    }
+
     public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
         this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
     }
