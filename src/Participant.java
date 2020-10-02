@@ -190,6 +190,10 @@ public final class Participant {
         return this.pastResults.containsKey(simulatedPlayer.startingRank);
     }
 
+    public int getNumberOfTopThreeFinishes() {
+        return this.numberOfTopThreeFinishes;
+    }
+
     public int compareToByScoreThenTieBreak(final Participant p2) {
         for (int i = 0; i < Tournament.getRankingOrder().size(); i++) {
             final int result = switch (Tournament.getRankingOrder().get(i)) {

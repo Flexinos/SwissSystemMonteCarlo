@@ -3,14 +3,12 @@ import java.util.Collection;
 import java.util.List;
 
 public final class SimulatedTournament {
-    private final List<Participant> participantList;
     private final List<Participant> simulatedPlayerList;
     private final List<List<Pairing>> roundList;
     private final int roundsToBeSimulated;
 
     public SimulatedTournament(final int roundsToBeSimulated, final Collection<Participant> participants) {
         this.roundsToBeSimulated = roundsToBeSimulated;
-        this.participantList = new ArrayList<>(participants);
         this.simulatedPlayerList = new ArrayList<>(participants.size());
         for (final Participant participant : participants) {
             final Participant simulatedPlayer = Participant.copyOf(participant);
@@ -50,8 +48,8 @@ public final class SimulatedTournament {
     public void analyseThisSimulatedTournament() {
         this.simulatedPlayerList.forEach(Participant::updateScores);
         this.simulatedPlayerList.sort(Participant::compareToByScoreThenTieBreak);
-        for (int i1 = 0; i1 < 3; i1++) {
-            Main.addTopThreeRanking(this.participantList.get(this.simulatedPlayerList.get(i1).getStartingRank() - 1));
+        for (int i = 0; i < 3; i++) {
+            Main.addTopThreeRanking(this.simulatedPlayerList.get(i).getStartingRank());
         }
     }
 }

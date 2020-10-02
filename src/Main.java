@@ -17,7 +17,7 @@ public final class Main {
     public static final int minElo = 1000;
     public static final int maxElo = 2600;
     // End of configuration
-    private static final Map<Participant, LongAdder> topThreeCounter =
+    private static final Map<Integer, LongAdder> topThreeCounter =
             new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
     private static int finished_simulations = 0;
 
@@ -38,7 +38,7 @@ public final class Main {
         final Timer simulationsTimer = new Timer();
         simulateTournament(myTournament);
         simulationsTimer.printElapsedSecondsMessage("Simulation runtime: ", System.lineSeparator());
-        showResults();
+        showResults(myTournament);
         entireProcessTimer.printElapsedSecondsMessage(System.lineSeparator() + "Total runtime: ", "");
     }
 
@@ -58,9 +58,14 @@ public final class Main {
         pool.awaitTermination(1L, TimeUnit.DAYS);
     }
 
-    private static void showResults() {
-        topThreeCounter.forEach((Participant participant, LongAdder longAdder) -> participant.setNumberOfTopThreeFinishes(longAdder.intValue()));
-        final List<Participant> participantsWithTopThreeRanking = new ArrayList<>(topThreeCounter.keySet());
+    private static void showResults(final Tournament myTournament) {
+        topThreeCounter.forEach((Integer startingRank, LongAdder longAdder) -> myTournament.getParticipantList().get(startingRank - 1).setNumberOfTopThreeFinishes(longAdder.intValue()));
+        final List<Participant> participantsWithTopThreeRanking = new ArrayList<>();
+        for (final Participant participant : myTournament.getParticipantList()) {
+            if (participant.getNumberOfTopThreeFinishes() > 0) {
+                participantsWithTopThreeRanking.add(participant);
+            }
+        }
         participantsWithTopThreeRanking.sort(Participant::compareToByTopThreeFinishesDescending);
         Participant.printSimulationResults(participantsWithTopThreeRanking);
     }
@@ -71,8 +76,8 @@ public final class Main {
         }
     }
 
-    public static void addTopThreeRanking(final Participant p) {
-        topThreeCounter.computeIfAbsent(p, (Participant key) -> new LongAdder()).increment();
+    public static void addTopThreeRanking(final int startingRank) {
+        topThreeCounter.computeIfAbsent(startingRank, (Integer key) -> new LongAdder()).increment();
     }
 
     private static final class Timer {
