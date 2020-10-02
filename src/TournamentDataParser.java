@@ -242,7 +242,7 @@ public final class TournamentDataParser {
         }
 
         private static List<PlayerData> getParticipantsData(final URL link) {
-            final Scanner scanner = getScanner(link);//prepareScanner(link, STARTING_RANK_TABLE_HEADER_PATTERN);
+            final Scanner scanner = getScanner(link);
             final String tableHeader = advanceScannerToTableStart(scanner, STARTING_RANK_TABLE_HEADER_PATTERN);
             if (tableHeader == null) {
                 System.out.println("Could not find table header.");
