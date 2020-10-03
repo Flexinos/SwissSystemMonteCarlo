@@ -14,7 +14,6 @@ public final class Main {
     public static final int numberOfSimulations = 10000;
     public static final int numberOfConcurrentThreads = 6;
     // End of configuration
-
     private static final Map<Integer, LongAdder> topThreeCounter =
             new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
     private static int finished_simulations = 0;
@@ -32,6 +31,7 @@ public final class Main {
         // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
         LookupTable.createLookupTable(lookupTableFile);
         entireProcessTimer.printElapsedSecondsMessage("Time spent creating lookupTable: ", System.lineSeparator());
+        Participant.initializeLongadders();
         final Tournament myTournament = createTournament();
         final Timer simulationsTimer = new Timer();
         simulateTournament(myTournament);

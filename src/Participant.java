@@ -1,8 +1,11 @@
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.LongAdder;
 
 public final class Participant {
+    private static final LongAdder[][] rankings = new LongAdder[Main.numberOfParticipants][Main.numberOfParticipants];
     private final Map<Integer, Float> pastResults;
     private final String title;
     private final String name;
@@ -40,6 +43,18 @@ public final class Participant {
         this.hasReceivedBye = hasReceivedBye;
     }
 
+    public static Participant copyOf(final Participant participant) {
+        return new Participant(participant.startingRank, participant.title, participant.name,
+                participant.country, participant.elo, participant.type, participant.isFemale,
+                new HashMap<>(participant.getPastResults()), participant.pointsByForfeit,
+                participant.startingRankNextOpponent, participant.isWhiteNextGame,
+                participant.hasReceivedBye);
+    }
+
+    public static void addRanking(final int startingRank, final int finalRank) {
+        rankings[startingRank][finalRank].increment();
+    }
+
     public static boolean equalsCheckAllParsed(final Object obj1, final Object obj2) {
         if (obj1 == obj2) {
             return true;
@@ -67,12 +82,12 @@ public final class Participant {
                 participant1.hasReceivedBye == participant2.hasReceivedBye;
     }
 
-    public static Participant copyOf(final Participant participant) {
-        return new Participant(participant.startingRank, participant.title, participant.name,
-                participant.country, participant.elo, participant.type, participant.isFemale,
-                new HashMap<>(participant.getPastResults()), participant.pointsByForfeit,
-                participant.startingRankNextOpponent, participant.isWhiteNextGame,
-                participant.hasReceivedBye);
+    public static void initializeLongadders() {
+        for (int i = 0; i < Main.numberOfParticipants; i++) {
+            for (int j = 0; j < Main.numberOfParticipants; j++) {
+                rankings[i][j] = new LongAdder();
+            }
+        }
     }
 
     public int getStartingRank() {
@@ -89,10 +104,6 @@ public final class Participant {
 
     public String getName() {
         return this.name;
-    }
-
-    public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
-        this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
     }
 
     public Map<Integer, Float> getPastResults() {
@@ -129,6 +140,10 @@ public final class Participant {
 
     public int getNumberOfTopThreeFinishes() {
         return this.numberOfTopThreeFinishes;
+    }
+
+    public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
+        this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
     }
 
     public int compareToByScoreThenTieBreak(final Participant p2) {
@@ -296,7 +311,13 @@ public final class Participant {
     }
 
     public float getAverageRank() {
-        return -1.0f;
+        float sum = 0;
+        for (int i = 0, arrayLength = rankings[this.startingRank].length; i < arrayLength; i++) {
+            final LongAdder longAdder = rankings[this.startingRank][i];
+            sum += longAdder.floatValue() * (i + 1);
+        }
+
+        return sum / Main.numberOfSimulations;
     }
 
     public int compareToByEloDescending(final Participant p2) {

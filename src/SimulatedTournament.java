@@ -119,6 +119,9 @@ public final class SimulatedTournament {
         for (int i = 0; i < 3; i++) {
             Main.addTopThreeRanking(this.simulatedPlayerList.get(i).getStartingRank());
         }
+        for (int i = 0, simulatedPlayerListSize = this.simulatedPlayerList.size(); i < simulatedPlayerListSize; i++) {
+            Participant.addRanking(this.simulatedPlayerList.get(i).getStartingRank(), i);
+        }
     }
 
     private enum Padding {LEFT, RIGHT}
