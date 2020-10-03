@@ -28,7 +28,7 @@ public final class Participant {
     private float performanceRating;
     private int colorDifference = 0;
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye, final float score) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -41,6 +41,7 @@ public final class Participant {
         this.startingRankNextOpponent = startingRankNextOpponent;
         this.isWhiteNextGame = isWhiteNextGame;
         this.hasReceivedBye = hasReceivedBye;
+        this.score = score;
     }
 
     public static Participant copyOf(final Participant participant) {
@@ -48,7 +49,7 @@ public final class Participant {
                 participant.country, participant.elo, participant.type, participant.isFemale,
                 new HashMap<>(participant.getPastResults()), participant.pointsByForfeit,
                 participant.startingRankNextOpponent, participant.isWhiteNextGame,
-                participant.hasReceivedBye);
+                participant.hasReceivedBye, participant.score);
     }
 
     public static void addRanking(final int startingRank, final int finalRank) {
@@ -236,7 +237,7 @@ public final class Participant {
         }
     }
 
-    private void updateScore() {
+    void updateScore() {
         float tmpSum = 0.0f;
         for (final Float result : this.pastResults.values()) {
             tmpSum += result;

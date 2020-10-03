@@ -60,7 +60,7 @@ public final class TournamentDataParser {
         final Map<Integer, Float> pastResults = createPastResults(playerHistory.normalGames);
         return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
                 playerData.elo, playerData.type, playerData.isFemale, pastResults, playerHistory.pointsByForfeit,
-                playerHistory.nextOpponentStartingRank, playerHistory.isWhiteNextGame, playerHistory.hasReceivedBye);
+                playerHistory.nextOpponentStartingRank, playerHistory.isWhiteNextGame, playerHistory.hasReceivedBye, 0);
     }
 
     /**

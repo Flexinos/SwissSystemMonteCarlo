@@ -30,9 +30,6 @@ public final class SimulatedTournament {
         if (!round.isEmpty()) {
             this.roundList.add(round);
         }
-        for (final Participant simulatedPlayer : this.simulatedPlayerList) {
-            simulatedPlayer.updateScores();
-        }
     }
 
     // Customize the output of the simulation results here.
