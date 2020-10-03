@@ -11,7 +11,7 @@ public final class Main {
     // Variables for configuration
     public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 5;
-    public static final int numberOfSimulations = 10000;
+    public static final int numberOfSimulations = 100000;
     public static final int numberOfConcurrentThreads = 6;
     // End of configuration
     private static final Map<Integer, LongAdder> topThreeCounter =
@@ -41,9 +41,12 @@ public final class Main {
     }
 
     private static Tournament createTournament() {
-        return new Tournament(numberOfRounds,
-                TournamentDataParser.getTournamentDataFromLink(
-                        "https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010"));
+        final List<Participant> participants = TournamentDataParser.getTournamentDataFromLink(
+                "https://chess-results.com/tnr507448.aspx?lan=0&zeilen=0&art=1&rd=8&turdet=YES&flag=30&prt=4&excel=2010");
+        for (final Participant participant : participants) {
+            participant.updateScore();
+        }
+        return new Tournament(numberOfRounds, participants);
     }
 
     private static void simulateTournament(final Tournament tournament) throws InterruptedException {
