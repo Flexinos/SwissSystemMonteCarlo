@@ -16,7 +16,7 @@ public final class Main {
     // End of configuration
     private static final Map<Integer, LongAdder> topThreeCounter =
             new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
-    private static int finished_simulations = 0;
+    private static int finishedSimulationsCounter = 0;
 
     private Main() {
     }
@@ -73,7 +73,7 @@ public final class Main {
 
     public static int getSimulationTicket() {
         synchronized (Main.class) {
-            return ++finished_simulations;
+            return ++finishedSimulationsCounter;
         }
     }
 
