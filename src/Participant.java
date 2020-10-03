@@ -246,27 +246,21 @@ public final class Participant {
     }
 
     private void updateBuchholz() {
-        float tmpSum = 0.0f;
-        for (final Integer startingRankOpponent : this.pastResults.keySet()) {
-            tmpSum += this.simulatedPlayerList.get(startingRankOpponent - 1).score;
-        }
-        this.buchholz = tmpSum;
-    }
-
-    private void updateBuchholzCutOne() {
         if (this.pastResults.isEmpty()) {
+            this.buchholz = 0.0f;
             this.buchholzCutOne = 0.0f;
             return;
         }
-        float tmpBuchholz = 0.0f;
+        float buchholz = 0.0f;
         float lowestScore = Float.MAX_VALUE;
         for (final Integer startingRankOpponent : this.pastResults.keySet()) {
             if (this.simulatedPlayerList.get(startingRankOpponent - 1).score <= lowestScore) {
                 lowestScore = this.simulatedPlayerList.get(startingRankOpponent - 1).score;
             }
-            tmpBuchholz += this.simulatedPlayerList.get(startingRankOpponent - 1).score;
+            buchholz += this.simulatedPlayerList.get(startingRankOpponent - 1).score;
         }
-        this.buchholzCutOne = tmpBuchholz - lowestScore;
+        this.buchholz = buchholz;
+        this.buchholzCutOne = buchholz - lowestScore;
     }
 
     private void updateSonnenbornBerger() {
@@ -291,7 +285,6 @@ public final class Participant {
     public void updateScores() {
         updateScore();
         updateBuchholz();
-        updateBuchholzCutOne();
         updateAverageEloOpponents();
         updateSonnenbornBerger();
     }
