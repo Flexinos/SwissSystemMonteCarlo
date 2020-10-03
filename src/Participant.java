@@ -1,4 +1,3 @@
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -47,7 +46,7 @@ public final class Participant {
     public static Participant copyOf(final Participant participant) {
         return new Participant(participant.startingRank, participant.title, participant.name,
                 participant.country, participant.elo, participant.type, participant.isFemale,
-                participant.getPastResults(), participant.pointsByForfeit,
+                participant.pastResults, participant.pointsByForfeit,
                 participant.startingRankNextOpponent, participant.isWhiteNextGame,
                 participant.hasReceivedBye, participant.score);
     }
@@ -83,11 +82,21 @@ public final class Participant {
                 participant1.hasReceivedBye == participant2.hasReceivedBye;
     }
 
-    public static void initializeLongadders() {
+    public static void initializeLongAdders() {
         for (int i = 0; i < Main.numberOfParticipants; i++) {
             for (int j = 0; j < Main.numberOfParticipants; j++) {
                 rankings[i][j] = new LongAdder();
             }
+        }
+    }
+
+    public void addGame(final Participant opponent, final float result, final boolean isWhite) {
+        this.pastResults.put(opponent.startingRank, result);
+        this.score += result;
+        if (isWhite) {
+            this.colorDifference++;
+        } else {
+            this.colorDifference--;
         }
     }
 
@@ -107,20 +116,12 @@ public final class Participant {
         return this.name;
     }
 
-    public Map<Integer, Float> getPastResults() {
-        return Collections.unmodifiableMap(this.pastResults);
-    }
-
     public boolean hasReceivedBye() {
         return this.hasReceivedBye;
     }
 
     public int getStartingRankNextOpponent() {
         return this.startingRankNextOpponent;
-    }
-
-    public List<Participant> getSimulatedPlayerList() {
-        return Collections.unmodifiableList(this.simulatedPlayerList);
     }
 
     public void setSimulatedPlayerList(final List<Participant> simulatedPlayerList) {
@@ -145,27 +146,6 @@ public final class Participant {
 
     public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
         this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
-    }
-
-    public int compareToByScoreThenTieBreak(final Participant p2) {
-        for (int i = 0; i < Tournament.getRankingOrder().size(); i++) {
-            final int result = switch (Tournament.getRankingOrder().get(i)) {
-                case SCORE -> Float.compare(p2.score, this.score);
-                case BUCHHOLZ -> Float.compare(p2.buchholz, this.buchholz);
-                case BUCHHOLZ_CUT_ONE -> Float.compare(p2.buchholzCutOne, this.buchholzCutOne);
-                case AVERAGE_ELO_OPPONENTS -> Float.compare(p2.averageEloOpponents, this.averageEloOpponents);
-                case SONNENBORN_BERGER -> Float.compare(p2.score, this.sonnenbornBerger);
-            };
-            if (result != 0) {
-                return result;
-            }
-        }
-        return Integer.compare(p2.elo, this.elo);
-    }
-
-    public int compareToByScoreThenElo(final Participant p2) {
-        final int result = Float.compare(p2.score, this.score);
-        return (result != 0) ? result : Integer.compare(p2.elo, this.elo);
     }
 
     private void calculatePerformance() {
@@ -289,21 +269,6 @@ public final class Participant {
         updateSonnenbornBerger();
     }
 
-    public void addGame(final Participant opponent, final float result, final boolean isWhite) {
-        this.pastResults.put(opponent.startingRank, result);
-        this.score += result;
-        if (isWhite) {
-            this.colorDifference++;
-        } else {
-            this.colorDifference--;
-        }
-    }
-
-    public void giveBye() {
-        this.hasReceivedBye = true;
-        this.score += 1.0f;
-    }
-
     public float getAverageRank() {
         float sum = 0;
         for (int i = 0, arrayLength = rankings[this.startingRank].length; i < arrayLength; i++) {
@@ -314,7 +279,33 @@ public final class Participant {
         return sum / Main.numberOfSimulations;
     }
 
+    public void giveBye() {
+        this.hasReceivedBye = true;
+        this.score += 1.0f;
+    }
+
     public int compareToByEloDescending(final Participant p2) {
+        return Integer.compare(p2.elo, this.elo);
+    }
+
+    public int compareToByScoreThenElo(final Participant p2) {
+        final int result = Float.compare(p2.score, this.score);
+        return (result != 0) ? result : Integer.compare(p2.elo, this.elo);
+    }
+
+    public int compareToByScoreThenTieBreak(final Participant p2) {
+        for (int i = 0; i < Tournament.getRankingOrder().size(); i++) {
+            final int result = switch (Tournament.getRankingOrder().get(i)) {
+                case SCORE -> Float.compare(p2.score, this.score);
+                case BUCHHOLZ -> Float.compare(p2.buchholz, this.buchholz);
+                case BUCHHOLZ_CUT_ONE -> Float.compare(p2.buchholzCutOne, this.buchholzCutOne);
+                case AVERAGE_ELO_OPPONENTS -> Float.compare(p2.averageEloOpponents, this.averageEloOpponents);
+                case SONNENBORN_BERGER -> Float.compare(p2.score, this.sonnenbornBerger);
+            };
+            if (result != 0) {
+                return result;
+            }
+        }
         return Integer.compare(p2.elo, this.elo);
     }
 
