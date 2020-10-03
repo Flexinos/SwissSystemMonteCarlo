@@ -47,7 +47,7 @@ public final class Participant {
     public static Participant copyOf(final Participant participant) {
         return new Participant(participant.startingRank, participant.title, participant.name,
                 participant.country, participant.elo, participant.type, participant.isFemale,
-                new HashMap<>(participant.getPastResults()), participant.pointsByForfeit,
+                participant.getPastResults(), participant.pointsByForfeit,
                 participant.startingRankNextOpponent, participant.isWhiteNextGame,
                 participant.hasReceivedBye, participant.score);
     }
