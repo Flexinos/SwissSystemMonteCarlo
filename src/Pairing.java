@@ -57,19 +57,6 @@ public final class Pairing {
         }
     }
 
-    @Override
-    public String toString() {
-        if (this.result == ResultOfGame.WHITE_WIN) {
-            return this.whitePlayer + "1-0 " + this.blackPlayer;
-        } else if (this.result == ResultOfGame.DRAW) {
-            return this.whitePlayer + "0.5-0.5 " + this.blackPlayer;
-        } else if (this.result == ResultOfGame.BLACK_WIN) {
-            return this.whitePlayer + "0-1 " + this.blackPlayer;
-        } else {
-            return this.whitePlayer + " 1 " + "spielfrei";
-        }
-    }
-
     private enum ResultOfGame {
         WHITE_WIN, DRAW, BLACK_WIN
     }
