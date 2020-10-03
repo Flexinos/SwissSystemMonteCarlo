@@ -1,7 +1,7 @@
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.LongAdder;
 
 public final class Participant {
@@ -36,7 +36,7 @@ public final class Participant {
         this.elo = elo;
         this.type = type;
         this.isFemale = isFemale;
-        this.pastResults = new HashMap<>(pastResults);
+        this.pastResults = new TreeMap<>(pastResults);
         this.pointsByForfeit = pointsByForfeit;
         this.startingRankNextOpponent = startingRankNextOpponent;
         this.isWhiteNextGame = isWhiteNextGame;

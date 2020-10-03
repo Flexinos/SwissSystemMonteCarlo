@@ -70,7 +70,7 @@ public final class TournamentDataParser {
      * @return A Map mapping the opponent's starting rank to the game's result.
      */
     private static Map<Integer, Float> createPastResults(final Iterable<Game> games) {
-        final Map<Integer, Float> pastResults = new HashMap<>();
+        final Map<Integer, Float> pastResults = new TreeMap<>();
         for (final Game game : games) {
             pastResults.put(game.opponentStartingRank, gameResultToFloat(game.result));
         }
