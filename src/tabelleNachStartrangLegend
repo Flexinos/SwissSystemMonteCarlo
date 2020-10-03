@@ -1,4 +1,0 @@
--1 -> spielfrei ... giveBye()
--0 -> nicht ausgelost ... ignoriern
-80w- -> spieler erschien nicht ... ignorieren
-17w+ -> gegner erschien nicht ... spieler erhaelt einen punkt, rest ignorieren
