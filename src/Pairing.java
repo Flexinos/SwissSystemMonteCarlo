@@ -11,8 +11,7 @@ public final class Pairing {
 
     public static boolean canBePaired(final Participant player1, final Participant player2) {
         if (player1.equals(player2)) {
-            System.out.println("playing against oneself");
-            return false;
+            throw new IllegalArgumentException("Can not play against oneself!");
         } else {
             return !player1.hasPlayedAgainst(player2);
         }
