@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 public final class SimulatedTournament {
     private final List<Participant> simulatedPlayerList;
-    private final List<Collection<Pairing>> roundList;
+    private final Collection<Pairing> givenPairings;
     private final int roundsToBeSimulated;
 
     public SimulatedTournament(final int roundsToBeSimulated, final Collection<Participant> participants) {
@@ -16,19 +16,15 @@ public final class SimulatedTournament {
             this.simulatedPlayerList.add(simulatedPlayer);
             simulatedPlayer.setSimulatedPlayerList(this.simulatedPlayerList);
         }
-        this.roundList = new ArrayList<>(this.roundsToBeSimulated);
-        final Collection<Pairing> round = new ArrayList<>();
+        this.givenPairings = new ArrayList<>(this.roundsToBeSimulated);
         for (final Participant participant : participants) {
             if (participant.getStartingRankNextOpponent() < 0) {
                 break;
             } else if (participant.getStartingRankNextOpponent() == 0) {
                 this.simulatedPlayerList.get(participant.getStartingRank() - 1).giveBye();
             } else if (participant.isWhiteNextGame()) {
-                round.add(new Pairing(this.simulatedPlayerList.get(participant.getStartingRank() - 1), this.simulatedPlayerList.get(participant.getStartingRankNextOpponent() - 1)));
+                this.givenPairings.add(new Pairing(this.simulatedPlayerList.get(participant.getStartingRank() - 1), this.simulatedPlayerList.get(participant.getStartingRankNextOpponent() - 1)));
             }
-        }
-        if (!round.isEmpty()) {
-            this.roundList.add(round);
         }
     }
 
@@ -100,11 +96,15 @@ public final class SimulatedTournament {
     }
 
     public void simulateTournament() {
+        Collection<Pairing> currentPairings;
         for (int finishedRounds = 0; finishedRounds < this.roundsToBeSimulated; finishedRounds++) {
-            if (this.roundList.size() <= finishedRounds) {
-                this.roundList.add(Round.createPairings(this.simulatedPlayerList));
+            if (this.givenPairings.isEmpty()) {
+                currentPairings = Round.createPairings(this.simulatedPlayerList);
+            } else {
+                currentPairings = this.givenPairings;
+                this.givenPairings.clear();
             }
-            for (final Pairing pairing : this.roundList.get(finishedRounds)) {
+            for (final Pairing pairing : currentPairings) {
                 pairing.simulateResult();
             }
         }
