@@ -154,10 +154,14 @@ public final class Participant {
     }
 
     public int getNumberOfTopThreeFinishes() {
+        return this.numberOfTopThreeFinishes;
+    }
+
+    public void updateNumberOfTopThreeFinishes() {
         if (topThreeCounter.containsKey(this.startingRank)) {
-            return topThreeCounter.get(this.startingRank).intValue();
+            this.numberOfTopThreeFinishes = topThreeCounter.get(this.startingRank).intValue();
         } else {
-            return 0;
+            this.numberOfTopThreeFinishes = 0;
         }
     }
 

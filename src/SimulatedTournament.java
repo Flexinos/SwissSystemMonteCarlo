@@ -17,7 +17,7 @@ public final class SimulatedTournament {
             simulatedPlayer.setSimulatedPlayerList(this.simulatedPlayerList);
         }
         this.roundList = new ArrayList<>(this.roundsToBeSimulated);
-        final List<Pairing> round = new ArrayList<>();
+        final Collection<Pairing> round = new ArrayList<>();
         for (final Participant participant : participants) {
             if (participant.getStartingRankNextOpponent() < 0) {
                 break;

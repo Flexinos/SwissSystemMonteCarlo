@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public final class Main {
     // Variables for configuration
     public static final int numberOfRounds = 3;
-    public static final int numberOfSimulations = 200000;
+    public static final int numberOfSimulations = 10000;
     public static final int numberOfConcurrentThreads = 6;
     // End of configuration
     private static int finishedSimulationsCounter = 0;
@@ -57,7 +57,9 @@ public final class Main {
     private static void showResults(final Tournament myTournament) {
         final List<Participant> participantsWithTopThreeRanking = new ArrayList<>();
         for (final Participant participant : myTournament.getParticipantList()) {
-            if (participant.getNumberOfTopThreeFinishes() > 0) {
+            participant.updateNumberOfTopThreeFinishes();
+            final int numberOfTopThreeFinishes = participant.getNumberOfTopThreeFinishes();
+            if (numberOfTopThreeFinishes > 0) {
                 participantsWithTopThreeRanking.add(participant);
             }
         }
