@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 
 public final class SimulatedTournament {
     private final List<Participant> simulatedPlayerList;
-    private final List<List<Pairing>> roundList;
+    private final List<Collection<Pairing>> roundList;
     private final int roundsToBeSimulated;
 
     public SimulatedTournament(final int roundsToBeSimulated, final Collection<Participant> participants) {
@@ -124,15 +124,15 @@ public final class SimulatedTournament {
     private enum Padding {LEFT, RIGHT}
 
     public static final class Round {
-        public static List<Pairing> createPairings(final List<Participant> players) {
-            final List<Pairing> unorderedPairings = new ArrayList<>();
+        public static Collection<Pairing> createPairings(final List<Participant> players) {
+            final Collection<Pairing> unorderedPairings = new ArrayList<>();
             final List<Participant> unpairedPlayers = new ArrayList<>(players);
             unpairedPlayers.sort(Participant::compareToByScoreThenElo);
             if ((unpairedPlayers.size() % 2) == 1) {
                 giveByeToLastEligiblePlayer(unpairedPlayers); // makes pairing process somewhat easier but not necessarily correct pairing...
             }
             List<Participant> downfloaters = new ArrayList<>();
-            final List<Participant> pairedPlayers = new ArrayList<>();
+            final Collection<Participant> pairedPlayers = new ArrayList<>();
             while (!unpairedPlayers.isEmpty()) {
                 final float highestUnpairedScore = unpairedPlayers.get(0).getScore();
                 final List<Participant> nextBracket = unpairedPlayers.stream().filter((Participant p) -> Float.compare(p.getScore(), highestUnpairedScore) == 0).sorted(Participant::compareToByScoreThenElo).collect(Collectors.toList());
@@ -146,7 +146,7 @@ public final class SimulatedTournament {
             return unorderedPairings;
         }
 
-        private static List<Participant> pairBracket(final List<Participant> playersInThisBracket, final List<Participant> pairedPlayers, final List<Pairing> unorderedPairings) {
+        private static List<Participant> pairBracket(final List<Participant> playersInThisBracket, final Collection<Participant> pairedPlayers, final Collection<Pairing> unorderedPairings) {
             if (playersInThisBracket.size() < 2) {
                 return playersInThisBracket;
             }
@@ -195,8 +195,11 @@ public final class SimulatedTournament {
                 downfloaters.add(swappedOutPlayer);
             }
             if (unpairedPlayersInThisBracket.size() != pairedPlayers.size()) {
-                unpairedPlayersInThisBracket.removeAll(pairedPlayers);
-                downfloaters.addAll(unpairedPlayersInThisBracket);
+                for (final Participant participant : unpairedPlayersInThisBracket) {
+                    if (!pairedPlayers.contains(participant)) {
+                        downfloaters.add(participant);
+                    }
+                }
             }
             return downfloaters;
         }
