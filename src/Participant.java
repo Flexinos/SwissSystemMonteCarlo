@@ -4,7 +4,7 @@ import java.util.TreeMap;
 import java.util.concurrent.atomic.LongAdder;
 
 public final class Participant {
-    private static final LongAdder[][] rankings = new LongAdder[Main.numberOfParticipants][Main.numberOfParticipants];
+    private static LongAdder[][] rankings;
     private final Map<Integer, Float> pastResults;
     private final String title;
     private final String name;
@@ -52,7 +52,17 @@ public final class Participant {
     }
 
     public static void addRanking(final int startingRank, final int finalRank) {
-        rankings[startingRank][finalRank].increment();
+        //starting rank starts at one, finalRank starts at zero
+        rankings[startingRank - 1][finalRank].increment();
+    }
+
+    public static void initializeLongAdders(final int size) {
+        rankings = new LongAdder[size][size];
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                rankings[i][j] = new LongAdder();
+            }
+        }
     }
 
     public static boolean equalsCheckAllParsed(final Object obj1, final Object obj2) {
@@ -80,14 +90,6 @@ public final class Participant {
                 participant1.isWhiteNextGame == participant2.isWhiteNextGame &&
                 participant1.startingRank == participant2.startingRank &&
                 participant1.hasReceivedBye == participant2.hasReceivedBye;
-    }
-
-    public static void initializeLongAdders() {
-        for (int i = 0; i < Main.numberOfParticipants; i++) {
-            for (int j = 0; j < Main.numberOfParticipants; j++) {
-                rankings[i][j] = new LongAdder();
-            }
-        }
     }
 
     public void addGame(final Participant opponent, final float result, final boolean isWhite) {
@@ -261,7 +263,7 @@ public final class Participant {
     public float getAverageRank() {
         float sum = 0;
         for (int i = 0, arrayLength = rankings[this.startingRank].length; i < arrayLength; i++) {
-            final LongAdder longAdder = rankings[this.startingRank][i];
+            final LongAdder longAdder = rankings[this.startingRank - 1][i];
             sum += longAdder.floatValue() * (i + 1);
         }
 

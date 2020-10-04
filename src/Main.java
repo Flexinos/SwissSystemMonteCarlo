@@ -9,7 +9,6 @@ import java.util.concurrent.atomic.LongAdder;
 
 public final class Main {
     // Variables for configuration
-    public static final int numberOfParticipants = 100;
     public static final int numberOfRounds = 3;
     public static final int numberOfSimulations = 200000;
     public static final int numberOfConcurrentThreads = 6;
@@ -30,7 +29,6 @@ public final class Main {
         // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
         LookupTable.createLookupTable(lookupTableFile);
         entireProcessTimer.printElapsedSecondsMessage("Time spent creating lookupTable: ", System.lineSeparator());
-        Participant.initializeLongAdders();
         final Tournament myTournament = createTournament();
         final Timer simulationsTimer = new Timer();
         simulateTournament(myTournament);
@@ -46,6 +44,7 @@ public final class Main {
             participant.updateScore();
         }
         topThreeCounter = new ConcurrentHashMap<>(participants.size(), 0.75f, numberOfConcurrentThreads);
+        Participant.initializeLongAdders(participants.size());
         return new Tournament(numberOfRounds, participants);
     }
 
