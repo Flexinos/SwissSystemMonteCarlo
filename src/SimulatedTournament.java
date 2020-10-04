@@ -124,6 +124,9 @@ public final class SimulatedTournament {
     private enum Padding {LEFT, RIGHT}
 
     public static final class Round {
+        private Round() {
+        }
+
         public static List<Pairing> createPairings(final List<Participant> players) {
             final List<Pairing> unorderedPairings = new ArrayList<>();
             final List<Participant> unpairedPlayers = new ArrayList<>(players);
