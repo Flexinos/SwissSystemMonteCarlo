@@ -29,7 +29,7 @@ public final class Participant {
     private float performanceRating;
     private int colorDifference = 0;
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye, final float score) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -42,15 +42,16 @@ public final class Participant {
         this.startingRankNextOpponent = startingRankNextOpponent;
         this.isWhiteNextGame = isWhiteNextGame;
         this.hasReceivedBye = hasReceivedBye;
-        this.score = score;
     }
 
     public static Participant copyOf(final Participant participant) {
-        return new Participant(participant.startingRank, participant.title, participant.name,
+        final Participant participantCopy = new Participant(participant.startingRank, participant.title, participant.name,
                 participant.country, participant.elo, participant.type, participant.isFemale,
                 participant.pastResults, participant.pointsByForfeit,
                 participant.startingRankNextOpponent, participant.isWhiteNextGame,
-                participant.hasReceivedBye, participant.score);
+                participant.hasReceivedBye);
+        participantCopy.score = participant.score;
+        return participantCopy;
     }
 
     public static void addRanking(final int startingRank, final int finalRank) {
