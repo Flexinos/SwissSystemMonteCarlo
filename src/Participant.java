@@ -225,48 +225,37 @@ public final class Participant {
         this.score = tmpSum + (float) this.pointsByForfeit;
     }
 
-    private void updateBuchholz() {
+    public void updateScores() {
         if (this.pastResults.isEmpty()) {
+            this.score = this.pointsByForfeit;
             this.buchholz = 0.0f;
             this.buchholzCutOne = 0.0f;
+            this.sonnenbornBerger = 0.0f;
+            this.averageEloOpponents = 0.0f;
             return;
         }
-        float buchholz = 0.0f;
+        float tmpScore = 0.0f;
+        float tmpBuchholz = 0.0f;
+        float tmpSonnenbornBerger = 0.0f;
+        float tmpEloOpponentsSum = 0.0f;
         float lowestScore = Float.MAX_VALUE;
-        for (final Integer startingRankOpponent : this.pastResults.keySet()) {
-            if (this.simulatedPlayerList.get(startingRankOpponent - 1).score <= lowestScore) {
-                lowestScore = this.simulatedPlayerList.get(startingRankOpponent - 1).score;
-            }
-            buchholz += this.simulatedPlayerList.get(startingRankOpponent - 1).score;
-        }
-        this.buchholz = buchholz;
-        this.buchholzCutOne = buchholz - lowestScore;
-    }
-
-    private void updateSonnenbornBerger() {
-        float tmpSum = 0.0f;
         for (final Map.Entry<Integer, Float> entry : this.pastResults.entrySet()) {
-            tmpSum += this.simulatedPlayerList.get(entry.getKey() - 1).score * entry.getValue();
+            final int key = entry.getKey();
+            final float value = entry.getValue();
+            final Participant opponent = this.simulatedPlayerList.get(key - 1);
+            tmpScore += entry.getValue();
+            tmpBuchholz += opponent.score;
+            tmpSonnenbornBerger += opponent.score * value;
+            tmpEloOpponentsSum += opponent.elo;
+            if (opponent.score <= lowestScore) {
+                lowestScore = opponent.score;
+            }
         }
-        this.sonnenbornBerger = tmpSum;
-    }
-
-    private void updateAverageEloOpponents() {
-        if (this.pastResults.isEmpty()) {
-            this.averageEloOpponents = 0.0f;
-        }
-        int sum = 0;
-        for (final Integer startingRankOpponent : this.pastResults.keySet()) {
-            sum += this.simulatedPlayerList.get(startingRankOpponent - 1).elo;
-        }
-        this.averageEloOpponents = (float) sum / (float) this.pastResults.size();
-    }
-
-    public void updateScores() {
-        updateScore();
-        updateBuchholz();
-        updateAverageEloOpponents();
-        updateSonnenbornBerger();
+        this.score = tmpScore + (float) this.pointsByForfeit;
+        this.buchholz = tmpBuchholz;
+        this.buchholzCutOne = tmpBuchholz - lowestScore;
+        this.sonnenbornBerger = tmpSonnenbornBerger;
+        this.averageEloOpponents = tmpEloOpponentsSum / this.pastResults.size();
     }
 
     public float getAverageRank() {
