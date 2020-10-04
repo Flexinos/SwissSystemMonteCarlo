@@ -10,12 +10,11 @@ import java.util.concurrent.atomic.LongAdder;
 public final class Main {
     // Variables for configuration
     public static final int numberOfParticipants = 100;
-    public static final int numberOfRounds = 5;
-    public static final int numberOfSimulations = 100000;
+    public static final int numberOfRounds = 3;
+    public static final int numberOfSimulations = 200000;
     public static final int numberOfConcurrentThreads = 6;
     // End of configuration
-    private static final Map<Integer, LongAdder> topThreeCounter =
-            new ConcurrentHashMap<>(numberOfParticipants, 0.75f, numberOfConcurrentThreads);
+    private static Map<Integer, LongAdder> topThreeCounter;
     private static int finishedSimulationsCounter = 0;
 
     private Main() {
@@ -46,6 +45,7 @@ public final class Main {
         for (final Participant participant : participants) {
             participant.updateScore();
         }
+        topThreeCounter = new ConcurrentHashMap<>(participants.size(), 0.75f, numberOfConcurrentThreads);
         return new Tournament(numberOfRounds, participants);
     }
 
