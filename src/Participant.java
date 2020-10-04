@@ -1,10 +1,12 @@
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
 public final class Participant {
     private static LongAdder[][] rankings;
+    private static Map<Integer, LongAdder> topThreeCounter;
     private final Map<Integer, Float> pastResults;
     private final String title;
     private final String name;
@@ -65,6 +67,14 @@ public final class Participant {
         }
     }
 
+    public static void initializeTopThreeCounterMap(final int numberOfPlayers, final int concurrentThreads) {
+        topThreeCounter = new ConcurrentHashMap<>(numberOfPlayers, 0.75f, concurrentThreads);
+    }
+
+    public static void addTopThreeRanking(final int startingRank) {
+        topThreeCounter.computeIfAbsent(startingRank, (Integer key) -> new LongAdder()).increment();
+    }
+
     public static boolean equalsCheckAllParsed(final Object obj1, final Object obj2) {
         if (obj1 == obj2) {
             return true;
@@ -101,6 +111,7 @@ public final class Participant {
             this.colorDifference--;
         }
     }
+
 
     public int getStartingRank() {
         return this.startingRank;
@@ -143,11 +154,11 @@ public final class Participant {
     }
 
     public int getNumberOfTopThreeFinishes() {
-        return this.numberOfTopThreeFinishes;
-    }
-
-    public void setNumberOfTopThreeFinishes(final int numberOfTopThreeFinishes) {
-        this.numberOfTopThreeFinishes = numberOfTopThreeFinishes;
+        if (topThreeCounter.containsKey(this.startingRank)) {
+            return topThreeCounter.get(this.startingRank).intValue();
+        } else {
+            return 0;
+        }
     }
 
     private void calculatePerformance() {

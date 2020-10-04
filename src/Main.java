@@ -1,11 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.LongAdder;
 
 public final class Main {
     // Variables for configuration
@@ -13,7 +10,6 @@ public final class Main {
     public static final int numberOfSimulations = 200000;
     public static final int numberOfConcurrentThreads = 6;
     // End of configuration
-    private static Map<Integer, LongAdder> topThreeCounter;
     private static int finishedSimulationsCounter = 0;
 
     private Main() {
@@ -43,7 +39,7 @@ public final class Main {
         for (final Participant participant : participants) {
             participant.updateScore();
         }
-        topThreeCounter = new ConcurrentHashMap<>(participants.size(), 0.75f, numberOfConcurrentThreads);
+        Participant.initializeTopThreeCounterMap(participants.size(), numberOfConcurrentThreads);
         Participant.initializeLongAdders(participants.size());
         return new Tournament(numberOfRounds, participants);
     }
@@ -59,7 +55,6 @@ public final class Main {
     }
 
     private static void showResults(final Tournament myTournament) {
-        topThreeCounter.forEach((Integer startingRank, LongAdder longAdder) -> myTournament.getParticipantList().get(startingRank - 1).setNumberOfTopThreeFinishes(longAdder.intValue()));
         final List<Participant> participantsWithTopThreeRanking = new ArrayList<>();
         for (final Participant participant : myTournament.getParticipantList()) {
             if (participant.getNumberOfTopThreeFinishes() > 0) {
@@ -74,10 +69,6 @@ public final class Main {
         synchronized (Main.class) {
             return ++finishedSimulationsCounter;
         }
-    }
-
-    public static void addTopThreeRanking(final int startingRank) {
-        topThreeCounter.computeIfAbsent(startingRank, (Integer key) -> new LongAdder()).increment();
     }
 
     private static final class Timer {
