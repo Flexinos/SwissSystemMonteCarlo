@@ -254,7 +254,7 @@ public final class Participant {
         float tmpScore = 0.0f;
         float tmpBuchholz = 0.0f;
         float tmpSonnenbornBerger = 0.0f;
-        float tmpEloOpponentsSum = 0.0f;
+        int tmpEloOpponentsSum = 0;
         float lowestScore = Float.MAX_VALUE;
         for (final Map.Entry<Integer, Float> entry : this.pastResults.entrySet()) {
             final int key = entry.getKey();
@@ -272,7 +272,7 @@ public final class Participant {
         this.buchholz = tmpBuchholz;
         this.buchholzCutOne = tmpBuchholz - lowestScore;
         this.sonnenbornBerger = tmpSonnenbornBerger;
-        this.averageEloOpponents = tmpEloOpponentsSum / this.pastResults.size();
+        this.averageEloOpponents = (float) tmpEloOpponentsSum / this.pastResults.size();
     }
 
     public float getAverageRank() {
