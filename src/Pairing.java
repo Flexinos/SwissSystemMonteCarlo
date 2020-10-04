@@ -3,7 +3,6 @@ import java.util.concurrent.ThreadLocalRandom;
 public final class Pairing {
     private final Participant whitePlayer;
     private final Participant blackPlayer;
-    private ResultOfGame result;
 
     public Pairing(final Participant whitePlayer, final Participant blackPlayer) {
         this.whitePlayer = whitePlayer;
@@ -40,8 +39,7 @@ public final class Pairing {
     }
 
     public void simulateResult() {
-        this.result = randomResultLookUp(this.whitePlayer, this.blackPlayer);
-        switch (this.result) {
+        switch (randomResultLookUp(this.whitePlayer, this.blackPlayer)) {
             case WHITE_WIN -> {
                 this.whitePlayer.addGame(this.blackPlayer, 1.0f, true);
                 this.blackPlayer.addGame(this.whitePlayer, 0.0f, false);
