@@ -30,10 +30,6 @@ done
 $THREAD_SCRIPT $STARTLINE $LINE_COUNT $2 $TMP_DIR"/"$TMP_FILE_BASE"$ITERATION" &
 wait
 
-ITERATION=1
-while [ $ITERATION -le $1 ]; do
-	cat $TMP_DIR"/"$TMP_FILE_BASE"$ITERATION" >> $3
-	ITERATION=$(expr $ITERATION + "1")
-done
+cat $TMP_DIR/* > $3
 
 rm -r $TMP_DIR
