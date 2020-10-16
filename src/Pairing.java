@@ -29,6 +29,51 @@ public final class Pairing {
         }
     }
 
+    public static char randomResultFormula(final int whiteRating, final int blackRating) {
+        double chanceWhite = 1.0, chanceBlack = 0.0;
+        final double averageRating = (whiteRating + blackRating) / 2.0;
+        final double ratingDifference = (whiteRating - blackRating);
+        final double rmq = (averageRating > 1200.0) ? ((averageRating - 1200.0) / 1200.0) : 0.0;
+        final double centerLimitWhite = 40.0;
+        final double wcv = 0.45 - (0.1 * rmq * rmq);
+        final double lowerLimitWhite = -1492.0 + (averageRating * 0.391);
+        final double upperLimitWhite = 1691.0 - (averageRating * 0.428);
+        final double centerLimitBlack = -80.0;
+        final double bcv = 0.46 - (0.13 * rmq * rmq);
+        final double lowerLimitBlack = -1753 + (averageRating * 0.416);
+        final double upperLimitBlack = 1428 - (averageRating * 0.388);
+        final double wf1 = (ratingDifference - lowerLimitWhite) / (centerLimitWhite - lowerLimitWhite);
+        final double wf2 = (ratingDifference - upperLimitWhite) / (centerLimitWhite - upperLimitWhite);
+        final double bf1 = (ratingDifference - lowerLimitBlack) / (centerLimitBlack - lowerLimitBlack);
+        final double bf2 = (ratingDifference - upperLimitBlack) / (centerLimitBlack - upperLimitBlack);
+        if (ratingDifference < lowerLimitWhite) {
+            chanceWhite = 0.0;
+        } else if ((lowerLimitWhite <= ratingDifference) && (ratingDifference <= centerLimitWhite)) {
+            chanceWhite = wcv * wf1 * wf1;
+        } else if ((centerLimitWhite <= ratingDifference) && (ratingDifference <= upperLimitWhite)) {
+            chanceWhite = 1.0 - ((1.0 - wcv) * wf2 * wf2);
+        } else if (ratingDifference > upperLimitWhite) {
+            return 'w';
+        }
+        if (ratingDifference < lowerLimitBlack) {
+            chanceBlack = 1.0;
+        } else if ((lowerLimitBlack <= ratingDifference) && (ratingDifference <= centerLimitBlack)) {
+            chanceBlack = 1.0 - ((1.0 - bcv) * bf1 * bf1);
+        } else if ((lowerLimitBlack <= ratingDifference) && (ratingDifference <= upperLimitBlack)) {
+            chanceBlack = bcv * bf2 * bf2;
+        } else if (ratingDifference > upperLimitBlack) {
+            chanceBlack = 0.0;
+        }
+        final double r = ThreadLocalRandom.current().nextDouble();
+        if (r < chanceWhite) {
+            return 'w';
+        }
+        if (r < (chanceWhite + chanceBlack)) {
+            return 'b';
+        }
+        return '=';
+    }
+
     public Participant getWhitePlayer() {
         return this.whitePlayer;
     }
