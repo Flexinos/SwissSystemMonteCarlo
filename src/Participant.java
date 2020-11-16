@@ -168,7 +168,9 @@ public final class Participant {
 
     private void calculatePerformance() {
         boolean inverted = false;
-        // TODO: make sure to prevent division by 0.
+        if (this.pastResults.isEmpty()){
+            this.performanceRating = 0;
+        }
         float percentage = this.score / (float) this.pastResults.size();
         if (percentage < 0.5f) {
             percentage = 1.0f - percentage;
