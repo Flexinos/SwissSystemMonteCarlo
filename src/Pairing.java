@@ -17,9 +17,9 @@ public final class Pairing {
         }
     }
 
-    private static ResultOfGame randomResultLookUp(final Participant whitePlayer, final Participant blackPlayer) {
+    private static ResultOfGame randomResultLookUp(final int whiteElo, final int blackElo) {
         final float randomValue = ThreadLocalRandom.current().nextFloat();
-        final float[] probabilitiesArray = LookupTable.getProbabilities(whitePlayer.getElo(), blackPlayer.getElo());
+        final float[] probabilitiesArray = LookupTable.getProbabilities(whiteElo, blackElo);
         if (randomValue < probabilitiesArray[0]) {
             return ResultOfGame.BLACK_WIN;
         } else if (randomValue < (probabilitiesArray[0] + probabilitiesArray[1])) {
@@ -29,7 +29,7 @@ public final class Pairing {
         }
     }
 
-    public static char randomResultFormula(final int whiteRating, final int blackRating) {
+    public static ResultOfGame randomResultFormula(final int whiteRating, final int blackRating) {
         double chanceWhite = 1.0, chanceBlack = 0.0;
         final double averageRating = (whiteRating + blackRating) / 2.0;
         final double ratingDifference = (whiteRating - blackRating);
@@ -53,7 +53,7 @@ public final class Pairing {
         } else if ((centerLimitWhite <= ratingDifference) && (ratingDifference <= upperLimitWhite)) {
             chanceWhite = 1.0 - ((1.0 - wcv) * wf2 * wf2);
         } else if (ratingDifference > upperLimitWhite) {
-            return 'w';
+            return ResultOfGame.WHITE_WIN;
         }
         if (ratingDifference < lowerLimitBlack) {
             chanceBlack = 1.0;
@@ -66,12 +66,12 @@ public final class Pairing {
         }
         final double r = ThreadLocalRandom.current().nextDouble();
         if (r < chanceWhite) {
-            return 'w';
+            return ResultOfGame.WHITE_WIN;
         }
         if (r < (chanceWhite + chanceBlack)) {
-            return 'b';
+            return ResultOfGame.BLACK_WIN;
         }
-        return '=';
+        return ResultOfGame.DRAW;
     }
 
     public Participant getWhitePlayer() {
@@ -83,7 +83,7 @@ public final class Pairing {
     }
 
     public void simulateResult() {
-        switch (randomResultLookUp(this.whitePlayer, this.blackPlayer)) {
+        switch (randomResultLookUp(this.whitePlayer.getElo(), this.blackPlayer.getElo())) {
             case WHITE_WIN -> {
                 this.whitePlayer.addGame(this.blackPlayer, 1.0f, true);
                 this.blackPlayer.addGame(this.whitePlayer, 0.0f, false);
