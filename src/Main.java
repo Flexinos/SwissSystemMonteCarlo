@@ -16,14 +16,16 @@ public final class Main {
     }
 
     public static void main(final String[] args) throws InterruptedException {
+        /*
         if (args.length != 1) {
             System.out.println("Specify the location of the lookup table as the only argument.");
             System.exit(1);
         }
+        */
         final Timer entireProcessTimer = new Timer();
-        final String lookupTableFile = args[0];
+        // final String lookupTableFile = args[0];
         // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
-        LookupTable.createLookupTable(lookupTableFile);
+        // LookupTable.createLookupTable(lookupTableFile);
         entireProcessTimer.printElapsedSecondsMessage("Time spent creating lookupTable: ", System.lineSeparator());
         final Tournament myTournament = createTournament();
         final Timer simulationsTimer = new Timer();
