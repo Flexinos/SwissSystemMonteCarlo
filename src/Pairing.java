@@ -83,7 +83,7 @@ public final class Pairing {
     }
 
     public void simulateResult() {
-        switch (randomResultLookUp(this.whitePlayer.getElo(), this.blackPlayer.getElo())) {
+        switch (randomResultFormula(this.whitePlayer.getElo(), this.blackPlayer.getElo())) {
             case WHITE_WIN -> {
                 this.whitePlayer.addGame(this.blackPlayer, 1.0f, true);
                 this.blackPlayer.addGame(this.whitePlayer, 0.0f, false);
