@@ -237,6 +237,7 @@ public final class Participant {
         }
     }
 
+    // called after every round
     void updateScore() {
         float tmpSum = 0.0f;
         for (final Float result : this.pastResults.values()) {
@@ -245,6 +246,7 @@ public final class Participant {
         this.score = tmpSum + (float) this.pointsByForfeit;
     }
 
+    // called at end of simulation
     public void updateScores() {
         if (this.pastResults.isEmpty()) {
             this.score = this.pointsByForfeit;
@@ -276,6 +278,7 @@ public final class Participant {
         this.buchholzCutOne = tmpBuchholz - lowestScore;
         this.sonnenbornBerger = tmpSonnenbornBerger;
         this.averageEloOpponents = (float) tmpEloOpponentsSum / this.pastResults.size();
+        calculatePerformance();
     }
 
     public float getAverageRank() {
