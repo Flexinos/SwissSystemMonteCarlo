@@ -26,7 +26,7 @@ public final class Main {
         // final String lookupTableFile = args[0];
         // ATTENTION: The lookupTableFile's contents must match the variables LOWEST_ELO and HIGHEST_ELO.
         // LookupTable.createLookupTable(lookupTableFile);
-        entireProcessTimer.printElapsedSecondsMessage("Time spent creating lookupTable: ", System.lineSeparator());
+        // entireProcessTimer.printElapsedSecondsMessage("Time spent creating lookupTable: ", System.lineSeparator());
         final Tournament myTournament = createTournament();
         final Timer simulationsTimer = new Timer();
         simulateTournament(myTournament);
