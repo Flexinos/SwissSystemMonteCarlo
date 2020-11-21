@@ -28,6 +28,34 @@ public final class SimulatedTournament {
         }
     }
 
+    public static String createTRF(SimulatedTournament tournament) {
+        List<Participant> playerlist = tournament.simulatedPlayerList;
+        StringBuilder string = new StringBuilder(playerlist.size() * 100 + tournament.roundsToBeSimulated * 8);
+        Formatter formatter = new Formatter(string);
+        formatter.format("012 XX Open Internacional de Gros\n" +
+                "022 Donostia\n" +
+                "032 ESP\n" +
+                "042 24/09/2010\n" +
+                "052 02/10/2010\n" +
+                "062 52\n" +
+                "072 41\n" +
+                "082 0\n" +
+                "092 Individual: Swiss-System\n" +
+                "102 IA Mikel Larreategi Arana (22232540)\n" +
+                "112 \n" +
+                "122 moves/time, increment\n" +
+                "XXR 9\n");
+        for (int i = 0; i < playerlist.size(); i++) {
+            Participant p = playerlist.get(i);
+            formatter.format("001 %4d %c %3s %-33s %4d %3s 1234567890 1990/01/01 % 2.1f %4d  ", i, p.getGender(), p.getTitle(), p.getName(), p.getElo(), p.getCountry(), p.getScore(), p.getStartingRank());
+            for (OpponentWrapper oppponent : p.getOpponentList()) {
+                formatter.format("%4d %c %c  ", oppponent.getOpponentStartingRank(), oppponent.getColor(), oppponent.getResult());
+            }
+            formatter.format("\n");
+        }
+        return string.toString();
+    }
+
     // Customize the output of the simulation results here.
     public static void printSimulationResults(final Collection<Participant> participants) {
         // Set the name of each column here.
@@ -119,6 +147,7 @@ public final class SimulatedTournament {
         for (int i = 0, simulatedPlayerListSize = this.simulatedPlayerList.size(); i < simulatedPlayerListSize; i++) {
             Participant.addRanking(this.simulatedPlayerList.get(i).getStartingRank(), i);
         }
+        //System.out.println(SimulatedTournament.createTRF(this));
     }
 
     private enum Padding {LEFT, RIGHT}

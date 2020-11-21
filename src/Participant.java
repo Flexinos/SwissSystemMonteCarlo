@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -8,6 +9,7 @@ public final class Participant {
     private static LongAdder[][] rankings;
     private static Map<Integer, LongAdder> topThreeCounter;
     private final Map<Integer, Float> pastResults;
+    private final List<OpponentWrapper> opponentList;
     private final String title;
     private final String name;
     private final String country;
@@ -26,7 +28,7 @@ public final class Participant {
     private float buchholzCutOne;
     private float sonnenbornBerger;
     private float averageEloOpponents;
-    private float performanceRating;
+    private float performanceRating = 0;
     private int colorDifference = 0;
 
     public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye) {
@@ -38,6 +40,7 @@ public final class Participant {
         this.type = type;
         this.isFemale = isFemale;
         this.pastResults = new TreeMap<>(pastResults);
+        this.opponentList = new ArrayList<>(11); //todo pick better number
         this.pointsByForfeit = pointsByForfeit;
         this.startingRankNextOpponent = startingRankNextOpponent;
         this.isWhiteNextGame = isWhiteNextGame;
@@ -103,8 +106,23 @@ public final class Participant {
                 participant1.hasReceivedBye == participant2.hasReceivedBye;
     }
 
+    //todo: add way to add results like bye to opponentlist
     public void addGame(final Participant opponent, final float result, final boolean isWhite) {
         this.pastResults.put(opponent.startingRank, result);
+        OpponentWrapper opponentWrapper = new OpponentWrapper(opponent.startingRank);
+        if (result == 1) {
+            opponentWrapper.setResult('1');
+        } else if (result == 0.5) {
+            opponentWrapper.setResult('=');
+        } else {
+            opponentWrapper.setResult('0');
+        }
+        if (isWhite) {
+            opponentWrapper.setColor('w');
+        } else {
+            opponentWrapper.setColor('b');
+        }
+        this.opponentList.add(opponentWrapper);
         this.score += result;
         if (isWhite) {
             this.colorDifference++;
@@ -113,6 +131,9 @@ public final class Participant {
         }
     }
 
+    public List<OpponentWrapper> getOpponentList() {
+        return opponentList;
+    }
 
     public int getStartingRank() {
         return this.startingRank;
@@ -168,7 +189,7 @@ public final class Participant {
 
     private void calculatePerformance() {
         boolean inverted = false;
-        if (this.pastResults.isEmpty()){
+        if (this.pastResults.isEmpty()) {
             this.performanceRating = 0;
         }
         float percentage = this.score / (float) this.pastResults.size();
@@ -289,6 +310,21 @@ public final class Participant {
         }
 
         return sum / Main.numberOfSimulations;
+    }
+
+    public Character getGender() {
+        if (isFemale) {
+            return 'w';
+        }
+        return 'm';
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getCountry() {
+        return country;
     }
 
     public void giveBye() {
