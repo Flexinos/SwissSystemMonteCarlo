@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 public final class Main {
     // Variables for configuration
     public static final int numberOfRounds = 3;
-    public static final int numberOfSimulations = 10000;
+    public static final int numberOfSimulations = 1;
     public static final int numberOfConcurrentThreads = 6;
     // End of configuration
     private static int finishedSimulationsCounter = 0;

@@ -28,11 +28,18 @@ public final class SimulatedTournament {
         }
     }
 
+    public List<Participant> getSimulatedPlayerList() {
+        return simulatedPlayerList;
+    }
+
+    public int getRoundsToBeSimulated() {
+        return roundsToBeSimulated;
+    }
+
     public static String createTRF(SimulatedTournament tournament) {
         List<Participant> playerlist = tournament.simulatedPlayerList;
         StringBuilder string = new StringBuilder(playerlist.size() * 100 + tournament.roundsToBeSimulated * 8);
-        Formatter formatter = new Formatter(string);
-        formatter.format("012 XX Open Internacional de Gros\n" +
+        string.append("012 XX Open Internacional de Gros\n" +
                 "022 Donostia\n" +
                 "032 ESP\n" +
                 "042 24/09/2010\n" +
@@ -46,14 +53,25 @@ public final class SimulatedTournament {
                 "122 moves/time, increment\n" +
                 "XXR 9\n");
         for (int i = 0; i < playerlist.size(); i++) {
-            Participant p = playerlist.get(i);
-            formatter.format("001 %4d %c %3s %-33s %4d %3s 1234567890 1990/01/01 % 2.1f %4d  ", i, p.getGender(), p.getTitle(), p.getName(), p.getElo(), p.getCountry(), p.getScore(), p.getStartingRank());
-            for (OpponentWrapper oppponent : p.getOpponentList()) {
-                formatter.format("%4d %c %c  ", oppponent.getOpponentStartingRank(), oppponent.getColor(), oppponent.getResult());
-            }
-            formatter.format("\n");
+            string.append(createPlayerDataStringTRF(i, playerlist.get(i)));
+            string.append(createOpponentsStringTRF(playerlist.get(i).getOpponentList()));
         }
         return string.toString();
+    }
+
+    public static String createPlayerDataStringTRF(int rank, Participant p) {
+        return String.format("001 %4d %c %2s %-33s %4d %3s %11s %10s % 2.1f %4d", rank, p.getGender(),
+                p.getTitle(), p.getName(), p.getElo(), p.getCountry(),"1234567890", "1978      ",p.getScore(), p.getStartingRank());
+    }
+
+    public static String createOpponentsStringTRF(List<OpponentWrapper> opponents) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (OpponentWrapper opponent : opponents) {
+            stringBuilder.append(String.format("  %4d %c %c", opponent.getOpponentStartingRank(), opponent.getColor(),
+                    opponent.getResult()));
+        }
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     // Customize the output of the simulation results here.
