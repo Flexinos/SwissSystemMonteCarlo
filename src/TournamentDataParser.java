@@ -60,9 +60,9 @@ public final class TournamentDataParser {
      * @return A Participant object containing the data of the two arguments.
      */
     private static Participant createParticipant(final PlayerData playerData, final PlayerHistory playerHistory) {
-        final Map<Integer, Character> pastResults = createPastResults(playerHistory.normalGames);
+        final List<OpponentWrapper> opponentWrapperList = createPastResults(playerHistory.normalGames);
         return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
-                playerData.elo, playerData.type, playerData.isFemale, pastResults, playerHistory.pointsByForfeit,
+                playerData.elo, playerData.type, playerData.isFemale, opponentWrapperList, playerHistory.pointsByForfeit,
                 playerHistory.nextOpponentStartingRank, playerHistory.isWhiteNextGame, playerHistory.hasReceivedBye);
     }
 
@@ -73,12 +73,12 @@ public final class TournamentDataParser {
      * @param games An Iterable containing the games a player played in the tournament.
      * @return A Map mapping the opponent's starting rank to the game's result.
      */
-    private static Map<Integer, Character> createPastResults(final Iterable<Game> games) {
-        final Map<Integer, Character> pastResults = new TreeMap<>();
+    private static List<OpponentWrapper> createPastResults(final Iterable<Game> games) {
+        final List<OpponentWrapper> opponentWrapperList = new ArrayList<>(11); //todo change initial size
         for (final Game game : games) {
-            pastResults.put(game.opponentStartingRank, game.result);
+            opponentWrapperList.add(new OpponentWrapper(game.opponentStartingRank, game.result, game.color));
         }
-        return pastResults;
+        return opponentWrapperList;
     }
 
     private static URL buildStartingRankLink(final int tournamentNumber) {
@@ -432,17 +432,17 @@ public final class TournamentDataParser {
                 final String entry = lineEntries[gameEntryIndex];
                 if (matches(entry, NORMAL_GAME_PATTERN)) {
                     final int opponentStartingRank = parseOpponentStartingRank(entry);
-                    final boolean isWhite = isWhite(entry);
+                    final Character color = parseColor(entry);
                     final Character result =
                             REMOVE_FOR_RESULT_PARSING_PATTERN.matcher(entry).replaceFirst("").charAt(0);
-                    games.add(new Game(opponentStartingRank, isWhite, result));
+                    games.add(new Game(opponentStartingRank, result, color));
                 } else if (matches(entry, FORFEIT_GAME_PATTERN)) {
                     ++pointsByForfeit;
                 } else if (matches(entry, BYE_GAME_PATTERN)) {
                     hasReceivedBye = true;
                 } else if (matches(entry, FUTURE_GAME_PATTERN)) {
                     nextOpponentStartingRank = parseOpponentStartingRank(entry);
-                    isWhiteNextGame = isWhite(entry);
+                    isWhiteNextGame = parseColor(entry) == 'w'; //todo: check if this works
                 }
             }
             return new PlayerHistory(games, hasReceivedBye, pointsByForfeit, nextOpponentStartingRank, isWhiteNextGame);
@@ -452,8 +452,12 @@ public final class TournamentDataParser {
             return Integer.parseInt(REMOVE_FOR_OPPONENT_PARSING_PATTERN.matcher(entry).replaceFirst(""));
         }
 
-        private static boolean isWhite(final String entry) {
-            return entry.contains("w");
+        //todo: check if this function is needed
+        private static Character parseColor(final String entry) {
+            if (entry.contains("w")) {
+                return 'w';
+            }
+            return 'b';
         }
     }
 
@@ -499,12 +503,12 @@ public final class TournamentDataParser {
 
     private static final class Game {
         private final int opponentStartingRank;
-        private final boolean playerIsWhite;
         private final Character result;
+        private final Character color;
 
-        private Game(final int opponentStartingRank, final boolean playerIsWhite, final Character result) {
+        private Game(final int opponentStartingRank, final Character result, final Character color) {
             this.opponentStartingRank = opponentStartingRank;
-            this.playerIsWhite = playerIsWhite;
+            this.color = color;
             this.result = result;
         }
     }

@@ -7,6 +7,12 @@ public class OpponentWrapper {
         this.opponentStartingRank = opponentStartingRank;
     }
 
+    public OpponentWrapper(int opponentStartingRank, Character result, Character color) {
+        this.opponentStartingRank = opponentStartingRank;
+        this.result = result;
+        this.color = color;
+    }
+
     public void setResult(Character result) {
         this.result = result;
     }

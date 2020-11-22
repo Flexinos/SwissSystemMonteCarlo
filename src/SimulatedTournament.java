@@ -37,8 +37,8 @@ public final class SimulatedTournament {
     }
 
     public static String createTRF(SimulatedTournament tournament) {
-        List<Participant> playerlist = tournament.simulatedPlayerList;
-        StringBuilder string = new StringBuilder(playerlist.size() * 100 + tournament.roundsToBeSimulated * 8);
+        List<Participant> playerList = tournament.simulatedPlayerList;
+        StringBuilder string = new StringBuilder(playerList.size() * 100 + tournament.roundsToBeSimulated * 8);
         string.append("012 XX Open Internacional de Gros\n" +
                 "022 Donostia\n" +
                 "032 ESP\n" +
@@ -52,9 +52,9 @@ public final class SimulatedTournament {
                 "112 \n" +
                 "122 moves/time, increment\n" +
                 "XXR 9\n");
-        for (int i = 0; i < playerlist.size(); i++) {
-            string.append(createPlayerDataStringTRF(i, playerlist.get(i)));
-            string.append(createOpponentsStringTRF(playerlist.get(i).getOpponentList()));
+        for (int i = 0; i < playerList.size(); i++) {
+            string.append(createPlayerDataStringTRF(i, playerList.get(i)));
+            string.append(createOpponentsStringTRF(playerList.get(i).getOpponentList()));
         }
         return string.toString();
     }
