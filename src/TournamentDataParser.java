@@ -57,7 +57,7 @@ public final class TournamentDataParser {
      * @return A Participant object containing the data of the two arguments.
      */
     private static Participant createParticipant(final PlayerData playerData, final PlayerHistory playerHistory) {
-        final Map<Integer, Float> pastResults = createPastResults(playerHistory.normalGames);
+        final Map<Integer, Character> pastResults = createPastResults(playerHistory.normalGames);
         return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
                 playerData.elo, playerData.type, playerData.isFemale, pastResults, playerHistory.pointsByForfeit,
                 playerHistory.nextOpponentStartingRank, playerHistory.isWhiteNextGame, playerHistory.hasReceivedBye);
@@ -69,19 +69,19 @@ public final class TournamentDataParser {
      * @param games An Iterable containing the games a player played in the tournament.
      * @return A Map mapping the opponent's starting rank to the game's result.
      */
-    private static Map<Integer, Float> createPastResults(final Iterable<Game> games) {
-        final Map<Integer, Float> pastResults = new TreeMap<>();
+    private static Map<Integer, Character> createPastResults(final Iterable<Game> games) {
+        final Map<Integer, Character> pastResults = new TreeMap<>();
         for (final Game game : games) {
-            pastResults.put(game.opponentStartingRank, gameResultToFloat(game.result));
+            pastResults.put(game.opponentStartingRank, gameResultToCharacter(game.result));
         }
         return pastResults;
     }
 
-    private static Float gameResultToFloat(final GameResult gameResult) {
+    private static Character gameResultToCharacter(final GameResult gameResult) {
         return switch (gameResult) {
-            case WON -> 1.0f;
-            case DRAW -> 0.5f;
-            default -> 0.0f;
+            case WON -> '1';
+            case DRAW -> '=';
+            default -> '0';
         };
     }
 

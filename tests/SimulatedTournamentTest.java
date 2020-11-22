@@ -29,8 +29,8 @@ class SimulatedTournamentTest {
 
     @Test
     void createOpponentsStringTRF_TestJavafoSample() {
-        p1.addGame(p2, 1, true);
-        p2.addGame(p1, 0, false);
+        p1.addGame(p2, '1', true);
+        p2.addGame(p1, '0', false);
         assertEquals(SimulatedTournament.createOpponentsStringTRF(p1.getOpponentList()), "     2 w 1\n");
         assertEquals(SimulatedTournament.createOpponentsStringTRF(p2.getOpponentList()), "     1 b 0\n");
     }

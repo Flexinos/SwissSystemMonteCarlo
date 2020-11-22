@@ -85,16 +85,16 @@ public final class Pairing {
     public void simulateResult() {
         switch (randomResultFormula(this.whitePlayer.getElo(), this.blackPlayer.getElo())) {
             case WHITE_WIN -> {
-                this.whitePlayer.addGame(this.blackPlayer, 1.0f, true);
-                this.blackPlayer.addGame(this.whitePlayer, 0.0f, false);
+                this.whitePlayer.addGame(this.blackPlayer, '1', true);
+                this.blackPlayer.addGame(this.whitePlayer, '0', false);
             }
             case BLACK_WIN -> {
-                this.whitePlayer.addGame(this.blackPlayer, 0.0f, true);
-                this.blackPlayer.addGame(this.whitePlayer, 1.0f, false);
+                this.whitePlayer.addGame(this.blackPlayer, '0', true);
+                this.blackPlayer.addGame(this.whitePlayer, '1', false);
             }
             default -> {
-                this.whitePlayer.addGame(this.blackPlayer, 0.5f, true);
-                this.blackPlayer.addGame(this.whitePlayer, 0.5f, false);
+                this.whitePlayer.addGame(this.blackPlayer, '=', true);
+                this.blackPlayer.addGame(this.whitePlayer, '=', false);
             }
         }
     }

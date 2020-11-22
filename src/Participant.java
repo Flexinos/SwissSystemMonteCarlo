@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.LongAdder;
 public final class Participant {
     private static LongAdder[][] rankings;
     private static Map<Integer, LongAdder> topThreeCounter;
-    private final Map<Integer, Float> pastResults;
+    private final Map<Integer, Character> pastResults;
     private final List<OpponentWrapper> opponentList;
     private final String title;
     private final String name;
@@ -28,7 +28,7 @@ public final class Participant {
     private float performanceRating = 0;
     private int colorDifference = 0;
 
-    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Float> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye) {
+    public Participant(final int startingRank, final String title, final String name, final String country, final int elo, final String type, final boolean isFemale, final Map<Integer, Character> pastResults, final int pointsByForfeit, final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -43,9 +43,9 @@ public final class Participant {
         this.isWhiteNextGame = isWhiteNextGame;
         this.hasReceivedBye = hasReceivedBye;
     }
-    
+
     public static Participant skeletonParticipant(final int startingRank, final String title, final String name,
-                                                  final String country, final int elo, final boolean isFemale){
+                                                  final String country, final int elo, final boolean isFemale) {
         return new Participant(startingRank, title, name, country, elo, "", isFemale,
                 new HashMap<>(), 0, 0, false, false);
     }
@@ -58,6 +58,14 @@ public final class Participant {
                 participant.hasReceivedBye);
         participantCopy.score = participant.score;
         return participantCopy;
+    }
+
+    public static float resultToFloat(Character result) {
+        return switch (result) {
+            case '1' -> 1.0f;
+            case '0' -> 0.0f;
+            default -> 0.5f;
+        };
     }
 
     public static void addRanking(final int startingRank, final int finalRank) {
@@ -110,23 +118,13 @@ public final class Participant {
     }
 
     //todo: add way to add results like bye to opponentlist
-    public void addGame(final Participant opponent, final float result, final boolean isWhite) {
+    public void addGame(final Participant opponent, final Character result, final boolean isWhite) {
         this.pastResults.put(opponent.startingRank, result);
         OpponentWrapper opponentWrapper = new OpponentWrapper(opponent.startingRank);
-        if (result == 1) {
-            opponentWrapper.setResult('1');
-        } else if (result == 0.5) {
-            opponentWrapper.setResult('=');
-        } else {
-            opponentWrapper.setResult('0');
-        }
-        if (isWhite) {
-            opponentWrapper.setColor('w');
-        } else {
-            opponentWrapper.setColor('b');
-        }
+        opponentWrapper.setResult(result);
+        opponentWrapper.setColor(isWhite ? 'w' : 'b');
         this.opponentList.add(opponentWrapper);
-        this.score += result;
+        this.score += Participant.resultToFloat(result);
         if (isWhite) {
             this.colorDifference++;
         } else {
@@ -264,8 +262,8 @@ public final class Participant {
     // called after every round
     void updateScore() {
         float tmpSum = 0.0f;
-        for (final Float result : this.pastResults.values()) {
-            tmpSum += result;
+        for (final Character result : this.pastResults.values()) {
+            tmpSum += Participant.resultToFloat(result);
         }
         this.score = tmpSum + (float) this.pointsByForfeit;
     }
@@ -285,7 +283,7 @@ public final class Participant {
         float tmpSonnenbornBerger = 0.0f;
         int tmpEloOpponentsSum = 0;
         float lowestScore = Float.MAX_VALUE;
-        for (final Map.Entry<Integer, Float> entry : this.pastResults.entrySet()) {
+        for (final Map.Entry<Integer, Character> entry : this.pastResults.entrySet()) {
             final int key = entry.getKey();
             final float value = entry.getValue();
             final Participant opponent = this.simulatedPlayerList.get(key - 1);
