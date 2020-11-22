@@ -14,7 +14,6 @@ public final class Participant {
     private final boolean isFemale;
     private final int pointsByForfeit;
     private final int startingRankNextOpponent;
-    private final boolean isWhiteNextGame;
     private List<Participant> simulatedPlayerList;
     private boolean hasReceivedBye;
     private int startingRank;
@@ -30,7 +29,7 @@ public final class Participant {
     public Participant(final int startingRank, final String title, final String name, final String country,
                        final int elo, final String type, final boolean isFemale,
                        final List<OpponentWrapper> opponentList, final int pointsByForfeit,
-                       final int startingRankNextOpponent, final boolean isWhiteNextGame, final boolean hasReceivedBye) {
+                       final int startingRankNextOpponent, final boolean hasReceivedBye) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -41,22 +40,19 @@ public final class Participant {
         this.opponentList = new ArrayList<>(opponentList);
         this.pointsByForfeit = pointsByForfeit;
         this.startingRankNextOpponent = startingRankNextOpponent;
-        this.isWhiteNextGame = isWhiteNextGame;
         this.hasReceivedBye = hasReceivedBye;
     }
 
     public static Participant skeletonParticipant(final int startingRank, final String title, final String name,
                                                   final String country, final int elo, final boolean isFemale) {
-        return new Participant(startingRank, title, name, country, elo, "", isFemale,new ArrayList<>(), 0, 0, false,
-                false);
+        return new Participant(startingRank, title, name, country, elo, "", isFemale,new ArrayList<>(), 0, 0, false);
     }
 
     public static Participant copyOf(final Participant participant) {
         final Participant participantCopy = new Participant(participant.startingRank, participant.title, participant.name,
                 participant.country, participant.elo, participant.type, participant.isFemale,
                 participant.opponentList, participant.pointsByForfeit,
-                participant.startingRankNextOpponent, participant.isWhiteNextGame,
-                participant.hasReceivedBye);
+                participant.startingRankNextOpponent, participant.hasReceivedBye);
         participantCopy.score = participant.score;
         return participantCopy;
     }
@@ -113,7 +109,6 @@ public final class Participant {
                 participant1.opponentList.equals(participant2.opponentList) &&
                 participant1.pointsByForfeit == participant2.pointsByForfeit &&
                 participant1.startingRankNextOpponent == participant2.startingRankNextOpponent &&
-                participant1.isWhiteNextGame == participant2.isWhiteNextGame &&
                 participant1.startingRank == participant2.startingRank &&
                 participant1.hasReceivedBye == participant2.hasReceivedBye;
     }
@@ -166,10 +161,6 @@ public final class Participant {
 
     public float getScore() {
         return this.score;
-    }
-
-    public boolean isWhiteNextGame() {
-        return this.isWhiteNextGame;
     }
 
     public boolean hasPlayedAgainst(final Participant simulatedPlayer) {

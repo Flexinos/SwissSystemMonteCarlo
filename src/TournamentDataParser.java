@@ -63,7 +63,7 @@ public final class TournamentDataParser {
         final List<OpponentWrapper> opponentWrapperList = createPastResults(playerHistory.normalGames);
         return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
                 playerData.elo, playerData.type, playerData.isFemale, opponentWrapperList, playerHistory.pointsByForfeit,
-                playerHistory.nextOpponentStartingRank, playerHistory.isWhiteNextGame, playerHistory.hasReceivedBye);
+                playerHistory.nextOpponentStartingRank,  playerHistory.hasReceivedBye);
     }
 
     /**
@@ -427,7 +427,6 @@ public final class TournamentDataParser {
             boolean hasReceivedBye = false;
             int pointsByForfeit = 0;
             int nextOpponentStartingRank = -1;
-            boolean isWhiteNextGame = false;
             for (final Integer gameEntryIndex : gameEntryIndices) {
                 final String entry = lineEntries[gameEntryIndex];
                 if (matches(entry, NORMAL_GAME_PATTERN)) {
@@ -442,10 +441,9 @@ public final class TournamentDataParser {
                     hasReceivedBye = true;
                 } else if (matches(entry, FUTURE_GAME_PATTERN)) {
                     nextOpponentStartingRank = parseOpponentStartingRank(entry);
-                    isWhiteNextGame = parseColor(entry) == 'w'; //todo: check if this works
                 }
             }
-            return new PlayerHistory(games, hasReceivedBye, pointsByForfeit, nextOpponentStartingRank, isWhiteNextGame);
+            return new PlayerHistory(games, hasReceivedBye, pointsByForfeit, nextOpponentStartingRank);
         }
 
         private static int parseOpponentStartingRank(final CharSequence entry) {
@@ -489,15 +487,13 @@ public final class TournamentDataParser {
         private final boolean hasReceivedBye;
         private final int pointsByForfeit;
         private final int nextOpponentStartingRank;
-        private final boolean isWhiteNextGame;
 
         private PlayerHistory(final List<Game> normalGames, final boolean hasReceivedBye, final int pointsByForfeit,
-                              final int nextOpponentStartingRank, final boolean isWhiteNextGame) {
+                              final int nextOpponentStartingRank) {
             this.normalGames = normalGames;
             this.hasReceivedBye = hasReceivedBye;
             this.pointsByForfeit = pointsByForfeit;
             this.nextOpponentStartingRank = nextOpponentStartingRank;
-            this.isWhiteNextGame = isWhiteNextGame;
         }
     }
 
