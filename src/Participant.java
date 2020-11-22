@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.LongAdder;
 
@@ -45,6 +42,12 @@ public final class Participant {
         this.startingRankNextOpponent = startingRankNextOpponent;
         this.isWhiteNextGame = isWhiteNextGame;
         this.hasReceivedBye = hasReceivedBye;
+    }
+    
+    public static Participant skeletonParticipant(final int startingRank, final String title, final String name,
+                                                  final String country, final int elo, final boolean isFemale){
+        return new Participant(startingRank, title, name, country, elo, "", isFemale,
+                new HashMap<>(), 0, 0, false, false);
     }
 
     public static Participant copyOf(final Participant participant) {

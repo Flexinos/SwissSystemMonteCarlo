@@ -11,10 +11,8 @@ class SimulatedTournamentTest {
 
     @BeforeEach
     void setUp() {
-        p1 = new Participant(1, "g", "Mirzoev Azer", "AZE", 2527, "", false,
-                new HashMap<>(), 0, 0, false, false);
-        p2 = new Participant(2, "m", "Argandona Riveiro Inigo", "ESP", 2408, "", false,
-                new HashMap<>(), 0, 0, false, false);
+        p1 = Participant.skeletonParticipant(1, "g", "Mirzoev Azer", "AZE", 2527, false);
+        p2 = Participant.skeletonParticipant(2, "m", "Argandona Riveiro Inigo", "ESP", 2408, false);
         Collection<Participant> participants = new ArrayList<>(List.of(p1, p2));
         SimulatedTournament tournament = new SimulatedTournament(3, participants);
         List<Participant> playerlist = tournament.getSimulatedPlayerList();
@@ -22,7 +20,7 @@ class SimulatedTournamentTest {
     }
 
     @Test
-    void createPlayerDataStringTRF() {
+    void createPlayerDataStringTRF_TestJavafoSample() {
         assertEquals(SimulatedTournament.createPlayerDataStringTRF(1, p1),
                 "001    1 m  g Mirzoev Azer                      2527 AZE  1234567890 1978        0.0    1");
         assertEquals(SimulatedTournament.createPlayerDataStringTRF(2, p2),
@@ -30,10 +28,17 @@ class SimulatedTournamentTest {
     }
 
     @Test
-    void createOpponentsStringTRF() {
+    void createOpponentsStringTRF_TestJavafoSample() {
         p1.addGame(p2, 1, true);
         p2.addGame(p1, 0, false);
         assertEquals(SimulatedTournament.createOpponentsStringTRF(p1.getOpponentList()), "     2 w 1\n");
         assertEquals(SimulatedTournament.createOpponentsStringTRF(p2.getOpponentList()), "     1 b 0\n");
     }
+    /*
+    @Test
+    void createTRF_TestJavafoSample() {
+        p1.addGame(26,1,true);
+        assertEquals();
+    }
+    */
 }
