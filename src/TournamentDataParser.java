@@ -16,6 +16,7 @@ public final class TournamentDataParser {
 
     /**
      * Generates a list of Participants from a link to a tournament on chess-results.com.
+     *
      * @param inputLink A link to a tournament on chess-results.com.
      * @return A List of Participants who play in the given tournament.
      */
@@ -25,6 +26,7 @@ public final class TournamentDataParser {
 
     /**
      * Generates a list of Participants from a tournament number on chess-results.com.
+     *
      * @param tournamentNumber The number of the tournament on chess-results.com as seen in the link.
      * @return A List of Participants who play in the given tournament.
      */
@@ -50,8 +52,9 @@ public final class TournamentDataParser {
      * Combines the data from instances of the data classes PlayerData and PlayerHistory
      * to create a new Participant. The two objects must describe the same player,
      * otherwise the resulting Participant object will be useless.
-     * @param playerData A PlayerData object as returned by ParticipantUtilities.parseParticipantLine
-     *                   (called via ParticipantUtilities.getParticipantsData)
+     *
+     * @param playerData    A PlayerData object as returned by ParticipantUtilities.parseParticipantLine
+     *                      (called via ParticipantUtilities.getParticipantsData)
      * @param playerHistory A playerHistory object as returned by GamesUtilities.parseGamesOfPlayer
      *                      (called via GamesUtilities.parsePlayedGames)
      * @return A Participant object containing the data of the two arguments.
@@ -66,23 +69,16 @@ public final class TournamentDataParser {
     /**
      * Given a player's games, this method creates a Map mapping the opponent's starting rank
      * to the game's result.
+     *
      * @param games An Iterable containing the games a player played in the tournament.
      * @return A Map mapping the opponent's starting rank to the game's result.
      */
     private static Map<Integer, Character> createPastResults(final Iterable<Game> games) {
         final Map<Integer, Character> pastResults = new TreeMap<>();
         for (final Game game : games) {
-            pastResults.put(game.opponentStartingRank, gameResultToCharacter(game.result));
+            pastResults.put(game.opponentStartingRank, game.result);
         }
         return pastResults;
-    }
-
-    private static Character gameResultToCharacter(final GameResult gameResult) {
-        return switch (gameResult) {
-            case WON -> '1';
-            case DRAW -> '=';
-            default -> '0';
-        };
     }
 
     private static URL buildStartingRankLink(final int tournamentNumber) {
@@ -113,6 +109,7 @@ public final class TournamentDataParser {
 
     /**
      * Extracts the tournament number from a link.
+     *
      * @param inputLink A link to a tournament on chess-results.com
      * @return The tournament number of the tournament
      */
@@ -150,6 +147,7 @@ public final class TournamentDataParser {
 
     /**
      * Removes HTML tags and character codes from a CharSequence.
+     *
      * @param line The CharSequence to be cleaned
      * @return The CharSequence without HTML tags and character codes.
      * (Removes some non-ASCII letters from names.)
@@ -163,7 +161,8 @@ public final class TournamentDataParser {
 
     /**
      * Check if the given line matches the given pattern.
-     * @param line The line to be checked
+     *
+     * @param line    The line to be checked
      * @param pattern The pattern against which the line should be matched
      * @return true if a match is found, false otherwise
      */
@@ -434,7 +433,8 @@ public final class TournamentDataParser {
                 if (matches(entry, NORMAL_GAME_PATTERN)) {
                     final int opponentStartingRank = parseOpponentStartingRank(entry);
                     final boolean isWhite = isWhite(entry);
-                    final GameResult result = parseResult(entry);
+                    final Character result =
+                            REMOVE_FOR_RESULT_PARSING_PATTERN.matcher(entry).replaceFirst("").charAt(0);
                     games.add(new Game(opponentStartingRank, isWhite, result));
                 } else if (matches(entry, FORFEIT_GAME_PATTERN)) {
                     ++pointsByForfeit;
@@ -447,21 +447,13 @@ public final class TournamentDataParser {
             }
             return new PlayerHistory(games, hasReceivedBye, pointsByForfeit, nextOpponentStartingRank, isWhiteNextGame);
         }
-        
+
         private static int parseOpponentStartingRank(final CharSequence entry) {
             return Integer.parseInt(REMOVE_FOR_OPPONENT_PARSING_PATTERN.matcher(entry).replaceFirst(""));
         }
 
         private static boolean isWhite(final String entry) {
             return entry.contains("w");
-        }
-
-        private static GameResult parseResult(final CharSequence entry) {
-            return switch (REMOVE_FOR_RESULT_PARSING_PATTERN.matcher(entry).replaceFirst("")) {
-                case "1" -> GameResult.WON;
-                case "0" -> GameResult.LOST;
-                default -> GameResult.DRAW;
-            };
         }
     }
 
@@ -505,14 +497,12 @@ public final class TournamentDataParser {
         }
     }
 
-    private enum GameResult {WON, DRAW, LOST}
-
     private static final class Game {
         private final int opponentStartingRank;
         private final boolean playerIsWhite;
-        private final GameResult result;
+        private final Character result;
 
-        private Game(final int opponentStartingRank, final boolean playerIsWhite, final GameResult result) {
+        private Game(final int opponentStartingRank, final boolean playerIsWhite, final Character result) {
             this.opponentStartingRank = opponentStartingRank;
             this.playerIsWhite = playerIsWhite;
             this.result = result;
