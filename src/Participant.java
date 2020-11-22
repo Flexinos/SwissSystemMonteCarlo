@@ -15,7 +15,6 @@ public final class Participant {
     private final int pointsByForfeit;
     private final int startingRankNextOpponent;
     private List<Participant> simulatedPlayerList;
-    private boolean hasReceivedBye;
     private int startingRank;
     private int numberOfTopThreeFinishes;
     private float score;
@@ -29,7 +28,7 @@ public final class Participant {
     public Participant(final int startingRank, final String title, final String name, final String country,
                        final int elo, final String type, final boolean isFemale,
                        final List<OpponentWrapper> opponentList, final int pointsByForfeit,
-                       final int startingRankNextOpponent, final boolean hasReceivedBye) {
+                       final int startingRankNextOpponent) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -40,19 +39,18 @@ public final class Participant {
         this.opponentList = new ArrayList<>(opponentList);
         this.pointsByForfeit = pointsByForfeit;
         this.startingRankNextOpponent = startingRankNextOpponent;
-        this.hasReceivedBye = hasReceivedBye;
     }
 
     public static Participant skeletonParticipant(final int startingRank, final String title, final String name,
                                                   final String country, final int elo, final boolean isFemale) {
-        return new Participant(startingRank, title, name, country, elo, "", isFemale,new ArrayList<>(), 0, 0, false);
+        return new Participant(startingRank, title, name, country, elo, "", isFemale,new ArrayList<>(), 0, 0);
     }
 
     public static Participant copyOf(final Participant participant) {
         final Participant participantCopy = new Participant(participant.startingRank, participant.title, participant.name,
                 participant.country, participant.elo, participant.type, participant.isFemale,
                 participant.opponentList, participant.pointsByForfeit,
-                participant.startingRankNextOpponent, participant.hasReceivedBye);
+                participant.startingRankNextOpponent);
         participantCopy.score = participant.score;
         return participantCopy;
     }
@@ -109,8 +107,7 @@ public final class Participant {
                 participant1.opponentList.equals(participant2.opponentList) &&
                 participant1.pointsByForfeit == participant2.pointsByForfeit &&
                 participant1.startingRankNextOpponent == participant2.startingRankNextOpponent &&
-                participant1.startingRank == participant2.startingRank &&
-                participant1.hasReceivedBye == participant2.hasReceivedBye;
+                participant1.startingRank == participant2.startingRank;
     }
 
     //todo: add way to add results like bye to opponentList
@@ -145,10 +142,6 @@ public final class Participant {
 
     public String getName() {
         return this.name;
-    }
-
-    public boolean hasReceivedBye() {
-        return this.hasReceivedBye;
     }
 
     public int getStartingRankNextOpponent() {
@@ -320,11 +313,6 @@ public final class Participant {
 
     public String getCountry() {
         return country;
-    }
-
-    public void giveBye() {
-        this.hasReceivedBye = true;
-        this.score += 1.0f;
     }
 
     public int compareToByEloDescending(final Participant p2) {

@@ -17,13 +17,12 @@ public final class SimulatedTournament {
             simulatedPlayer.setSimulatedPlayerList(this.simulatedPlayerList);
         }
         this.givenPairings = new ArrayList<>(this.roundsToBeSimulated);
+        //no clue what the point of this is
         for (final Participant participant : participants) {
             if (participant.getStartingRankNextOpponent() < 0) {
                 break;
             } else if (participant.getStartingRankNextOpponent() == 0) {
-                this.simulatedPlayerList.get(participant.getStartingRank() - 1).giveBye();
-            } else if (participant.isWhiteNextGame()) {
-                this.givenPairings.add(new Pairing(this.simulatedPlayerList.get(participant.getStartingRank() - 1), this.simulatedPlayerList.get(participant.getStartingRankNextOpponent() - 1)));
+                // this.simulatedPlayerList.get(participant.getStartingRank() - 1).giveBye();
             }
         }
     }
@@ -61,14 +60,20 @@ public final class SimulatedTournament {
 
     public static String createPlayerDataStringTRF(int rank, Participant p) {
         return String.format("001 %4d %c %2s %-33s %4d %3s %11s %10s % 2.1f %4d", rank, p.getGender(),
-                p.getTitle(), p.getName(), p.getElo(), p.getCountry(),"1234567890", "1978      ",p.getScore(), p.getStartingRank());
+                p.getTitle(), p.getName(), p.getElo(), p.getCountry(), "1234567890", "1978      ", p.getScore(), p.getStartingRank());
     }
 
     public static String createOpponentsStringTRF(List<OpponentWrapper> opponents) {
         StringBuilder stringBuilder = new StringBuilder();
         for (OpponentWrapper opponent : opponents) {
-            stringBuilder.append(String.format("  %4d %c %c", opponent.getOpponentStartingRank(), opponent.getColor(),
-                    opponent.getResult()));
+            if (opponent.getOpponentStartingRank() == 0) {
+                stringBuilder.append(String.format("  %4s %c %c", "0000",
+                        opponent.getColor(), opponent.getResult()));
+                //TRF format requires "0000" or "    " in case of bye
+            } else {
+                stringBuilder.append(String.format("  %4d %c %c",
+                        opponent.getOpponentStartingRank(), opponent.getColor(), opponent.getResult()));
+            }
         }
         stringBuilder.append("\n");
         return stringBuilder.toString();
@@ -170,6 +175,8 @@ public final class SimulatedTournament {
 
     private enum Padding {LEFT, RIGHT}
 
+    // pairing is completely broken by removal of bye mechanism
+    /*
     public static final class Round {
         public static Collection<Pairing> createPairings(final List<Participant> players) {
             final Collection<Pairing> unorderedPairings = new ArrayList<>();
@@ -259,5 +266,7 @@ public final class SimulatedTournament {
                 }
             }
         }
+
     }
+     */
 }

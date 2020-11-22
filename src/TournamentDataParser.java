@@ -63,7 +63,7 @@ public final class TournamentDataParser {
         final List<OpponentWrapper> opponentWrapperList = createPastResults(playerHistory.normalGames);
         return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
                 playerData.elo, playerData.type, playerData.isFemale, opponentWrapperList, playerHistory.pointsByForfeit,
-                playerHistory.nextOpponentStartingRank,  playerHistory.hasReceivedBye);
+                playerHistory.nextOpponentStartingRank);
     }
 
     /**
@@ -424,7 +424,6 @@ public final class TournamentDataParser {
         private static PlayerHistory parseGamesOfPlayer(final String line, final Iterable<Integer> gameEntryIndices) {
             final String[] lineEntries = line.split(";");
             final List<Game> games = new ArrayList<>();
-            boolean hasReceivedBye = false;
             int pointsByForfeit = 0;
             int nextOpponentStartingRank = -1;
             for (final Integer gameEntryIndex : gameEntryIndices) {
@@ -438,12 +437,12 @@ public final class TournamentDataParser {
                 } else if (matches(entry, FORFEIT_GAME_PATTERN)) {
                     ++pointsByForfeit;
                 } else if (matches(entry, BYE_GAME_PATTERN)) {
-                    hasReceivedBye = true;
+                    games.add(new Game(0, 'F', '-'));
                 } else if (matches(entry, FUTURE_GAME_PATTERN)) {
                     nextOpponentStartingRank = parseOpponentStartingRank(entry);
                 }
             }
-            return new PlayerHistory(games, hasReceivedBye, pointsByForfeit, nextOpponentStartingRank);
+            return new PlayerHistory(games, pointsByForfeit, nextOpponentStartingRank);
         }
 
         private static int parseOpponentStartingRank(final CharSequence entry) {
@@ -484,14 +483,12 @@ public final class TournamentDataParser {
 
     private static final class PlayerHistory {
         private final List<Game> normalGames;
-        private final boolean hasReceivedBye;
         private final int pointsByForfeit;
         private final int nextOpponentStartingRank;
 
-        private PlayerHistory(final List<Game> normalGames, final boolean hasReceivedBye, final int pointsByForfeit,
+        private PlayerHistory(final List<Game> normalGames, final int pointsByForfeit,
                               final int nextOpponentStartingRank) {
             this.normalGames = normalGames;
-            this.hasReceivedBye = hasReceivedBye;
             this.pointsByForfeit = pointsByForfeit;
             this.nextOpponentStartingRank = nextOpponentStartingRank;
         }
