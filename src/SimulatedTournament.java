@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,7 +52,7 @@ public final class SimulatedTournament {
                 "XXR 9\n");
         for (int i = 0; i < playerList.size(); i++) {
             string.append(createPlayerDataStringTRF(i, playerList.get(i)));
-            string.append(createOpponentsStringTRF(playerList.get(i).getOpponentList()));
+            string.append(createOpponentsStringTRF(playerList.get(i).getGameList()));
         }
         return string.toString();
     }

@@ -62,7 +62,7 @@ public final class TournamentDataParser {
     private static Participant createParticipant(final PlayerData playerData, final PlayerHistory playerHistory) {
         final List<OpponentWrapper> opponentWrapperList = createPastResults(playerHistory.normalGames);
         return new Participant(playerData.startingRank, playerData.title, playerData.name, playerData.country,
-                playerData.elo, playerData.type, playerData.isFemale, opponentWrapperList, playerHistory.pointsByForfeit,
+                playerData.elo, playerData.type, playerData.isFemale, opponentWrapperList,
                 playerHistory.nextOpponentStartingRank);
     }
 
@@ -424,7 +424,6 @@ public final class TournamentDataParser {
         private static PlayerHistory parseGamesOfPlayer(final String line, final Iterable<Integer> gameEntryIndices) {
             final String[] lineEntries = line.split(";");
             final List<Game> games = new ArrayList<>();
-            int pointsByForfeit = 0;
             int nextOpponentStartingRank = -1;
             for (final Integer gameEntryIndex : gameEntryIndices) {
                 final String entry = lineEntries[gameEntryIndex];
@@ -435,14 +434,14 @@ public final class TournamentDataParser {
                             REMOVE_FOR_RESULT_PARSING_PATTERN.matcher(entry).replaceFirst("").charAt(0);
                     games.add(new Game(opponentStartingRank, result, color));
                 } else if (matches(entry, FORFEIT_GAME_PATTERN)) {
-                    ++pointsByForfeit;
+                    games.add(new Game(0, '+', parseColor(entry))); //format shall include scheduled color
                 } else if (matches(entry, BYE_GAME_PATTERN)) {
                     games.add(new Game(0, 'F', '-'));
                 } else if (matches(entry, FUTURE_GAME_PATTERN)) {
                     nextOpponentStartingRank = parseOpponentStartingRank(entry);
                 }
             }
-            return new PlayerHistory(games, pointsByForfeit, nextOpponentStartingRank);
+            return new PlayerHistory(games, nextOpponentStartingRank);
         }
 
         private static int parseOpponentStartingRank(final CharSequence entry) {
@@ -483,13 +482,10 @@ public final class TournamentDataParser {
 
     private static final class PlayerHistory {
         private final List<Game> normalGames;
-        private final int pointsByForfeit;
         private final int nextOpponentStartingRank;
 
-        private PlayerHistory(final List<Game> normalGames, final int pointsByForfeit,
-                              final int nextOpponentStartingRank) {
+        private PlayerHistory(final List<Game> normalGames, final int nextOpponentStartingRank) {
             this.normalGames = normalGames;
-            this.pointsByForfeit = pointsByForfeit;
             this.nextOpponentStartingRank = nextOpponentStartingRank;
         }
     }

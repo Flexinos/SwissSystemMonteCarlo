@@ -5,14 +5,13 @@ import java.util.concurrent.atomic.LongAdder;
 public final class Participant {
     private static LongAdder[][] rankings;
     private static Map<Integer, LongAdder> topThreeCounter;
-    private final List<OpponentWrapper> opponentList;
+    private final List<OpponentWrapper> gameList;
     private final String title;
     private final String name;
     private final String country;
     private final int elo;
     private final String type;
     private final boolean isFemale;
-    private final int pointsByForfeit;
     private final int startingRankNextOpponent;
     private List<Participant> simulatedPlayerList;
     private int startingRank;
@@ -27,8 +26,7 @@ public final class Participant {
 
     public Participant(final int startingRank, final String title, final String name, final String country,
                        final int elo, final String type, final boolean isFemale,
-                       final List<OpponentWrapper> opponentList, final int pointsByForfeit,
-                       final int startingRankNextOpponent) {
+                       final List<OpponentWrapper> gameList, final int startingRankNextOpponent) {
         this.startingRank = startingRank;
         this.title = title;
         this.name = name;
@@ -36,21 +34,19 @@ public final class Participant {
         this.elo = elo;
         this.type = type;
         this.isFemale = isFemale;
-        this.opponentList = new ArrayList<>(opponentList);
-        this.pointsByForfeit = pointsByForfeit;
+        this.gameList = new ArrayList<>(gameList);
         this.startingRankNextOpponent = startingRankNextOpponent;
     }
 
     public static Participant skeletonParticipant(final int startingRank, final String title, final String name,
                                                   final String country, final int elo, final boolean isFemale) {
-        return new Participant(startingRank, title, name, country, elo, "", isFemale,new ArrayList<>(), 0, 0);
+        return new Participant(startingRank, title, name, country, elo, "", isFemale, new ArrayList<>(), 0);
     }
 
     public static Participant copyOf(final Participant participant) {
         final Participant participantCopy = new Participant(participant.startingRank, participant.title, participant.name,
                 participant.country, participant.elo, participant.type, participant.isFemale,
-                participant.opponentList, participant.pointsByForfeit,
-                participant.startingRankNextOpponent);
+                participant.gameList, participant.startingRankNextOpponent);
         participantCopy.score = participant.score;
         return participantCopy;
     }
@@ -58,8 +54,12 @@ public final class Participant {
     public static float resultToFloat(Character result) {
         return switch (result) {
             case '1' -> 1.0f;
+            case '=' -> 0.5f;
             case '0' -> 0.0f;
-            default -> 0.5f;
+            case '+' -> 1.0f;
+            case '-' -> 0.0f;
+            case 'F' -> 1.0f;
+            default -> throw new IllegalStateException("Result is unknown character");
         };
     }
 
@@ -104,8 +104,7 @@ public final class Participant {
                 participant1.elo == participant2.elo &&
                 participant1.type.equals(participant2.type) &&
                 participant1.isFemale == participant2.isFemale &&
-                participant1.opponentList.equals(participant2.opponentList) &&
-                participant1.pointsByForfeit == participant2.pointsByForfeit &&
+                participant1.gameList.equals(participant2.gameList) &&
                 participant1.startingRankNextOpponent == participant2.startingRankNextOpponent &&
                 participant1.startingRank == participant2.startingRank;
     }
@@ -115,7 +114,7 @@ public final class Participant {
         final OpponentWrapper opponentWrapper = new OpponentWrapper(opponent.startingRank);
         opponentWrapper.setResult(result);
         opponentWrapper.setColor(isWhite ? 'w' : 'b');
-        this.opponentList.add(opponentWrapper);
+        this.gameList.add(opponentWrapper);
         this.score += Participant.resultToFloat(result);
         if (isWhite) {
             this.colorDifference++;
@@ -124,8 +123,8 @@ public final class Participant {
         }
     }
 
-    public List<OpponentWrapper> getOpponentList() {
-        return opponentList;
+    public List<OpponentWrapper> getGameList() {
+        return gameList;
     }
 
     public int getStartingRank() {
@@ -157,8 +156,8 @@ public final class Participant {
     }
 
     public boolean hasPlayedAgainst(final Participant simulatedPlayer) {
-        for (OpponentWrapper game : simulatedPlayer.opponentList){
-            if(game.getOpponentStartingRank()==startingRank){
+        for (OpponentWrapper game : simulatedPlayer.gameList) {
+            if (game.getOpponentStartingRank() == startingRank) {
                 return true;
             }
         }
@@ -179,10 +178,10 @@ public final class Participant {
 
     private void calculatePerformance() {
         boolean inverted = false;
-        if (this.opponentList.isEmpty()) {
+        if (this.gameList.isEmpty()) {
             this.performanceRating = 0;
         }
-        float percentage = this.score / (float) this.opponentList.size();
+        float percentage = this.score / (float) this.gameList.size();
         if (percentage < 0.5f) {
             percentage = 1.0f - percentage;
             inverted = true;
@@ -251,16 +250,16 @@ public final class Participant {
     // called after every round
     void updateScore() {
         float tmpSum = 0.0f;
-        for (final OpponentWrapper game : this.opponentList) {
+        for (final OpponentWrapper game : this.gameList) {
             tmpSum += Participant.resultToFloat(game.getResult());
         }
-        this.score = tmpSum + (float) this.pointsByForfeit;
+        this.score = tmpSum;
     }
 
     // called at end of simulation
     public void updateScores() {
-        if (this.opponentList.isEmpty()) {
-            this.score = this.pointsByForfeit;
+        if (this.gameList.isEmpty()) {
+            this.score = 0.0f;
             this.buchholz = 0.0f;
             this.buchholzCutOne = 0.0f;
             this.sonnenbornBerger = 0.0f;
@@ -272,21 +271,25 @@ public final class Participant {
         float tmpSonnenbornBerger = 0.0f;
         int tmpEloOpponentsSum = 0;
         float lowestScore = Float.MAX_VALUE;
-        for (final OpponentWrapper game : this.opponentList) {
-            final Participant opponent = this.simulatedPlayerList.get(game.getOpponentStartingRank() - 1);
-            tmpScore += Participant.resultToFloat(game.getResult());
-            tmpBuchholz += opponent.score;
-            tmpSonnenbornBerger += opponent.score * Participant.resultToFloat(game.getResult());
-            tmpEloOpponentsSum += opponent.elo;
-            if (opponent.score <= lowestScore) {
-                lowestScore = opponent.score;
+        for (final OpponentWrapper game : this.gameList) {
+            if (game.getOpponentStartingRank() == 0) {
+                tmpScore += Participant.resultToFloat(game.getResult());
+            } else {
+                final Participant opponent = this.simulatedPlayerList.get(game.getOpponentStartingRank() - 1);
+                tmpScore += Participant.resultToFloat(game.getResult());
+                tmpBuchholz += opponent.score;
+                tmpSonnenbornBerger += opponent.score * Participant.resultToFloat(game.getResult());
+                tmpEloOpponentsSum += opponent.elo;
+                if (opponent.score <= lowestScore) {
+                    lowestScore = opponent.score;
+                }
             }
         }
-        this.score = tmpScore + (float) this.pointsByForfeit;
+        this.score = tmpScore;
         this.buchholz = tmpBuchholz;
         this.buchholzCutOne = tmpBuchholz - lowestScore;
         this.sonnenbornBerger = tmpSonnenbornBerger;
-        this.averageEloOpponents = (float) tmpEloOpponentsSum / this.opponentList.size();
+        this.averageEloOpponents = (float) tmpEloOpponentsSum / this.gameList.size();
         calculatePerformance();
     }
 
