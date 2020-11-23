@@ -22,7 +22,6 @@ public final class Participant {
     private float sonnenbornBerger;
     private float averageEloOpponents;
     private float performanceRating = 0;
-    private int colorDifference = 0;
 
     public Participant(final int startingRank, final String title, final String name, final String country,
                        final int elo, final String type, final boolean isFemale,
@@ -109,18 +108,10 @@ public final class Participant {
                 participant1.startingRank == participant2.startingRank;
     }
 
-    //todo: add way to add results like bye to opponentList
-    public void addGame(final Participant opponent, final Character result, final boolean isWhite) {
-        final OpponentWrapper opponentWrapper = new OpponentWrapper(opponent.startingRank);
-        opponentWrapper.setResult(result);
-        opponentWrapper.setColor(isWhite ? 'w' : 'b');
+    public void addGame(final int opponentStartingRank, final Character result, final Character color) {
+        final OpponentWrapper opponentWrapper = new OpponentWrapper(opponentStartingRank, result, color);
         this.gameList.add(opponentWrapper);
         this.score += Participant.resultToFloat(result);
-        if (isWhite) {
-            this.colorDifference++;
-        } else {
-            this.colorDifference--;
-        }
     }
 
     public List<OpponentWrapper> getGameList() {
