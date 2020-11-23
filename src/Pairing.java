@@ -1,14 +1,6 @@
 import java.util.concurrent.ThreadLocalRandom;
 
 public final class Pairing {
-    private final Participant whitePlayer;
-    private final Participant blackPlayer;
-
-    public Pairing(final Participant whitePlayer, final Participant blackPlayer) {
-        this.whitePlayer = whitePlayer;
-        this.blackPlayer = blackPlayer;
-    }
-
     public static boolean canBePaired(final Participant player1, final Participant player2) {
         if (player1.equals(player2)) {
             throw new IllegalArgumentException("Can not play against oneself!");
@@ -74,27 +66,19 @@ public final class Pairing {
         return ResultOfGame.DRAW;
     }
 
-    public Participant getWhitePlayer() {
-        return this.whitePlayer;
-    }
-
-    public Participant getBlackPlayer() {
-        return this.blackPlayer;
-    }
-
-    public void simulateResult() {
-        switch (randomResultFormula(this.whitePlayer.getElo(), this.blackPlayer.getElo())) {
+    public static void simulateResult(Participant whitePlayer, Participant blackPlayer) {
+        switch (randomResultFormula(whitePlayer.getElo(), blackPlayer.getElo())) {
             case WHITE_WIN -> {
-                this.whitePlayer.addGame(this.blackPlayer, '1', true);
-                this.blackPlayer.addGame(this.whitePlayer, '0', false);
+                whitePlayer.addGame(blackPlayer.getStartingRank(), '1', 'w');
+                blackPlayer.addGame(whitePlayer.getStartingRank(), '0', 'b');
             }
             case BLACK_WIN -> {
-                this.whitePlayer.addGame(this.blackPlayer, '0', true);
-                this.blackPlayer.addGame(this.whitePlayer, '1', false);
+                whitePlayer.addGame(blackPlayer.getStartingRank(), '0', 'w');
+                blackPlayer.addGame(whitePlayer.getStartingRank(), '1', 'b');
             }
             default -> {
-                this.whitePlayer.addGame(this.blackPlayer, '=', true);
-                this.blackPlayer.addGame(this.whitePlayer, '=', false);
+                whitePlayer.addGame(blackPlayer.getStartingRank(), '=', 'w');
+                blackPlayer.addGame(whitePlayer.getStartingRank(), '=', 'b');
             }
         }
     }
