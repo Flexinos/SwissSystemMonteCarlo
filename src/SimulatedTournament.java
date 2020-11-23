@@ -1,3 +1,5 @@
+import javafo.api.JaVaFoApi;
+
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -16,14 +18,6 @@ public final class SimulatedTournament {
             simulatedPlayer.setSimulatedPlayerList(this.simulatedPlayerList);
         }
         this.givenPairings = new ArrayList<>(this.roundsToBeSimulated);
-        //no clue what the point of this is
-        for (final Participant participant : participants) {
-            if (participant.getStartingRankNextOpponent() < 0) {
-                break;
-            } else if (participant.getStartingRankNextOpponent() == 0) {
-                // this.simulatedPlayerList.get(participant.getStartingRank() - 1).giveBye();
-            }
-        }
     }
 
     public List<Participant> getSimulatedPlayerList() {
@@ -34,9 +28,8 @@ public final class SimulatedTournament {
         return roundsToBeSimulated;
     }
 
-    public static String createTRF(SimulatedTournament tournament) {
-        List<Participant> playerList = tournament.simulatedPlayerList;
-        StringBuilder string = new StringBuilder(playerList.size() * 100 + tournament.roundsToBeSimulated * 8);
+    public static String createTRF(List<Participant> simulatedPlayerList) {
+        StringBuilder string = new StringBuilder(simulatedPlayerList.size() * 100 + 90); //todo: pick better initial size
         string.append("012 XX Open Internacional de Gros\n" +
                 "022 Donostia\n" +
                 "032 ESP\n" +
@@ -49,17 +42,20 @@ public final class SimulatedTournament {
                 "102 IA Mikel Larreategi Arana (22232540)\n" +
                 "112 \n" +
                 "122 moves/time, increment\n" +
-                "XXR 9\n");
-        for (int i = 0; i < playerList.size(); i++) {
-            string.append(createPlayerDataStringTRF(i, playerList.get(i)));
-            string.append(createOpponentsStringTRF(playerList.get(i).getGameList()));
+                "XXR 12\n");
+        for (int i = 0; i < simulatedPlayerList.size(); i++) {
+            string.append(createPlayerDataStringTRF(i + 1, simulatedPlayerList.get(i)));
+            string.append(createOpponentsStringTRF(simulatedPlayerList.get(i).getGameList()));
+            if (i < simulatedPlayerList.size() - 1) {
+                string.append("\n");
+            }
         }
         return string.toString();
     }
 
     public static String createPlayerDataStringTRF(int rank, Participant p) {
-        return String.format("001 %4d %c %2s %-33s %4d %3s %11s %10s % 2.1f %4d", rank, p.getGender(),
-                p.getTitle(), p.getName(), p.getElo(), p.getCountry(), "1234567890", "1978      ", p.getScore(), p.getStartingRank());
+        return String.format("001 %4d %c %2s %-33s %4d %3s %11s %10s % 2.1f %4d", p.getStartingRank(), p.getGender(),
+                p.getTitle(), p.getName(), p.getElo(), p.getCountry(), 1234567, "1978      ", p.getScore(), rank);
     }
 
     public static String createOpponentsStringTRF(List<OpponentWrapper> opponents) {
@@ -74,7 +70,6 @@ public final class SimulatedTournament {
                         opponent.getOpponentStartingRank(), opponent.getColor(), opponent.getResult()));
             }
         }
-        stringBuilder.append("\n");
         return stringBuilder.toString();
     }
 
@@ -145,6 +140,30 @@ public final class SimulatedTournament {
         System.out.println("-".repeat(rowLength + 1));
     }
 
+    private void simulateResults(String pairings) {
+        String[] pairingsArray = pairings.split("\\n");
+        //start at index one since javafo output starts with line that contains number of pairings
+        for (int i = 1; i < pairingsArray.length; i++) {
+            String[] matchup = pairingsArray[i].split(" ");
+            if (matchup[1].equals("0")) {
+                simulatedPlayerList.get(Integer.parseInt(matchup[0]) - 1).addGame(0, 'F', '-');
+            } else {
+                Pairing.simulateResult(simulatedPlayerList.get(Integer.parseInt(matchup[0]) - 1),
+                        simulatedPlayerList.get(Integer.parseInt(matchup[1]) - 1));
+            }
+        }
+    }
+
+    public void simulateTournament() {
+        for (int completedRounds = 0; completedRounds < roundsToBeSimulated; completedRounds++) {
+            simulatedPlayerList.sort(Participant::compareToByScoreThenElo);
+            String trf = SimulatedTournament.createTRF(simulatedPlayerList);
+            String pairings = JaVaFoApi.exec(1000, trf);
+            simulateResults(pairings);
+        }
+    }
+
+    /*
     public void simulateTournament() {
         Collection<Pairing> currentPairings;
         for (int finishedRounds = 0; finishedRounds < this.roundsToBeSimulated; finishedRounds++) {
@@ -159,6 +178,7 @@ public final class SimulatedTournament {
             }
         }
     }
+     */
 
     public void analyseThisSimulatedTournament() {
         this.simulatedPlayerList.forEach(Participant::updateScores);
