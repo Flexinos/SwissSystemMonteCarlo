@@ -430,8 +430,11 @@ public final class TournamentDataParser {
                 if (matches(entry, NORMAL_GAME_PATTERN)) {
                     final int opponentStartingRank = parseOpponentStartingRank(entry);
                     final Character color = parseColor(entry);
-                    final Character result =
+                    char result =
                             REMOVE_FOR_RESULT_PARSING_PATTERN.matcher(entry).replaceFirst("").charAt(0);
+                    if (result == '½') {
+                        result = '=';
+                    }
                     games.add(new Game(opponentStartingRank, result, color));
                 } else if (matches(entry, FORFEIT_GAME_PATTERN)) {
                     games.add(new Game(0, '+', parseColor(entry))); //format shall include scheduled color
